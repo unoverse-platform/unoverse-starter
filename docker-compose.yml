@@ -13,9 +13,32 @@ version: "3.8"
 #   - sab (custom branded client app)
 #   - packages/ (custom nodes, design-system components)
 #
+# USAGE:
+#   First time / after code changes:
+#     docker compose run --rm builder
+#     docker compose build sab
+#     docker compose up -d
+#
+#   Update platform images only:
+#     docker compose pull
+#     docker compose up -d
+#
 # =============================================================================
 
 services:
+  # ===========================================================================
+  # BUILDER (runs npm install && npm run build)
+  # ===========================================================================
+  # One-time build step - compiles packages from source
+  # Run: docker compose run --rm builder
+  builder:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm run build"
+    profiles:
+      - build
   # ===========================================================================
   # LAYER 1: CORE PLATFORM (GHCR Images)
   # ===========================================================================

@@ -46,27 +46,22 @@ case $ACTION in
         echo ""
         
         # Pull latest GHCR images
-        echo "1/5 Pulling platform images..."
+        echo "1/4 Pulling platform images..."
         docker compose pull
         
-        # Install dependencies
+        # Build packages (inside Docker - no Node.js needed on host)
         echo ""
-        echo "2/5 Installing dependencies..."
-        npm install
-        
-        # Build packages
-        echo ""
-        echo "3/5 Building packages..."
-        npm run build
+        echo "2/4 Building packages..."
+        docker compose run --rm builder
         
         # Build SAB
         echo ""
-        echo "4/5 Building SAB..."
+        echo "3/4 Building SAB..."
         docker compose build sab
         
         # Start services
         echo ""
-        echo "5/5 Starting services..."
+        echo "4/4 Starting services..."
         docker compose up -d
         ;;
         
