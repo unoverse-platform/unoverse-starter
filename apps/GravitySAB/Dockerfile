@@ -34,9 +34,9 @@ ENV VITE_APS_CUSTOMER_ENDPOINT=$VITE_APS_CUSTOMER_ENDPOINT
 ENV VITE_CLOUDFRONT_ENDPOINT=$VITE_CLOUDFRONT_ENDPOINT
 COPY --from=pruner /app/out/json/ .
 # Use --ignore-scripts to skip postinstall (which tries to build gravity-client before rollup bindings are ready)
-# Then manually rebuild rollup bindings and run the builds
+# Then explicitly install rollup native bindings for Alpine Linux (musl)
 RUN npm install --ignore-scripts
-RUN npm rebuild
+RUN npm install @rollup/rollup-linux-x64-musl --ignore-scripts
 COPY --from=pruner /app/out/full/ .
 COPY tsconfig.base.json ./
 RUN npm run build -w @gravity-platform/gravity-client || true
