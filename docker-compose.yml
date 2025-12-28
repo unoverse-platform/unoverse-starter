@@ -197,6 +197,13 @@ services:
         - VITE_AUTH_ISSUER
         - VITE_AUTH_CLIENT_ID
         - VITE_AUTH_AUDIENCE
+        # Amazon Connect Config
+        - VITE_CONTACT_FLOW_ID
+        - VITE_INSTANCE_ID
+        - VITE_API_GATEWAY_ENDPOINT
+        - VITE_CONNECT_REGION
+        - VITE_APS_CUSTOMER_ENDPOINT
+        - VITE_CLOUDFRONT_ENDPOINT
     # OR use pre-built GHCR image (requires runtime config injection):
     # image: ghcr.io/gravity-platform/gravity-sab:latest
     ports:
