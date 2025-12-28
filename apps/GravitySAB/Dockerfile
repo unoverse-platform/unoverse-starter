@@ -26,7 +26,16 @@ ENV VITE_CONNECT_REGION=$VITE_CONNECT_REGION
 ENV VITE_APS_CUSTOMER_ENDPOINT=$VITE_APS_CUSTOMER_ENDPOINT
 ENV VITE_CLOUDFRONT_ENDPOINT=$VITE_CLOUDFRONT_ENDPOINT
 
-# Copy SAB app only
+# Copy gravity-client package first (SAB depends on it)
+COPY packages/gravity-client/ ./packages/gravity-client/
+
+# Build gravity-client
+WORKDIR /app/packages/gravity-client
+RUN npm install
+RUN npm run build
+
+# Copy and build SAB
+WORKDIR /app/apps/GravitySAB
 COPY apps/GravitySAB/package.json ./
 RUN npm install
 COPY apps/GravitySAB/ ./
@@ -34,7 +43,7 @@ RUN npm run build
 
 # Production stage
 FROM nginx:alpine AS runner
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/apps/GravitySAB/dist /usr/share/nginx/html
 RUN echo 'server { listen 80; location / { root /usr/share/nginx/html; index index.html; try_files $uri $uri/ /index.html; } }' > /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
