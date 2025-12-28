@@ -43,4 +43,4 @@ docker compose up -d
 
 ## Documentation
 
-See the [Developer Guide](https://github.com/gravity-platform/GravityPlatform/blob/main/docs/architecture/DEVELOPER_GUIDE.md) for full documentation.
+See the [Developer Guide](./docs/DEVELOPER_GUIDE.md) for full documentation.
