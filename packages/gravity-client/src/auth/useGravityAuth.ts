@@ -59,7 +59,15 @@ export function useGravityAuth(): GravityAuthState {
     accessToken: auth.user?.access_token || null,
 
     login: async () => {
-      await auth.signinRedirect();
+      try {
+        console.log("[useGravityAuth] Starting signinRedirect...");
+        console.log("[useGravityAuth] auth.settings:", auth.settings);
+        await auth.signinRedirect();
+        console.log("[useGravityAuth] signinRedirect completed");
+      } catch (error) {
+        console.error("[useGravityAuth] signinRedirect FAILED:", error);
+        throw error;
+      }
     },
 
     logout: async () => {
