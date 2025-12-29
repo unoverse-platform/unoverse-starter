@@ -109,6 +109,7 @@ echo ""
 PUBLIC_IP=$(curl -s ifconfig.me 2>/dev/null || curl -s icanhazip.com 2>/dev/null || hostname -I | awk '{print $1}')
 
 echo "Access:"
-echo "  Canvas: http://${PUBLIC_IP}:3001"
-echo "  SAB:    http://${PUBLIC_IP}:3007"
-echo "  API:    http://${PUBLIC_IP}:4100"
+echo "  Canvas:  http://${PUBLIC_IP}:3001"
+echo "  SAB:     http://${PUBLIC_IP}:3007"
+echo "  API:     http://${PUBLIC_IP}:4100"
+echo "  Grafana: http://${PUBLIC_IP}:3000"
