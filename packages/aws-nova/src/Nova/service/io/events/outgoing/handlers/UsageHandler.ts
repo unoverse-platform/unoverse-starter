@@ -46,7 +46,7 @@ export class UsageHandler {
    */
   static parseUsageEvent(data: any): UsageEvent | null {
     if (data?.event?.usageEvent) {
-      console.log("📊 [NOVA USAGE EVENT]:", JSON.stringify(data, null, 2));
+      // console.log("📊 [NOVA USAGE EVENT]:", JSON.stringify(data, null, 2)); // Commented out - too verbose
       return data as UsageEvent;
     }
     return null;
@@ -108,8 +108,9 @@ export class UsageHandler {
     return {
       input: event.event.usageEvent.details.total.input.speechTokens,
       output: event.event.usageEvent.details.total.output.speechTokens,
-      total: event.event.usageEvent.details.total.input.speechTokens + 
-             event.event.usageEvent.details.total.output.speechTokens
+      total:
+        event.event.usageEvent.details.total.input.speechTokens +
+        event.event.usageEvent.details.total.output.speechTokens,
     };
   }
 
@@ -120,8 +121,8 @@ export class UsageHandler {
     return {
       input: event.event.usageEvent.details.total.input.textTokens,
       output: event.event.usageEvent.details.total.output.textTokens,
-      total: event.event.usageEvent.details.total.input.textTokens + 
-             event.event.usageEvent.details.total.output.textTokens
+      total:
+        event.event.usageEvent.details.total.input.textTokens + event.event.usageEvent.details.total.output.textTokens,
     };
   }
 }

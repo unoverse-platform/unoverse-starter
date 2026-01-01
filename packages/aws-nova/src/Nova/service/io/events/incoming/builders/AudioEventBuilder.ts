@@ -2,7 +2,7 @@
  * Audio event builder for Nova Speech
  */
 
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 
 export interface AudioContentStartEvent {
   event: {
@@ -61,7 +61,7 @@ export class AudioEventBuilder {
         },
       },
     };
-    console.log("🎯 AUDIO CONTENT START EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🎯 AUDIO CONTENT START EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 
@@ -89,7 +89,7 @@ export class AudioEventBuilder {
         },
       },
     };
-    
+
     return event;
   }
 
@@ -105,7 +105,7 @@ export class AudioEventBuilder {
         },
       },
     };
-    console.log("🎯 AUDIO CONTENT END EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🎯 AUDIO CONTENT END EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 
@@ -128,7 +128,7 @@ export class AudioEventBuilder {
    * Creates audio input events for continuous streaming
    */
   static createAudioInputEvents(promptName: string, contentName: string, audioData: Buffer | string): any[] {
-    console.log(`🔥 createAudioInputEvents CALLED: promptName=${promptName}, contentName=${contentName}, audioData type=${typeof audioData}, length=${audioData?.length || 0}`);
+    // console.log(`🔥 createAudioInputEvents CALLED: promptName=${promptName}, contentName=${contentName}, audioData type=${typeof audioData}, length=${audioData?.length || 0}`); // Commented out - too verbose
     const events = [];
 
     // Process audio data

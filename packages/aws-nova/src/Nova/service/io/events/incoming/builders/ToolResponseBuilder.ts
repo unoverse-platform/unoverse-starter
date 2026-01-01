@@ -74,12 +74,20 @@ export class ToolResponseBuilder {
       results: Array.isArray(toolResult) ? toolResult : [toolResult],
     };
 
+    // Stringify and truncate if too large (Nova has limits on tool result size)
+    let content = JSON.stringify(formattedResult);
+    const MAX_TOOL_RESULT_LENGTH = 8000; // ~8KB limit to be safe
+    if (content.length > MAX_TOOL_RESULT_LENGTH) {
+      console.log(`⚠️ Tool result too large (${content.length} chars), truncating to ${MAX_TOOL_RESULT_LENGTH}`);
+      content = content.substring(0, MAX_TOOL_RESULT_LENGTH) + "... [truncated]";
+    }
+
     const event = {
       event: {
         toolResult: {
           promptName,
           contentName,
-          content: JSON.stringify(formattedResult), // Stringify the result
+          content,
           status: "success" as const,
         },
       },

@@ -40,6 +40,7 @@ export class EventQueue {
    * Streams events from the queue
    */
   async *streamEvents() {
+    console.log(`📤 [EventQueue] Starting stream for session ${this.sessionId}`);
     try {
       while (this.isActive || this.queue.length > 0) {
         // Wait for events if queue is empty
@@ -48,18 +49,18 @@ export class EventQueue {
             await Promise.race([
               firstValueFrom(this.queueSignal.pipe(take(1))).catch((error) => {
                 // Handle EmptyError when queueSignal completes without emitting
-                if (error && error.constructor.name === 'EmptyError') {
+                if (error && error.constructor.name === "EmptyError") {
                   throw new Error("Stream closed");
                 }
                 throw error;
               }),
               firstValueFrom(this.closeSignal.pipe(take(1))).catch((error) => {
                 // Handle EmptyError when closeSignal completes without emitting
-                if (error && error.constructor.name === 'EmptyError') {
+                if (error && error.constructor.name === "EmptyError") {
                   throw new Error("Stream closed");
                 }
                 throw error;
-              })
+              }),
             ]);
           } catch (error) {
             if (error instanceof Error && error.message === "Stream closed") {
@@ -76,6 +77,11 @@ export class EventQueue {
             // Convert event to JSON and encode as UTF-8 bytes
             const eventJson = JSON.stringify(event);
             const textEncoder = new TextEncoder();
+
+            // Log event type being sent
+            const eventType = Object.keys(event?.event || {})[0] || "unknown";
+            console.log(`📤 [EventQueue] Yielding event: ${eventType} (${eventJson.length} bytes)`);
+
             // Match the exact format from the working example
             yield {
               chunk: {
@@ -95,7 +101,7 @@ export class EventQueue {
       }
     } catch (error) {
       // Catch any EmptyError that might escape
-      if (error && error.constructor.name === 'EmptyError') {
+      if (error && error.constructor.name === "EmptyError") {
         // Gracefully exit on EmptyError
         return;
       }
@@ -108,7 +114,7 @@ export class EventQueue {
    */
   async waitForEmpty(): Promise<void> {
     while (this.queue.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
     }
   }
 

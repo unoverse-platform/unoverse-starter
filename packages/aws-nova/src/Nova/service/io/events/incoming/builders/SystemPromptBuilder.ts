@@ -2,7 +2,7 @@
  * System prompt event builder for Nova Speech
  */
 
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 
 export interface ContentStartEvent {
   event: {
@@ -60,7 +60,7 @@ export class SystemPromptBuilder {
         },
       },
     };
-    console.log("🎯 SYSTEM PROMPT START EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🎯 SYSTEM PROMPT START EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 
@@ -80,7 +80,7 @@ export class SystemPromptBuilder {
         },
       },
     };
-    console.log("🎯 SYSTEM PROMPT INPUT EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🎯 SYSTEM PROMPT INPUT EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 
@@ -96,7 +96,7 @@ export class SystemPromptBuilder {
         },
       },
     };
-    console.log("🎯 SYSTEM PROMPT END EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🎯 SYSTEM PROMPT END EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 

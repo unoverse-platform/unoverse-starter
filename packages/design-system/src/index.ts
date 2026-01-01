@@ -17,6 +17,7 @@ import { CardNode } from "./Card/node";
 import { Card2Node } from "./Card2/node";
 import { CardCarouselNode } from "./CardCarousel/node";
 import { ChatInputNode } from "./ChatInput/node";
+import { CardFinderNode } from "./CardFinder/node";
 import { ListPickerNode } from "./ListPicker/node";
 
 // All design system nodes
@@ -27,6 +28,7 @@ const nodes = [
   CardNode,
   Card2Node,
   CardCarouselNode,
+  CardFinderNode,
   ChatInputNode,
   ListPickerNode,
 ];

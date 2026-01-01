@@ -73,12 +73,12 @@ export class AudioStreamManager {
     context?: any,
     config?: NovaSpeechConfig
   ): Promise<void> {
-    this.logger.info("📞 Starting call - subscribing to audio stream", {
-      sessionId,
-      contextKeys: context ? Object.keys(context) : "no context",
-      nodeId: context?.nodeId,
-      hasContext: !!context,
-    });
+    // this.logger.info("📞 Starting call - subscribing to audio stream", { // Commented out - too verbose
+    //   sessionId,
+    //   contextKeys: context ? Object.keys(context) : "no context",
+    //   nodeId: context?.nodeId,
+    //   hasContext: !!context,
+    // });
 
     // Using WebSocket audio only - Redis audio subscriber removed
 
@@ -94,12 +94,12 @@ export class AudioStreamManager {
         session.eventQueue!, // Event queue
         eventMetadata // Pass the same metadata used for Redis
       );
-      this.logger.info("✅ WebSocket audio session registered", {
-        wsSessionId,
-        conversationId: metadata.conversationId,
-        novaSessionId: sessionId,
-        chatId: metadata.chatId,
-      });
+      // this.logger.info("✅ WebSocket audio session registered", { // Commented out - too verbose
+      //   wsSessionId,
+      //   conversationId: metadata.conversationId,
+      //   novaSessionId: sessionId,
+      //   chatId: metadata.chatId,
+      // });
     }
 
     // Publish session ready state via WebSocket
@@ -121,10 +121,10 @@ export class AudioStreamManager {
     // Send initial request AFTER audio streaming is active
     // This triggers Nova to respond immediately with a greeting
     if (config?.initialRequest) {
-      this.logger.info("📝 Sending initial request after audio session ready", {
-        initialRequest: config.initialRequest,
-        sessionId,
-      });
+      // this.logger.info("📝 Sending initial request after audio session ready", { // Commented out - too verbose
+      //   initialRequest: config.initialRequest,
+      //   sessionId,
+      // });
       const textEvents = TextBuilder.buildTextInputEvents(promptName, config.initialRequest);
       const textEventsWithMetadata = EventMetadataProcessor.addMetadataToEvents(textEvents, eventMetadata);
       textEventsWithMetadata.forEach((event) => session.eventQueue?.enqueue(event));
@@ -233,10 +233,10 @@ export class AudioStreamManager {
     const processor = session.responseProcessor as any;
     if (processor.onCompletionEnd !== undefined) {
       processor.onCompletionEnd = () => {
-        this.logger.info("✅ Completion received, sending promptEnd", {
-          sessionId: session.sessionId,
-          promptName,
-        });
+        // this.logger.info("✅ Completion received, sending promptEnd", { // Commented out - too verbose
+        //   sessionId: session.sessionId,
+        //   promptName,
+        // });
 
         const promptEndEvent = EndEventBuilder.createPromptEnd(promptName);
         const promptEndWithMetadata = EventMetadataProcessor.addMetadata(promptEndEvent, eventMetadata);

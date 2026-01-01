@@ -67,7 +67,7 @@ export class TextBuilder {
         },
       },
     };
-    console.log("🎯 TEXT INPUT START EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🎯 TEXT INPUT START EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 
@@ -86,7 +86,7 @@ export class TextBuilder {
         },
       },
     };
-    console.log("🎯 TEXT INPUT EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🎯 TEXT INPUT EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 
@@ -102,7 +102,7 @@ export class TextBuilder {
         },
       },
     };
-    console.log("🎯 TEXT INPUT END EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🎯 TEXT INPUT END EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 

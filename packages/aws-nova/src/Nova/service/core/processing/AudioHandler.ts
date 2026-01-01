@@ -48,7 +48,7 @@ export class AudioHandler {
     const { metadata } = this.context;
     const conversationId = metadata.conversationId;
 
-    console.log("🔊 Assistant started speaking - publishing SPEECH_STARTED state");
+    // console.log("🔊 Assistant started speaking - publishing SPEECH_STARTED state"); // Commented out - too verbose
     this.audioState.generationComplete = false;
 
     const publisher = AudioPublisherFactory.getPublisher(conversationId);
@@ -142,7 +142,7 @@ export class AudioHandler {
     const { metadata } = this.context;
     const conversationId = metadata.conversationId;
 
-    console.log("🔇 Assistant finished speaking - publishing SPEECH_ENDED state");
+    // console.log("🔇 Assistant finished speaking - publishing SPEECH_ENDED state"); // Commented out - too verbose
 
     const publisher = AudioPublisherFactory.getPublisher(conversationId);
 
@@ -156,7 +156,7 @@ export class AudioHandler {
 
       if (publisher.cleanup) {
         await publisher.cleanup(conversationId);
-        logger.debug("Audio publisher cleanup completed", { conversationId });
+        // logger.debug("Audio publisher cleanup completed", { conversationId }); // Commented out - too verbose
       }
     } catch (error: any) {
       logger.error("Failed to publish SPEECH_ENDED or cleanup", { error: error.message });

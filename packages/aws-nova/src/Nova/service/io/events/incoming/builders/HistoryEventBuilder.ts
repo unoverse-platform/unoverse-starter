@@ -41,7 +41,7 @@ export class HistoryEventBuilder {
         },
       },
     };
-    console.log(`🎯 HISTORY ${role} START EVENT:`, JSON.stringify(event, null, 2));
+    // console.log(`🎯 HISTORY ${role} START EVENT:`, JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 
@@ -98,7 +98,7 @@ export class HistoryEventBuilder {
       `🎯 HISTORY ${role} INPUT EVENT (${truncatedMessage.length} chars):`,
       JSON.stringify(textInputEvent, null, 2)
     );
-    console.log(`🎯 HISTORY ${role} END EVENT:`, JSON.stringify(contentEndEvent, null, 2));
+    // console.log(`🎯 HISTORY ${role} END EVENT:`, JSON.stringify(contentEndEvent, null, 2)); // Commented out - too verbose
 
     return [startEvent, textInputEvent, contentEndEvent];
   }
@@ -145,7 +145,7 @@ export class HistoryEventBuilder {
     history: HistoryMessage[],
     logger?: { warn: (message: string, data?: any) => void }
   ): Array<ContentStartEvent | TextInputEvent | ContentEndEvent> {
-    console.log(`📚 Creating conversation history events for ${history.length} messages`);
+    // console.log(`📚 Creating conversation history events for ${history.length} messages`); // Commented out - too verbose
 
     // Truncate history before creating events
     const truncatedHistory = this.truncateHistory(history, logger);

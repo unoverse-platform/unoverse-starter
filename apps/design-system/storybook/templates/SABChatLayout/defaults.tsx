@@ -55,9 +55,9 @@ export const SABChatLayoutDefaults = {
       question: "Tell me about personal loans",
     },
     {
-      icon: "home",
-      title: "Home Loans",
-      question: "How can I apply for a home loan?",
+      icon: "newcard",
+      title: "New Card",
+      question: "Help me select a new card",
     },
     {
       icon: "chatBubble",

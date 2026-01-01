@@ -116,14 +116,21 @@ export class EventParser {
 
     const logPrefix = loggers[eventType];
     if (logPrefix) {
-      if (eventType === "audioOutput") {
-        // For audio output events, don't log the jsonResponse (contains large audio data)
-        this.logger.debug(`${logPrefix}`);
+      if (
+        eventType === "audioOutput" ||
+        eventType === "usageEvent" ||
+        eventType === "contentStart" ||
+        eventType === "contentEnd" ||
+        eventType === "completionStart" ||
+        eventType === "completionEnd"
+      ) {
+        // Commented out - too verbose (audio, usage, content, completion events)
+        // this.logger.debug(`${logPrefix}`);
       } else {
-        // For all other events, log normally with jsonResponse
+        // For tool use and text output events, log normally with jsonResponse
         // Parse JSON string if needed to ensure proper object formatting
         let logData = jsonResponse;
-        if (typeof jsonResponse === 'string') {
+        if (typeof jsonResponse === "string") {
           try {
             logData = JSON.parse(jsonResponse);
           } catch (e) {

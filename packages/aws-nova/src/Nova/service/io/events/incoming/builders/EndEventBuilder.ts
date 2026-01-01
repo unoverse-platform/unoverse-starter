@@ -33,7 +33,7 @@ export class EndEventBuilder {
         },
       },
     };
-    console.log("📤 PROMPT END EVENT:", JSON.stringify(event, null, 2));
+    // console.log("📤 PROMPT END EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 
@@ -48,7 +48,7 @@ export class EndEventBuilder {
         sessionEnd: {}, // No parameters needed
       },
     };
-    console.log("🔚 SESSION END EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🔚 SESSION END EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 }

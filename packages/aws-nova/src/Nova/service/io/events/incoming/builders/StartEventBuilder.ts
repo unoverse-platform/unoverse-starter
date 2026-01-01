@@ -99,7 +99,7 @@ export class StartEventBuilder {
         },
       },
     };
-    console.log("🎯 SESSION START EVENT:", JSON.stringify(event, null, 2));
+    // console.log("🎯 SESSION START EVENT:", JSON.stringify(event, null, 2)); // Commented out - too verbose
     return event;
   }
 
@@ -143,7 +143,7 @@ export class StartEventBuilder {
       throw new Error(`Invalid voiceId: ${voiceId}. Must be one of: ${validVoices.join(", ")}`);
     }
 
-    console.log("🎯 [VOICE DEBUG] createPromptStartEvent creating event with voiceId:", voiceId);
+    // console.log("🎯 [VOICE DEBUG] createPromptStartEvent creating event with voiceId:", voiceId); // Commented out - too verbose
 
     const promptStartEvent: any = {
       event: {
@@ -177,7 +177,7 @@ export class StartEventBuilder {
         },
       },
     };
-    console.log("🎯 PROMPT START EVENT:", JSON.stringify(promptStartEvent, null, 2));
+    // console.log("🎯 PROMPT START EVENT:", JSON.stringify(promptStartEvent, null, 2)); // Commented out - too verbose
     return promptStartEvent;
   }
 
@@ -191,15 +191,15 @@ export class StartEventBuilder {
     enableTextOutput: boolean = true,
     tools?: any[]
   ): any[] {
-    console.log("🎯 [VOICE DEBUG] createStartEvents called with:", {
-      promptName,
-      voiceId,
-      temperature: config.temperature,
-      maxTokens: config.maxTokens,
-      enableTextOutput,
-      hasTools: !!tools,
-      toolCount: tools?.length || 0,
-    });
+    // console.log("🎯 [VOICE DEBUG] createStartEvents called with:", {
+    //   promptName,
+    //   voiceId,
+    //   temperature: config.temperature,
+    //   maxTokens: config.maxTokens,
+    //   enableTextOutput,
+    //   hasTools: !!tools,
+    //   toolCount: tools?.length || 0,
+    // }); // Commented out - too verbose
 
     return [
       this.createSessionStartEvent(config.temperature, config.maxTokens, config.topP),

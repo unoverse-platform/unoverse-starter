@@ -46,17 +46,17 @@ export class ControlMessageHandler {
       // 1. Send promptEnd to close the current prompt
       const promptEndEvent = EndEventBuilder.createPromptEnd(session.chatId);
       await session.eventQueue.enqueue(promptEndEvent);
-      logger.info("Prompt end sent", { sessionId: session.sessionId, promptName: session.chatId });
+      // logger.info("Prompt end sent", { sessionId: session.sessionId, promptName: session.chatId }); // Commented out - too verbose
 
       // 2. Send sessionEnd to close the session
       const sessionEndEvent = EndEventBuilder.createSessionEnd();
       await session.eventQueue.enqueue(sessionEndEvent);
-      logger.info("Session end sent", { sessionId: session.sessionId });
+      // logger.info("Session end sent", { sessionId: session.sessionId }); // Commented out - too verbose
 
       // 3. Close queue after delay
       setTimeout(() => {
         session.eventQueue.close();
-        logger.info("Queue closed", { sessionId: session.sessionId });
+        // logger.info("Queue closed", { sessionId: session.sessionId }); // Commented out - too verbose
       }, TIMING_DELAYS.SESSION_END || 100);
     } catch (error) {
       logger.warn("Failed to send end events", {
@@ -67,7 +67,7 @@ export class ControlMessageHandler {
     }
 
     session.isActive = false;
-    logger.info("Session stopped", { sessionId: session.sessionId });
+    // logger.info("Session stopped", { sessionId: session.sessionId }); // Commented out - too verbose
   }
 
   private static async handleEnd(session: WebSocketAudioSession): Promise<void> {

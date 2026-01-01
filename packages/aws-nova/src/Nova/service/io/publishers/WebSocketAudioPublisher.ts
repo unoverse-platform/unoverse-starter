@@ -127,12 +127,12 @@ export class WebSocketAudioPublisher implements AudioPublisherInterface {
       // Combine all chunks into a single buffer
       const combinedBuffer = Buffer.concat(buffer.chunks);
 
-      logger.debug("Flushing audio buffer", {
-        conversationId,
-        originalChunks: buffer.chunks.length,
-        totalSize: combinedBuffer.length,
-        targetSize: TARGET_CHUNK_SIZE,
-      });
+      // logger.debug("Flushing audio buffer", {
+      //   conversationId,
+      //   originalChunks: buffer.chunks.length,
+      //   totalSize: combinedBuffer.length,
+      //   targetSize: TARGET_CHUNK_SIZE,
+      // }); // Commented out - too verbose
 
       // Send the combined buffer
       const success = audioWSManager.sendAudio(conversationId, combinedBuffer);
@@ -197,10 +197,10 @@ export class WebSocketAudioPublisher implements AudioPublisherInterface {
         throw new Error("Failed to send state - connection not available");
       }
 
-      logger.debug("State published via WebSocket", {
-        conversationId: config.conversationId,
-        state: config.state,
-      });
+      // logger.debug("State published via WebSocket", {
+      //   conversationId: config.conversationId,
+      //   state: config.state,
+      // }); // Commented out - too verbose
     } catch (error: any) {
       logger.error("Failed to publish state via WebSocket", {
         error: error.message,
@@ -234,10 +234,10 @@ export class WebSocketAudioPublisher implements AudioPublisherInterface {
       }
       this.chunkBuffers.delete(conversationId);
 
-      logger.debug("Cleaned up audio buffer", {
-        conversationId,
-        hadPendingChunks: buffer.chunks.length > 0,
-      });
+      // logger.debug("Cleaned up audio buffer", { // Commented out - too verbose
+      //   conversationId,
+      //   hadPendingChunks: buffer.chunks.length > 0,
+      // });
     }
   }
 }

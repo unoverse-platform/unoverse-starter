@@ -41,15 +41,16 @@ export class SessionOrchestrator {
     context: any,
     emit?: (output: any) => void
   ): Promise<StreamUsageStats> {
-    // Check for MCP services and get tools if available
-    const platformDeps = getPlatformDependencies();
+    // Check for MCP services and get tools if available (using context.api like OpenAI)
+    const api = context?.api;
 
-    if (context && platformDeps.callService) {
+    if (context && api?.callService) {
       try {
-        const mcpSchema = await platformDeps.callService("getSchema", {}, context);
+        this.logger.info("🔍 [MCP Discovery] Checking for MCP service connections...");
+        const mcpSchema = await api.callService("getSchema", {}, context);
 
         if (mcpSchema?.methods) {
-          this.logger.info(`MCP tools available: ${Object.keys(mcpSchema.methods).length} methods`);
+          this.logger.info(`🛠️ MCP tools available: ${Object.keys(mcpSchema.methods).length} methods`);
 
           // Convert MCP schema to Nova tools format
           config.tools = Object.entries(mcpSchema.methods).map(([methodName, methodSchema]: [string, any]) => ({
@@ -66,15 +67,28 @@ export class SessionOrchestrator {
           config.mcpService = {};
           for (const [methodName] of Object.entries(mcpSchema.methods)) {
             config.mcpService[methodName] = async (input: any) => {
-              this.logger.info(`Calling MCP method: ${methodName}`, { input });
-              return platformDeps.callService(methodName, input, context);
+              // Include workflowId in the input for data isolation (required by PostgresFetch)
+              const inputWithWorkflow = {
+                ...input,
+                workflowId: context.workflowId || metadata.workflowId,
+              };
+              this.logger.info(`📞 Calling MCP method: ${methodName}`, { input: inputWithWorkflow });
+              return api.callService(methodName, inputWithWorkflow, context);
             };
           }
+
+          this.logger.info(`✅ [MCP Discovery] Configured ${config.tools.length} tools for Nova`);
         }
       } catch (error) {
         // No MCP service connected - continue without tools
         this.logger.debug("No MCP service connected", { error: (error as Error).message });
       }
+    } else {
+      this.logger.debug("No MCP service available", {
+        hasContext: !!context,
+        hasApi: !!api,
+        hasCallService: !!api?.callService,
+      });
     }
 
     // Fetch AWS credentials internally

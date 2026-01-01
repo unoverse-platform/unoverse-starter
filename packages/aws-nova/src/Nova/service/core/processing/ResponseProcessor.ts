@@ -160,10 +160,10 @@ export class NovaSpeechResponseProcessor implements StreamResponseProcessor {
    * Handle completion start event
    */
   private async handleCompletionStart(event: CompletionStartEvent): Promise<void> {
-    this.logger.info("Completion started", {
-      sessionId: this.context.sessionId,
-      completionId: event.event.completionStart.completionId,
-    });
+    // this.logger.info("Completion started", { // Commented out - too verbose
+    //   sessionId: this.context.sessionId,
+    //   completionId: event.event.completionStart.completionId,
+    // });
   }
 
   /**
@@ -173,11 +173,11 @@ export class NovaSpeechResponseProcessor implements StreamResponseProcessor {
     const contentType = ContentHandler.getContentType(event);
     const role = ContentHandler.getContentRole(event);
 
-    this.logger.info("Content started", {
-      sessionId: this.context.sessionId,
-      contentType,
-      role,
-    });
+    // this.logger.info("Content started", { // Commented out - too verbose
+    //   sessionId: this.context.sessionId,
+    //   contentType,
+    //   role,
+    // });
 
     // Set role for text accumulator
     this.textAccumulator.setCurrentRole(role as "USER" | "ASSISTANT");
@@ -211,11 +211,11 @@ export class NovaSpeechResponseProcessor implements StreamResponseProcessor {
     const contentType = event.event.contentEnd.type;
     const stopReason = event.event.contentEnd.stopReason;
 
-    this.logger.info("Content ended", {
-      sessionId: this.context.sessionId,
-      contentType,
-      stopReason,
-    });
+    // this.logger.info("Content ended", { // Commented out - too verbose
+    //   sessionId: this.context.sessionId,
+    //   contentType,
+    //   stopReason,
+    // });
 
     // Handle audio content end
     if (contentType === "AUDIO") {
@@ -279,10 +279,10 @@ export class NovaSpeechResponseProcessor implements StreamResponseProcessor {
   private async handleCompletionEnd(event: CompletionEndEvent): Promise<void> {
     this.completionReceived = true;
 
-    this.logger.info("Completion ended", {
-      sessionId: this.context.sessionId,
-      completionId: event.event.completionEnd.completionId,
-    });
+    // this.logger.info("Completion ended", { // Commented out - too verbose
+    //   sessionId: this.context.sessionId,
+    //   completionId: event.event.completionEnd.completionId,
+    // });
 
     // Update usage stats with final text
     const textResults = this.textAccumulator.getResults();
