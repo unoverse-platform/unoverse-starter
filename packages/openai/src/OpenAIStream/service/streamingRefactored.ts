@@ -102,6 +102,12 @@ export async function streamCompletionCallback(
           }
         : undefined;
 
+    logger.info(`🔍 [MCP TRACE DEBUG] executionContext.executionId: ${executionContext?.executionId}`);
+    logger.info(`🔍 [MCP TRACE DEBUG] executionContext.nodeId: ${executionContext?.nodeId}`);
+    logger.info(`🔍 [MCP TRACE DEBUG] traceContext: ${JSON.stringify(traceContext)}`);
+    logger.info(`🔍 [MCP TRACE DEBUG] api exists: ${!!executionContext?.api}`);
+    logger.info(`🔍 [MCP TRACE DEBUG] api.saveMCPTrace exists: ${!!executionContext?.api?.saveMCPTrace}`);
+
     const result = await runConversationLoop({
       openai,
       streamParams,
