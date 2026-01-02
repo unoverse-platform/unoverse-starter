@@ -57,7 +57,7 @@ export const SABChatLayoutDefaults = {
     {
       icon: "newcard",
       title: "New Card",
-      question: "Help me select a new card",
+      question: "Which card should I apply for?",
     },
     {
       icon: "chatBubble",

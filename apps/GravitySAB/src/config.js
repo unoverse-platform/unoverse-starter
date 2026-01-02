@@ -2,7 +2,7 @@
 
 export const workflowConfig = {
   workflowId: "wf-r4jzo7",
-  targetTriggerNode: "inputtrigger5",
+  targetTriggerNode: "inputtrigger1",
 };
 
 export const apiUrl = import.meta.env.VITE_API_URL;
