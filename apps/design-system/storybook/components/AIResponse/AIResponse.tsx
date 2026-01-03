@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import Markdown from "markdown-to-jsx";
-import { ChunkAnimator } from "./chunkAnimator";
 import { getSafeMarkdown } from "./markdownBuffer";
 import styles from "./AIResponse.module.css";
 
@@ -28,75 +27,15 @@ interface AIResponseProps {
 }
 
 export default function AIResponse(props: AIResponseProps) {
-  const { progressText, text, questions, onQuestionClick, className, nodeId, isStreaming } = props;
+  const { progressText, text, questions, onQuestionClick, className, isStreaming } = props;
 
-  // Use ref for displayed text to avoid React state race conditions
-  const displayedTextRef = useRef<string>(props.text || "");
-  const [, forceUpdate] = useState(0);
-  const animatorRef = useRef<ChunkAnimator | null>(null);
-
-  // Initialize animator once with a callback that updates the ref and triggers render
-  if (!animatorRef.current) {
-    animatorRef.current = new ChunkAnimator({
-      charsPerSecond: 200,
-      onUpdate: (newText: string) => {
-        // Only update if text is longer (never go backwards)
-        if (newText.length >= displayedTextRef.current.length) {
-          displayedTextRef.current = newText;
-          forceUpdate((n) => n + 1);
-        }
-      },
-      onTypingChange: () => {},
-    });
-  }
-
-  // Cleanup animator on unmount
-  React.useEffect(() => {
-    return () => {
-      animatorRef.current?.destroy();
-    };
-  }, []);
-
-  // Handle text updates
-  React.useLayoutEffect(() => {
-    // Always ensure displayedTextRef has the latest text when not streaming
-    // This fixes the race condition where WORKFLOW_COMPLETED arrives before final text
-    if (!isStreaming) {
-      animatorRef.current?.stop(false);
-      if (text) {
-        // Always update to latest text when streaming ends
-        displayedTextRef.current = text;
-        forceUpdate((n) => n + 1);
-      }
-      return;
-    }
-
-    // Streaming - animate new text
-    if (text) {
-      animatorRef.current?.addChunk(text);
-    }
-  }, [text, isStreaming]);
-
-  // CRITICAL: When text prop changes and we're not streaming, ensure we show it
-  // This handles the case where final text arrives after isStreaming becomes false
-  React.useEffect(() => {
-    if (!isStreaming && text && text !== displayedTextRef.current) {
-      displayedTextRef.current = text;
-      forceUpdate((n) => n + 1);
-    }
-  }, [text, isStreaming]);
-
-  // Get current displayed text
-  const displayedText = displayedTextRef.current;
-
-  // Questions are always an array of strings
+  // SIMPLE: Just show the text prop directly. Server sends accumulated text.
   const questionList = questions || [];
 
   return (
     <div className={`${styles.container} ${className || ""}`}>
-      {/* Reasoning/Thinking - rendered as markdown in italic gray */}
-      {/* Hide progressText once text starts arriving to prevent both showing simultaneously */}
-      {progressText && !displayedText && (
+      {/* Reasoning/Thinking - hide once text starts arriving */}
+      {progressText && !text && (
         <div className={styles.progress}>
           <span className={styles.dotsContainer}>
             <span className={styles.dot} />
@@ -107,10 +46,10 @@ export default function AIResponse(props: AIResponseProps) {
         </div>
       )}
 
-      {/* Text - server sends accumulated chunks */}
-      {displayedText && (
+      {/* Text - server sends accumulated chunks, use getSafeMarkdown during streaming */}
+      {text && (
         <div className={`${styles.textContent} prose`}>
-          <Markdown options={markdownOptions}>{getSafeMarkdown(displayedText, !!isStreaming)}</Markdown>
+          <Markdown options={markdownOptions}>{getSafeMarkdown(text, !!isStreaming)}</Markdown>
           {/* Animated blinking cursor inline with text */}
           {isStreaming && <span className={styles.cursor} />}
         </div>

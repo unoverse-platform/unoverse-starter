@@ -126,15 +126,17 @@ export async function streamCompletionCallback(
     });
 
     logger.info(`🔍 [streamingRefactored] IMMEDIATELY after runConversationLoop - result keys:`, Object.keys(result));
+    logger.info(`🔍 [streamingRefactored] fullText length: ${result.fullText?.length || 0}`);
+    logger.info(`🔍 [streamingRefactored] fullText preview: "${result.fullText?.substring(0, 100)}..."`);
     logger.info(
       `🔍 [streamingRefactored] IMMEDIATELY after runConversationLoop - result.usage keys:`,
       Object.keys(result.usage || {})
     );
     logger.info(`🔍 [streamingRefactored] IMMEDIATELY after runConversationLoop - result.usage:`, result.usage);
 
-    // Step 7: Skip emitFinal - the final emit() below contains complete text/reasoning
-    // Calling emitFinal here would emit a redundant 'chunk' that triggers downstream
-    // nodes before the proper 'text' output is emitted, causing errors.
+    // Step 7: Flush any remaining text that hasn't been emitted yet
+    // TextEmitter only emits every 100 chars, so the final partial chunk needs to be flushed
+    textEmitter.emitFinal(result.fullText);
 
     // Step 8: Save token usage
     logger.info(`🔍 [streamingRefactored] result.usage:`, JSON.stringify(result.usage, null, 2));

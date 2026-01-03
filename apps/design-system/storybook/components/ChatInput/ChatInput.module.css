@@ -305,7 +305,7 @@
   padding: var(--spacing-2) var(--spacing-3);
   background: #ffffff;
   border: 1px solid var(--color-gray-200, #e5e7eb);
-  border-radius: var(--radius-full);
+  border-radius: 16px;
   font-size: var(--text-body-sm);
   color: var(--color-gray-700);
   cursor: pointer;
@@ -313,6 +313,8 @@
   white-space: normal;
   text-align: left;
   box-shadow: var(--shadow-sm);
+  max-width: 100%;
+  word-break: break-word;
 }
 
 .chip:hover {

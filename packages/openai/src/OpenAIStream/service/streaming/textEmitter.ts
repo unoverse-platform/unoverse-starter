@@ -40,7 +40,7 @@ export class TextEmitter {
   }
 
   /**
-   * Emit final text if there's any remaining
+   * Emit final text - ALWAYS emit the complete text regardless of charsSinceLastEmit
    */
   emitFinal(fullText: string): void {
     this.logger.info(
@@ -48,17 +48,14 @@ export class TextEmitter {
         fullText?.length || 0
       }`
     );
-    if (this.charsSinceLastEmit > 0) {
-      this.emit({
-        __outputs: {
-          chunk: fullText, // Send complete accumulated text
-        },
-      });
-      this.logger.info(
-        `📦 Emitted final accumulated text (${this.charsSinceLastEmit} new chars, ${fullText.length} total)`
-      );
-      this.charsSinceLastEmit = 0;
-    }
+    // ALWAYS emit final chunk with complete text
+    this.emit({
+      __outputs: {
+        chunk: fullText, // Send complete accumulated text
+      },
+    });
+    this.logger.info(`📦 Emitted FINAL chunk (${this.charsSinceLastEmit} pending chars, ${fullText.length} total)`);
+    this.charsSinceLastEmit = 0;
   }
 
   /**

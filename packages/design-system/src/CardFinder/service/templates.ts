@@ -7,7 +7,7 @@ import { CardFinderTemplate } from "../util/types";
 
 export function loadDefaultTemplate(): CardFinderTemplate {
   return {
-    componentUrl: '/components/CardFinder.js?v=1767416811087',
+    componentUrl: '/components/CardFinder.js?v=1767429193969',
   };
 }
 
