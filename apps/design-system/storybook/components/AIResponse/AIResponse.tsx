@@ -59,10 +59,12 @@ export default function AIResponse(props: AIResponseProps) {
 
   // Handle text updates
   React.useLayoutEffect(() => {
-    // Not streaming - show full text immediately
+    // Always ensure displayedTextRef has the latest text when not streaming
+    // This fixes the race condition where WORKFLOW_COMPLETED arrives before final text
     if (!isStreaming) {
       animatorRef.current?.stop(false);
       if (text) {
+        // Always update to latest text when streaming ends
         displayedTextRef.current = text;
         forceUpdate((n) => n + 1);
       }
@@ -75,6 +77,15 @@ export default function AIResponse(props: AIResponseProps) {
     }
   }, [text, isStreaming]);
 
+  // CRITICAL: When text prop changes and we're not streaming, ensure we show it
+  // This handles the case where final text arrives after isStreaming becomes false
+  React.useEffect(() => {
+    if (!isStreaming && text && text !== displayedTextRef.current) {
+      displayedTextRef.current = text;
+      forceUpdate((n) => n + 1);
+    }
+  }, [text, isStreaming]);
+
   // Get current displayed text
   const displayedText = displayedTextRef.current;
 
@@ -84,7 +95,8 @@ export default function AIResponse(props: AIResponseProps) {
   return (
     <div className={`${styles.container} ${className || ""}`}>
       {/* Reasoning/Thinking - rendered as markdown in italic gray */}
-      {progressText && (
+      {/* Hide progressText once text starts arriving to prevent both showing simultaneously */}
+      {progressText && !displayedText && (
         <div className={styles.progress}>
           <span className={styles.dotsContainer}>
             <span className={styles.dot} />
