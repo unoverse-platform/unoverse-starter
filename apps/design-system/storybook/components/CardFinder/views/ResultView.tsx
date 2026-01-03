@@ -7,10 +7,9 @@ interface ResultViewProps {
   recommendedCard: CardRecommendation;
   runnerUpCard?: CardRecommendation;
   onApply: () => void;
-  onRestart: () => void;
 }
 
-export default function ResultView({ recommendedCard, runnerUpCard, onApply, onRestart }: ResultViewProps) {
+export default function ResultView({ recommendedCard, runnerUpCard, onApply }: ResultViewProps) {
   const [selectedCard, setSelectedCard] = useState<"primary" | "secondary">("primary");
   const [isFlipping, setIsFlipping] = useState(false);
 
@@ -199,17 +198,6 @@ export default function ResultView({ recommendedCard, runnerUpCard, onApply, onR
             <p className={styles.ctaNote}>{card.annualFeeNotes || "Quick online application • Instant decision"}</p>
           </div>
         </div>
-      </div>
-
-      {/* Footer: Just Restart */}
-      <div className={styles.resultFooterPremium}>
-        <button className={styles.restartButton} onClick={onRestart}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-            <path d="M3 3v5h5" />
-          </svg>
-          Start over
-        </button>
       </div>
     </div>
   );

@@ -54,9 +54,6 @@ export function useWidgetState(props: WidgetStateProps) {
     onRestart,
   } = props;
 
-  // Check if we have real Zustand (updateData function)
-  const hasZustand = !!updateData;
-
   // Fallback state for Storybook (no Zustand available)
   // Initialize from props to support Storybook's initial state
   const [fallbackPhase, setFallbackPhase] = useState<WidgetPhase>(propPhase ?? "eligibility");
@@ -69,15 +66,18 @@ export function useWidgetState(props: WidgetStateProps) {
   const [fallbackRecommended, setFallbackRecommended] = useState<CardRecommendation | undefined>(propRecommended);
   const [fallbackRunnerUp, setFallbackRunnerUp] = useState<CardRecommendation | undefined>(propRunnerUp);
 
-  // Use Zustand if available (has updateData), otherwise use fallback state
-  // This ensures Storybook can update state locally without Zustand
-  const currentPhase = hasZustand ? propPhase ?? "eligibility" : fallbackPhase;
-  const currentQuestion = hasZustand ? propQuestion ?? 0 : fallbackQuestion;
-  const eligibilityAnswers = hasZustand ? propEligibility ?? {} : fallbackEligibilityAnswers;
-  const eligibleTiers = hasZustand ? propEligibleTiers : fallbackEligibleTiers;
-  const bestFitAnswers = hasZustand ? propBestFit ?? {} : fallbackBestFit;
-  const recommendedCard = hasZustand ? propRecommended : fallbackRecommended;
-  const runnerUpCard = hasZustand ? propRunnerUp : fallbackRunnerUp;
+  // Use Zustand state if available, otherwise fallback state
+  // This pattern ensures state is shared between inline and focused views:
+  // - When Zustand provides a value → use it (production with withZustandData HOC)
+  // - When Zustand doesn't provide a value → use fallback (Storybook or initial render)
+  // The fallback state persists across view switches, fixing the state isolation bug
+  const currentPhase = propPhase ?? fallbackPhase;
+  const currentQuestion = propQuestion ?? fallbackQuestion;
+  const eligibilityAnswers = propEligibility ?? fallbackEligibilityAnswers;
+  const eligibleTiers = propEligibleTiers ?? fallbackEligibleTiers;
+  const bestFitAnswers = propBestFit ?? fallbackBestFit;
+  const recommendedCard = propRecommended ?? fallbackRecommended;
+  const runnerUpCard = propRunnerUp ?? fallbackRunnerUp;
 
   // State update wrappers
   const setCurrentPhase = useCallback(

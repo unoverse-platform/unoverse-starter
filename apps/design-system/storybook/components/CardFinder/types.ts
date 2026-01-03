@@ -109,7 +109,4 @@ export interface CreditCardEligibilityWidgetProps {
 
   /** Callback when user wants to apply */
   onApply?: (card: CreditCard) => void;
-
-  /** Callback when user wants to restart */
-  onRestart?: () => void;
 }

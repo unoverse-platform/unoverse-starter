@@ -34,7 +34,6 @@ export default function CreditCardEligibilityWidget(props: CreditCardEligibility
     runnerUpCard: propRunnerUp,
     updateData,
     onApply,
-    onRestart,
   } = props;
 
   const {
@@ -55,7 +54,6 @@ export default function CreditCardEligibilityWidget(props: CreditCardEligibility
     handleNext,
     handleBack,
     handleProceedToBestFit,
-    handleRestart,
     isCurrentQuestionAnswered,
   } = useWidgetState({
     currentPhase: propPhase,
@@ -66,7 +64,6 @@ export default function CreditCardEligibilityWidget(props: CreditCardEligibility
     recommendedCard: propRecommended,
     runnerUpCard: propRunnerUp,
     updateData,
-    onRestart,
   });
 
   const handleApply = () => {
@@ -169,14 +166,6 @@ export default function CreditCardEligibilityWidget(props: CreditCardEligibility
               </p>
             </div>
           </div>
-          {/* Close button in header for result view */}
-          {isShowingResult && (
-            <button className={styles.closeButton} aria-label="Close" onClick={handleRestart}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
-            </button>
-          )}
         </div>
 
         {/* Progress Indicator */}
@@ -191,12 +180,7 @@ export default function CreditCardEligibilityWidget(props: CreditCardEligibility
 
         {/* Content */}
         {isShowingResult && recommendedCard ? (
-          <ResultView
-            recommendedCard={recommendedCard}
-            runnerUpCard={runnerUpCard}
-            onApply={handleApply}
-            onRestart={handleRestart}
-          />
+          <ResultView recommendedCard={recommendedCard} runnerUpCard={runnerUpCard} onApply={handleApply} />
         ) : isShowingEligibilitySummary ? (
           <EligibilitySummary eligibleTiers={eligibleTiers || []} />
         ) : (
