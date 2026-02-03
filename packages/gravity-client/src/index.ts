@@ -22,8 +22,6 @@ export {
   type WorkflowState,
   type ServerMessage,
   type ComponentInitMessage,
-  type ComponentDataMessage,
-  type ComponentRemoveMessage,
   type WorkflowStateMessage,
   type UserActionType,
   type UserActionPayload,
@@ -52,12 +50,11 @@ export {
   withZustandData,
 } from "./react";
 
-// Profile API (data only, UI in app)
+// Profile API (v2 Evidence-based, UI in app)
 export {
   useProfileData,
-  type ProfileData,
-  type Memory,
-  type Insights,
+  type Evidence,
+  type ComposedMemory,
   type UseProfileDataOptions,
   type UseProfileDataReturn,
 } from "./react/profile";

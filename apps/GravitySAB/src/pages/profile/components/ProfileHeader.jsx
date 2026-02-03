@@ -3,13 +3,12 @@ import { motion } from "framer-motion";
 import { MapPin, Zap, Mail, Target } from "lucide-react";
 import CryptoJS from "crypto-js";
 
-export function ProfileHeader({ profileData, userId, insights }) {
-  // Get user's name from profileData
-  const userName = profileData?.profile?.name || profileData?.profile?.firstName || "User Profile";
-  const userFirstName = profileData?.profile?.firstName;
-  const userEmail = profileData?.profile?.email;
-  const userLocation =
-    profileData?.profile?.attributes?.location || profileData?.businessProfile?.targetMarket || "Abu Dhabi";
+export function ProfileHeader({ userId, composed }) {
+  // v2 only - all data comes from composed understanding
+  const userName = composed?.identity?.known?.name || composed?.identity?.inferred?.name || "User Profile";
+  const userFirstName = composed?.identity?.known?.firstName || userName.split(" ")[0];
+  const userEmail = composed?.identity?.known?.email;
+  const userLocation = composed?.identity?.known?.location || composed?.identity?.inferred?.location || "Abu Dhabi";
 
   // Generate Gravatar URL from email
   const getGravatarUrl = (email, size = 128) => {
@@ -164,21 +163,21 @@ export function ProfileHeader({ profileData, userId, insights }) {
                   )}
                 </motion.div>
 
-                {/* Business Info Pills */}
+                {/* Info Pills from v2 composed */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.25 }}
                   className="flex flex-wrap gap-2 mt-6"
                 >
-                  {profileData?.businessProfile?.industry && (
+                  {composed?.identity?.known?.industry && (
                     <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                      {profileData.businessProfile.industry}
+                      {composed.identity.known.industry}
                     </span>
                   )}
-                  {profileData?.businessProfile?.businessStage && (
+                  {composed?.identity?.inferred?.stage && (
                     <span className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium">
-                      {profileData.businessProfile.businessStage}
+                      {composed.identity.inferred.stage}
                     </span>
                   )}
                 </motion.div>
@@ -193,10 +192,8 @@ export function ProfileHeader({ profileData, userId, insights }) {
             transition={{ delay: 0.3 }}
             className="lg:col-span-1 space-y-4"
           >
-            {/* Current Needs */}
-            {(profileData?.insights?.needs?.immediate ||
-              profileData?.insights?.needs?.upcoming ||
-              profileData?.insights?.needs?.latent) && (
+            {/* Current Needs - v2 Evidence-Based */}
+            {composed?.currentNeeds && composed.currentNeeds.length > 0 && (
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6">
                 <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <Target className="w-3.5 h-3.5" />
@@ -204,26 +201,23 @@ export function ProfileHeader({ profileData, userId, insights }) {
                 </h3>
 
                 <div className="space-y-4">
-                  {profileData.insights.needs.immediate && (
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Immediate</p>
-                      <p className="text-sm text-gray-900 leading-relaxed">{profileData.insights.needs.immediate}</p>
+                  {composed.currentNeeds.slice(0, 3).map((need, index) => (
+                    <div key={need.need || index}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="text-xs font-medium text-gray-500">
+                          {index === 0 ? "Primary" : index === 1 ? "Secondary" : "Additional"}
+                        </p>
+                        <span className="text-xs px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">
+                          {Math.round(need.certainty * 100)}%
+                        </span>
+                      </div>
+                      <p
+                        className={`text-sm leading-relaxed ${index === 0 ? "text-gray-900" : index === 1 ? "text-gray-700" : "text-gray-600"}`}
+                      >
+                        {need.need}
+                      </p>
                     </div>
-                  )}
-
-                  {profileData.insights.needs.upcoming && (
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Upcoming</p>
-                      <p className="text-sm text-gray-700 leading-relaxed">{profileData.insights.needs.upcoming}</p>
-                    </div>
-                  )}
-
-                  {profileData.insights.needs.latent && (
-                    <div>
-                      <p className="text-xs font-medium text-gray-500 mb-1">Future</p>
-                      <p className="text-sm text-gray-600 leading-relaxed">{profileData.insights.needs.latent}</p>
-                    </div>
-                  )}
+                  ))}
                 </div>
               </div>
             )}

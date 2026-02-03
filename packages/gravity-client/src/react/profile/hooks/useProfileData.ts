@@ -1,53 +1,78 @@
 import { useState, useEffect, useCallback } from "react";
 
-// Types
-export interface ProfileData {
+/**
+ * Evidence types (v2 - Honcho-inspired)
+ */
+export interface Evidence {
+  id: string;
   userId: string;
   workflowId: string;
-  profile: {
-    name: string;
-    email: string;
-    phone: string;
-    firstName: string;
-    attributes: Record<string, any>;
-    tags: string[];
-  };
-  insights: Record<string, any>;
-  rawData: Record<string, any>;
-  [key: string]: any;
+  type: "explicit" | "deductive" | "inductive" | "abductive";
+  domain: string;
+  claim: string;
+  premises: Array<{
+    observation: string;
+    conversationId?: string;
+    timestamp?: string;
+    confidence?: number;
+    sourceEvidenceId?: string;
+  }>;
+  certainty: number;
+  firstObserved: string;
+  lastReinforced: string;
+  reinforcementCount: number;
+  supports?: string[];
+  contradicts?: string[];
+  sourceConversationIds: string[];
 }
 
-export interface Memory {
-  userId: string;
-  workflowId: string;
-  memoryId: string;
-  content: {
-    summary: string;
-    importance: number;
-    tags: string[];
-    keyFacts: string[];
-    decisions: string[];
-    actionItems: string[];
-    sentiment: string;
-    topics: string[];
+export interface ComposedMemory {
+  summary: string;
+  identity: {
+    known: Record<string, any>;
+    inferred: Record<string, any>;
   };
-  sourceConversationId: string;
-  sourceMessageCount: number;
-  timestamp: string;
+  currentNeeds: Array<{
+    need: string;
+    certainty: number;
+    evidence: string[];
+    domain?: string;
+  }>;
+  interests: Array<{
+    interest: string;
+    certainty: number;
+    reinforcementCount: number;
+  }>;
+  hypotheses: Array<{
+    hypothesis: string;
+    certainty: number;
+    evidence: string[];
+  }>;
+  facts: Array<{
+    fact: string;
+    domain: string;
+    reinforcementCount: number;
+  }>;
+  evidenceCount: number;
 }
 
-export interface Insights {
-  needs: {
-    immediate: string[];
-    upcoming: string[];
-    latent: string[];
+export interface EvidenceResponse {
+  evidence: Evidence[];
+  grouped: {
+    explicit: Evidence[];
+    deductive: Evidence[];
+    inductive: Evidence[];
+    abductive: Evidence[];
   };
-  needsTags: string[];
-  currentState: {
-    stage?: string;
-    situation?: string;
-    challenges?: string[];
-    priorities?: string[];
+  composed: ComposedMemory;
+  metadata: {
+    total: number;
+    byType: {
+      explicit: number;
+      deductive: number;
+      inductive: number;
+      abductive: number;
+    };
   };
 }
 
@@ -57,27 +82,54 @@ export interface UseProfileDataOptions {
 }
 
 export interface UseProfileDataReturn {
-  profileData: ProfileData | null;
-  memories: Memory[];
-  insights: Insights | null;
+  evidence: Evidence[];
+  composed: ComposedMemory | null;
   loading: boolean;
   error: string | null;
   refetch: () => void;
 }
 
 /**
- * Hook to fetch user profile and memories via REST API
+ * Fetch evidence for a user from the API
+ */
+async function fetchEvidence(
+  userId: string,
+  workflowId: string,
+  apiUrl: string,
+  getAccessToken?: () => Promise<string | null>,
+): Promise<EvidenceResponse | null> {
+  try {
+    const token = getAccessToken ? await getAccessToken() : null;
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const url = `${apiUrl}/api/evidence/${userId}/${workflowId}?limit=100`;
+    const response = await fetch(url, { headers });
+
+    if (!response.ok) {
+      console.warn(`[fetchEvidence] Failed with status ${response.status}`);
+      return null;
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.warn("[fetchEvidence] Error:", error);
+    return null;
+  }
+}
+
+/**
+ * Hook to fetch user memory data via v2 Evidence API
  */
 export function useProfileData(
   userId: string,
   workflowId: string,
-  options: UseProfileDataOptions
+  options: UseProfileDataOptions,
 ): UseProfileDataReturn {
   const { apiUrl, getAccessToken } = options;
 
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
-  const [memories, setMemories] = useState<Memory[]>([]);
-  const [insights, setInsights] = useState<Insights | null>(null);
+  const [evidence, setEvidence] = useState<Evidence[]>([]);
+  const [composed, setComposed] = useState<ComposedMemory | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -88,68 +140,27 @@ export function useProfileData(
     setError(null);
 
     try {
-      const token = getAccessToken ? await getAccessToken() : null;
-      const headers: Record<string, string> = { "Content-Type": "application/json" };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const evidenceData = await fetchEvidence(userId, workflowId, apiUrl, getAccessToken);
 
-      // Fetch profile and memories in parallel
-      const [profileRes, memoriesRes] = await Promise.all([
-        fetch(`${apiUrl}/api/profiles/${userId}/${workflowId}`, { headers }),
-        fetch(`${apiUrl}/api/memories/${userId}/${workflowId}?limit=100`, { headers }),
-      ]);
-
-      // Process profile
-      if (profileRes.ok) {
-        const profile = await profileRes.json();
-        if (profile) {
-          const transformedData: ProfileData = {
-            userId: profile.userId,
-            workflowId: profile.workflowId,
-            profile: {
-              name: profile.profile?.name || "",
-              email: profile.profile?.email || "",
-              phone: profile.profile?.phone || "",
-              firstName: profile.profile?.firstName || "",
-              attributes: profile.profile?.attributes || {},
-              tags: profile.profile?.tags || [],
-            },
-            insights: profile.insights || {},
-            rawData: profile.rawData || {},
-            ...(profile.rawData || {}),
-          };
-          setProfileData(transformedData);
-
-          if (profile.insights) {
-            setInsights({
-              needs: profile.insights.needs || { immediate: [], upcoming: [], latent: [] },
-              needsTags: profile.insights.needsTags || [],
-              currentState: profile.insights.currentState || {},
-            });
-          }
-        }
-      }
-
-      // Process memories
-      if (memoriesRes.ok) {
-        const memoriesData = await memoriesRes.json();
-        setMemories(memoriesData || []);
+      if (evidenceData) {
+        setEvidence(evidenceData.evidence || []);
+        setComposed(evidenceData.composed || null);
       }
     } catch (err: any) {
+      console.error("[useProfileData] Error:", err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   }, [userId, workflowId, apiUrl, getAccessToken]);
 
-  // Fetch on mount and when dependencies change
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   return {
-    profileData,
-    memories,
-    insights,
+    evidence,
+    composed,
     loading,
     error,
     refetch: fetchData,

@@ -1,14 +1,7 @@
 import React, { Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
-import { 
-  OverviewView,
-  InterestsView,
-  PersonalityView,
-  TimelineView,
-  InsightsView,
-  ProfileDataView
-} from "../views";
+import { OverviewView, InterestsView, PersonalityView, TimelineView, InsightsView, ProfileDataView } from "../views";
 
 const viewComponents = {
   overview: OverviewView,
@@ -27,7 +20,8 @@ function LoadingFallback() {
   );
 }
 
-export function ProfileContent({ activeView, profileData, memories, insights }) {
+export function ProfileContent({ activeView, evidence, composed }) {
+  // v2 only - no legacy profileData or insights
   const ViewComponent = viewComponents[activeView] || OverviewView;
   const isLazyView = activeView !== "overview";
 
@@ -42,10 +36,10 @@ export function ProfileContent({ activeView, profileData, memories, insights }) 
       >
         {isLazyView ? (
           <Suspense fallback={<LoadingFallback />}>
-            <ViewComponent profileData={profileData} memories={memories} insights={insights} />
+            <ViewComponent evidence={evidence} composed={composed} />
           </Suspense>
         ) : (
-          <ViewComponent profileData={profileData} memories={memories} insights={insights} />
+          <ViewComponent evidence={evidence} composed={composed} />
         )}
       </motion.div>
     </AnimatePresence>

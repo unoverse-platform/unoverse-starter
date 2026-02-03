@@ -14,7 +14,9 @@ export interface ProfileProps {
 
 export function Profile({ userId, workflowId, apiUrl, getAccessToken, onBack }: ProfileProps) {
   const [activeView, setActiveView] = useState("overview");
-  const { profileData, memories, insights, loading, error } = useProfileData(userId, workflowId, {
+
+  // v2 only - evidence and composed understanding
+  const { evidence, composed, loading, error } = useProfileData(userId, workflowId, {
     apiUrl,
     getAccessToken,
   });
@@ -47,7 +49,7 @@ export function Profile({ userId, workflowId, apiUrl, getAccessToken, onBack }: 
   }
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden overscroll-none">
+    <div className="min-h-screen relative overflow-x-hidden overflow-y-auto">
       {/* Fixed background with gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-gray-50 via-gray-50 to-gray-100 overflow-hidden pointer-events-none">
         {/* Gradient orbs contained within background */}
@@ -71,9 +73,9 @@ export function Profile({ userId, workflowId, apiUrl, getAccessToken, onBack }: 
       )}
 
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-6xl">
-        <ProfileHeader userId={userId} profileData={profileData} insights={insights} />
+        <ProfileHeader userId={userId} composed={composed} />
         <ProfileNavigation activeView={activeView} onViewChange={setActiveView} />
-        <ProfileContent activeView={activeView} profileData={profileData} memories={memories} insights={insights} />
+        <ProfileContent activeView={activeView} evidence={evidence} composed={composed} />
       </div>
     </div>
   );

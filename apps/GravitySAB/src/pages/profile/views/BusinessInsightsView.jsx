@@ -1,112 +1,116 @@
 import React from "react";
 import { motion } from "framer-motion";
-import EngagementScoreCard from "../components/EngagementScoreCard";
-import FocusAreasCard from "../components/FocusAreasCard";
-import RecommendedStepsCard from "../components/RecommendedStepsCard";
-import {
-  calculateEngagementReadiness,
-  calculateRegulatoryInterest,
-  calculateTimelineUrgency,
-  getEngagementStage,
-  getSegment,
-  generateRecommendedSteps
-} from "../utils/profileCalculations";
+import { TrendingUp, Target, CheckCircle } from "lucide-react";
 
 /**
- * BusinessInsightsView Component
- *
- * Displays business insights and recommendations based on profile data and memories.
- * Uses backend-provided insights when available, falls back to local calculations.
- *
- * @param {Object} props
- * @param {Object} props.profileData - User profile data including business profile and service interests
- * @param {Array} props.memories - Array of user memories/interactions
- * @param {Object} props.insights - Backend-provided insights including:
- *   - userSegment: Classification of the user (e.g., "high_value_prospect")
- *   - engagementStage: Current stage in the user journey
- *   - focusAreas: Array of areas with scores and priorities
- *   - nextSteps: Recommended actions for the user
- *   - timelineUrgency: Urgency level for taking action
+ * BusinessInsightsView Component - v2 Evidence-based
  */
-export default function BusinessInsightsView({ profileData, memories, insights }) {
-  // Use backend insights if available, otherwise calculate locally
-  const engagementScore = insights?.userSegment
-    ? insights.userSegment === "high_value_prospect"
-      ? 85
-      : insights.userSegment === "qualified_lead"
-      ? 65
-      : insights.userSegment === "active_client"
-      ? 100
-      : 40
-    : calculateEngagementReadiness(profileData, memories);
+export default function BusinessInsightsView({ evidence, composed }) {
+  // Calculate engagement from evidence
+  const engagementScore =
+    evidence?.length > 0
+      ? Math.min(
+          Math.round(
+            (evidence.reduce((sum, e) => sum + (e.certainty || 0.5), 0) / evidence.length) * 60 +
+              Math.min(evidence.length * 2, 40),
+          ),
+          100,
+        )
+      : 23;
 
-  const regulatoryInterest = insights?.focusAreas
-    ? insights.focusAreas.find((area) => area.area.toLowerCase().includes("regulatory"))?.score * 100 || 0
-    : calculateRegulatoryInterest(memories);
-
-  const timelineUrgency = insights?.timelineUrgency
-    ? insights.timelineUrgency
-    : insights?.engagementStage === "decision"
-    ? "High"
-    : insights?.engagementStage === "evaluation"
-    ? "Medium"
-    : calculateTimelineUrgency(memories);
-
-  // Convert nextSteps object to array format
-  const recommendedSteps = insights?.nextSteps 
-    ? [
-        ...(insights.nextSteps.immediate || []),
-        ...(insights.nextSteps.shortTerm || []),
-        ...(insights.nextSteps.longTerm || [])
-      ]
-    : generateRecommendedSteps(profileData, memories);
+  // Get needs from composed
+  const currentNeeds = composed?.currentNeeds || [];
+  const hypotheses = composed?.hypotheses || [];
 
   return (
     <div className="space-y-6">
       {/* Engagement Score */}
-      <EngagementScoreCard
-        engagementScore={engagementScore}
-        insights={insights}
-        getEngagementStage={getEngagementStage}
-        getSegment={getSegment}
-        timelineUrgency={timelineUrgency}
-      />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-indigo-600" />
+            Engagement Score
+          </h3>
+          <span className="text-3xl font-semibold text-gray-900">{engagementScore}%</span>
+        </div>
+        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${engagementScore}%` }}
+            transition={{ duration: 1 }}
+            className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
+          />
+        </div>
+        <div className="grid grid-cols-3 gap-4 mt-4 text-sm">
+          <div>
+            <p className="text-gray-500">Evidence</p>
+            <p className="font-medium">{evidence?.length || 0} pieces</p>
+          </div>
+          <div>
+            <p className="text-gray-500">Needs</p>
+            <p className="font-medium">{currentNeeds.length} identified</p>
+          </div>
+          <div>
+            <p className="text-gray-500">Hypotheses</p>
+            <p className="font-medium">{hypotheses.length} active</p>
+          </div>
+        </div>
+      </motion.div>
 
-      {/* Focus Areas */}
-      <FocusAreasCard focusAreas={insights?.focusAreas} />
-
-      {/* Recommended Next Steps */}
-      <RecommendedStepsCard recommendedSteps={recommendedSteps} />
-
-
-      {/* Recent Activity Summary */}
-      {memories && memories.length > 0 && (
+      {/* Current Needs */}
+      {currentNeeds.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-black/40 backdrop-blur-md rounded-xl p-6 border border-white/10"
+          transition={{ delay: 0.1 }}
+          className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100"
         >
-          <h3 className="text-xl font-semibold text-white mb-4">Recent Activity</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between text-gray-300">
-              <span>Total Interactions</span>
-              <span className="text-white">{memories.length}</span>
-            </div>
-            <div className="flex justify-between text-gray-300">
-              <span>This Week</span>
-              <span className="text-white">
-                {
-                  memories.filter(
-                    (m) => new Date(m.timestamp) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-                  ).length
-                }
-              </span>
-            </div>
-            <div className="flex justify-between text-gray-300">
-              <span>Regulatory Interest</span>
-              <span className="text-white">{regulatoryInterest}%</span>
-            </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-blue-600" />
+            Current Needs
+          </h3>
+          <div className="space-y-3">
+            {currentNeeds.map((need, i) => (
+              <div key={i} className="p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">{need.need}</span>
+                  <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
+                    {Math.round((need.certainty || 0.5) * 100)}%
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Hypotheses */}
+      {hypotheses.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100"
+        >
+          <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <CheckCircle className="w-5 h-5 text-green-600" />
+            Hypotheses
+          </h3>
+          <div className="space-y-3">
+            {hypotheses.map((h, i) => (
+              <div key={i} className="p-3 bg-orange-50 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-700">{h.hypothesis}</span>
+                  <span className="text-xs px-2 py-0.5 bg-orange-100 text-orange-700 rounded">
+                    {Math.round((h.certainty || 0.5) * 100)}%
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
         </motion.div>
       )}

@@ -13,8 +13,6 @@ export type {
   ServerMessageType,
   ServerMessage,
   ComponentInitMessage,
-  ComponentDataMessage,
-  ComponentRemoveMessage,
   WorkflowStateMessage,
   SessionReadyMessage,
   UserActionType,

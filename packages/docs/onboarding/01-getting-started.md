@@ -94,6 +94,12 @@ echo "YOUR_TOKEN" | docker login ghcr.io -u YOUR_GITHUB_USERNAME --password-stdi
 | `./scripts/deploy.sh rebuild` | Rebuild SAB only and restart                                    |
 | `./scripts/deploy.sh clean`   | Clean caches + full deploy (use when builds fail)               |
 
+**After deploying, restart services to pick up changes:**
+
+```bash
+docker compose restart
+```
+
 ### 5. Local Development
 
 For local development with hot reload:

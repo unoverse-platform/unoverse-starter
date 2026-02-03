@@ -33,13 +33,13 @@ function SlidingPanel({ children }) {
           onClick: close,
           className: "absolute top-4 left-4 z-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors",
         },
-        h(X, { className: "h-6 w-6 text-gray-600" })
+        h(X, { className: "h-6 w-6 text-gray-600" }),
       ),
       // Content
-      h("div", { className: "h-full" }, children)
+      h("div", { className: "h-full overflow-y-auto" }, children),
     ),
     // Toggle button (shown when closed)
-    !isOpen && h(ToggleChatButton, { onClick: open })
+    !isOpen && h(ToggleChatButton, { onClick: open }),
   );
 }
 
