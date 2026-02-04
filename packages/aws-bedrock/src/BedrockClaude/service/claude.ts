@@ -62,7 +62,7 @@ export async function callBedrockClaude(
   config: BedrockClaudeConfig,
   credentialContext: any,
   api: any,
-  executionContext?: { workflowId: string; executionId: string; nodeId: string }
+  executionContext?: { workflowId: string; executionId: string; nodeId: string },
 ): Promise<BedrockClaudeServiceResponse> {
   const log = api?.createLogger?.("BedrockClaude") || console;
 
@@ -231,11 +231,16 @@ export async function callBedrockClaude(
 
     // Add usage information if available
     if (response.usage) {
+      const inputTokens = response.usage.inputTokens || 0;
+      const outputTokens = response.usage.outputTokens || 0;
       result.usage = {
-        inputTokens: response.usage.inputTokens || 0,
-        outputTokens: response.usage.outputTokens || 0,
-        totalTokens: response.usage.totalTokens || 0,
+        inputTokens,
+        outputTokens,
+        totalTokens: response.usage.totalTokens || inputTokens + outputTokens,
       };
+      log.info("Bedrock usage data", { usage: result.usage, rawUsage: response.usage });
+    } else {
+      log.warn("No usage data returned from Bedrock response");
     }
 
     log.info("Bedrock Claude API call successful", {

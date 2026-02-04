@@ -20,7 +20,7 @@ export default class BedrockClaudeExecutor extends PromiseNode {
   protected async executeNode(
     inputs: Record<string, any>,
     config: BedrockClaudeConfig,
-    context: NodeExecutionContext
+    context: NodeExecutionContext,
   ): Promise<BedrockClaudeOutput> {
     const nodeId = context.nodeId;
     const startTime = Date.now();
@@ -31,9 +31,10 @@ export default class BedrockClaudeExecutor extends PromiseNode {
     const credentialContext = this.buildCredentialContext(context);
 
     // Call the Bedrock service with context.api for dependency injection
+    const executionId = context.executionId || context.workflow?.runId || `exec_${Date.now()}`;
     const result = await callBedrockClaude(config, credentialContext, context.api, {
       workflowId: context.workflowId || context.workflow?.id || "",
-      executionId: context.executionId,
+      executionId,
       nodeId: context.nodeId,
     });
 
@@ -54,7 +55,7 @@ export default class BedrockClaudeExecutor extends PromiseNode {
     };
 
     this.logger.info(
-      `🎯 [BedrockClaude] Returning result for node: ${nodeId}, total execution: ${Date.now() - startTime}ms`
+      `🎯 [BedrockClaude] Returning result for node: ${nodeId}, total execution: ${Date.now() - startTime}ms`,
     );
 
     return finalResult;
