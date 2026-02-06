@@ -241,6 +241,11 @@ services:
           memory: 256M
           cpus: "0.25"
 
+networks:
+  default:
+    name: gravity-net
+    external: true
+
 volumes:
   umap_models:
   loki_data:

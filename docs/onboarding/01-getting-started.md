@@ -82,10 +82,11 @@ You should see: `Login Succeeded`
 
 ## Step 5: Start Redis
 
-Redis is required. Run it locally with Docker:
+Redis is required. Run it on the same Docker network so containers can reach it:
 
 ```bash
-docker run -d --name gravity-redis -p 6379:6379 redis:7-alpine
+docker network create gravity-net 2>/dev/null || true
+docker run -d --name gravity-redis --network gravity-net -p 6379:6379 redis:7-alpine
 ```
 
 Verify it's running:
@@ -93,6 +94,8 @@ Verify it's running:
 ```bash
 docker ps | grep redis
 ```
+
+> **Note:** If your admin provides a managed Redis (e.g. DigitalOcean, AWS), skip this step and use those credentials in `.env` instead.
 
 ---
 
@@ -108,8 +111,8 @@ Edit `.env` with credentials from your admin:
 # Database (get from your admin)
 DATABASE_URL=postgresql://user:pass@host:5432/gravity
 
-# Redis (local Docker)
-REDIS_HOST=localhost
+# Redis (local Docker — use container name as host)
+REDIS_HOST=gravity-redis
 REDIS_PORT=6379
 REDIS_PASSWORD=
 REDIS_TLS=false
@@ -125,10 +128,11 @@ AUTH_AUDIENCE=gravity-api
 ## Step 7: Start the Platform
 
 ```bash
+docker network create gravity-net 2>/dev/null || true
 docker compose up -d
 ```
 
-This pulls pre-built images from GHCR and starts all core services.
+This pulls pre-built images from DigitalOcean Container Registry and starts all core services.
 
 **First time?** This downloads ~2GB of images. Subsequent starts are fast.
 
@@ -249,7 +253,8 @@ docker compose logs workflow
 docker ps | grep redis
 
 # If not running, start it
-docker run -d --name gravity-redis -p 6379:6379 redis:7-alpine
+docker network create gravity-net 2>/dev/null || true
+docker run -d --name gravity-redis --network gravity-net -p 6379:6379 redis:7-alpine
 ```
 
 ### Clean restart
