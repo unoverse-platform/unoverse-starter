@@ -13,7 +13,6 @@
     "gen:nodes": "npm run gen:nodes -w @gravity-platform/design-system-dev && npm run build -w @gravity-platform/design-system"
   },
   "devDependencies": {
-    "@gravity-platform/cli": "github:gravity-platform/gravity-cli",
     "turbo": "^2.0.0"
   },
   "packageManager": "npm@10.2.0"
