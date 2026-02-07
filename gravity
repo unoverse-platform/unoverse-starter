@@ -167,9 +167,7 @@ cmd_init() {
 
   # Apple Silicon check
   if [ "$(uname -m)" = "arm64" ]; then
-    warn "Apple Silicon detected"
-    info "Ensure Rosetta is enabled: Docker Desktop → Settings → General"
-    info "→ \"Use Rosetta for x86_64/amd64 emulation on Apple Silicon\""
+    ok "Apple Silicon detected — multi-arch images will run natively"
     echo ""
   fi
 
@@ -287,9 +285,8 @@ ENVEOF
   echo ""
   echo -e "  ${BOLD}Next steps:${NC}"
   echo ""
-  echo -e "    ${GREEN}1.${NC} ${BOLD}gravity start${NC}   Start the platform"
+  echo -e "    ${GREEN}1.${NC} ${BOLD}gravity dev${NC}     Set up dev environment and start the platform"
   echo -e "    ${GREEN}2.${NC} ${BOLD}gravity open${NC}    Open Canvas in your browser"
-  echo -e "    ${GREEN}3.${NC} ${BOLD}gravity dev${NC}     Set up dev environment"
   echo ""
   info "Run ${BOLD}gravity doctor${NC} anytime to check health"
   echo ""
@@ -752,6 +749,12 @@ cmd_dev() {
   echo "  Installing workspace dependencies..."
   (cd "$ROOT" && npm install)
   ok "Dependencies installed"
+
+  # Build plugin-base first (dependency for design-system and custom nodes)
+  echo ""
+  echo "  Building plugin-base..."
+  (cd "$ROOT" && npm run build -w @gravity-platform/plugin-base 2>/dev/null) || warn "plugin-base build skipped"
+  ok "plugin-base built"
 
   # Generate nodes from design system
   echo ""

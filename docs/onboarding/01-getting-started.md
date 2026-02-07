@@ -76,13 +76,17 @@ The wizard will ask for your DOCR token, database URL, Redis, and auth credentia
 
 ---
 
-## Step 4: Start the Platform
+## Step 4: Set Up and Start
 
 ```bash
-gravity start
+gravity dev
 ```
 
-**First time?** Images were already pulled during init (~2GB). Start is fast.
+This single command does everything:
+
+1. **Starts the platform** (all Docker containers)
+2. **Installs workspace dependencies** (`npm install`)
+3. **Generates workflow nodes** from the design system (`gen:nodes`)
 
 ---
 
@@ -111,18 +115,6 @@ All services should show green:
 | ---------- | --------------------- | ---------------- |
 | **Canvas** | http://localhost:3001 | Workflow Builder |
 | **API**    | http://localhost:4100 | REST API         |
-
----
-
-## Step 7: Set Up Dev Environment
-
-Once the platform is running, set up your development tools:
-
-```bash
-gravity dev
-```
-
-This installs workspace dependencies, generates workflow nodes from the design system, and confirms everything is ready.
 
 ---
 
@@ -157,7 +149,7 @@ npm run storybook -w @gravity-platform/design-system-dev
 ```bash
 # Start your day
 cd ~/gravity
-gravity start
+gravity dev
 
 # Make changes to packages/ or apps/design-system/
 gravity build               # Build all + gen:nodes + restart
@@ -206,7 +198,8 @@ gravity update           # Pull latest images and restart
 Run the doctor to diagnose issues:
 
 ```bash
-gravity doctor
+cd ~/gravity
+./gravity init
 ```
 
 ### "unauthorized" when pulling images
