@@ -429,18 +429,28 @@ cmd_pull() {
   fi
 
   echo "  Pulling images from DOCR..."
-  # Clean up any dangling images first to avoid "No such image" errors
+  # Clean up dangling images to avoid "No such image" errors
   docker image prune -f &>/dev/null || true
-  docker compose -f "$ROOT/docker-compose.yml" pull --ignore-pull-failures || true
+  docker system prune -f &>/dev/null || true
 
-  # Verify at least some images pulled
-  local pulled
-  pulled=$(docker compose -f "$ROOT/docker-compose.yml" images --format "{{.Repository}}" 2>/dev/null | grep -c . 2>/dev/null || echo "0")
-  pulled=${pulled:-0}
-  if [ "$pulled" -ge 5 ]; then
-    ok "All $pulled images pulled"
-  elif [ "$pulled" -gt 0 ]; then
-    warn "$pulled images pulled (some may have failed — run ${BOLD}gravity pull${NC} to retry)"
+  # Pull each service individually to handle failures gracefully
+  local services
+  services=$(docker compose -f "$ROOT/docker-compose.yml" config --services 2>/dev/null)
+  local total=0
+  local success=0
+  for svc in $services; do
+    ((total++))
+    if docker compose -f "$ROOT/docker-compose.yml" pull "$svc" 2>/dev/null; then
+      ((success++))
+    else
+      warn "Failed to pull $svc"
+    fi
+  done
+
+  if [ "$success" -eq "$total" ]; then
+    ok "All $success images pulled"
+  elif [ "$success" -gt 0 ]; then
+    warn "$success/$total images pulled (run ${BOLD}gravity pull${NC} to retry)"
   else
     fail "No images pulled — check your DOCR token and network"
     exit 1
