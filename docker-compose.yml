@@ -9,8 +9,7 @@ version: "3.8"
 #   - Code protected, pulled as images
 #   - node-service mounts ./packages for auto-discovery of custom nodes
 #
-# LAYER 2: CLIENT-SPECIFIC (Source or GHCR with runtime config)
-#   - sab (custom branded client app)
+# LAYER 2: CLIENT-SPECIFIC
 #   - packages/ (custom nodes, design-system components)
 #
 # =============================================================================
@@ -191,12 +190,6 @@ services:
         reservations:
           memory: 128M
           cpus: "0.1"
-
-  # ===========================================================================
-  # NOTE: SAB (client app) is NOT included here.
-  # SAB is client-specific and lives in gravity-starter template.
-  # See: https://github.com/gravity-platform/gravity-starter
-  # ===========================================================================
 
   # ===========================================================================
   # OBSERVABILITY STACK (Logs, Traces, Metrics)
