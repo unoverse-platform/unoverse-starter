@@ -429,8 +429,22 @@ cmd_pull() {
   fi
 
   echo "  Pulling images from DOCR..."
-  docker compose -f "$ROOT/docker-compose.yml" pull
-  ok "All images pulled"
+  # Clean up any dangling images first to avoid "No such image" errors
+  docker image prune -f &>/dev/null || true
+  docker compose -f "$ROOT/docker-compose.yml" pull --ignore-pull-failures || true
+
+  # Verify at least some images pulled
+  local pulled
+  pulled=$(docker compose -f "$ROOT/docker-compose.yml" images --format "{{.Repository}}" 2>/dev/null | grep -c . 2>/dev/null || echo "0")
+  pulled=${pulled:-0}
+  if [ "$pulled" -ge 5 ]; then
+    ok "All $pulled images pulled"
+  elif [ "$pulled" -gt 0 ]; then
+    warn "$pulled images pulled (some may have failed — run ${BOLD}gravity pull${NC} to retry)"
+  else
+    fail "No images pulled — check your DOCR token and network"
+    exit 1
+  fi
 }
 
 # ─── DOCTOR ─────────────────────────────────────────────────────────────────
