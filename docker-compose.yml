@@ -72,8 +72,8 @@ services:
     ports:
       - "3001:80"
     environment:
-      - VITE_API_URL=${API_URL:-http://localhost:4100}
-      - VITE_SERVER_WS_URL=${VITE_SERVER_WS_URL:-ws://localhost:4100}
+      - VITE_API_URL=${API_URL:-${DOMAIN:+https://api.${DOMAIN}}}
+      - VITE_SERVER_WS_URL=${VITE_SERVER_WS_URL:-${DOMAIN:+wss://api.${DOMAIN}}}
       - VITE_AUTH_ISSUER=${AUTH_ISSUER}
       - VITE_AUTH_CLIENT_ID=${AUTH_CLIENT_ID}
       - VITE_AUTH_AUDIENCE=${AUTH_AUDIENCE}
