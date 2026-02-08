@@ -20,6 +20,20 @@
     },
     "clean": {
       "cache": false
+    },
+    "@gravity-platform/gravity-sab#dev": {
+      "dependsOn": ["@gravity-platform/gravity-client#build"],
+      "cache": false,
+      "persistent": true
+    },
+    "@gravity-platform/gravity-sab#build": {
+      "dependsOn": ["@gravity-platform/gravity-client#build"],
+      "outputs": ["dist/**"]
+    },
+    "@gravity-platform/mcp-server#dev": {
+      "dependsOn": ["@gravity-platform/gravity-client#build"],
+      "cache": false,
+      "persistent": true
     }
   }
 }

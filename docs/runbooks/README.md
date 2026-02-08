@@ -33,16 +33,17 @@ Modular runbooks for deploying and managing Gravity Platform VMs.
 
 ## Runbook Modules
 
-| Runbook                                   | Description                        | Ansible Playbook            |
-| ----------------------------------------- | ---------------------------------- | --------------------------- |
-| [01-core](./01-core.md)                   | Deploy core app services           | `install.yml`               |
-| [02-database](./02-database.md)           | Set up database tables             | `db-setup.yml`              |
-| [03-ai-model](./03-ai-model.md)           | Deploy UMAP AI service             | `install-umap.yml`          |
-| [04-harden](./04-harden.md)               | Security hardening                 | `harden.yml`                |
-| [05-caddy](./05-caddy.md)                 | TLS + reverse proxy (optional)     | `install-caddy.yml`         |
-| [06-test](./06-test.md)                   | Verify connectivity and health     | `test-connectivity.yml`     |
-| [07-observability](./07-observability.md) | Grafana/Loki/Prometheus (POC only) | `install-observability.yml` |
-| [08-update-nodes](./08-update-nodes.md)   | Update packages and components     | `deploy-packages.yml`       |
+| Runbook                                               | Description                              | Ansible Playbook            |
+| ----------------------------------------------------- | ---------------------------------------- | --------------------------- |
+| [01-core](./01-core.md)                               | Deploy core app services                 | `install.yml`               |
+| [02-database](./02-database.md)                       | Set up database tables                   | `db-setup.yml`              |
+| [03-ai-model](./03-ai-model.md)                       | Deploy UMAP AI service                   | `install-umap.yml`          |
+| [04-harden](./04-harden.md)                           | Security hardening                       | `harden.yml`                |
+| [05-caddy](./05-caddy.md)                             | TLS + reverse proxy (optional)           | `install-caddy.yml`         |
+| [06-test](./06-test.md)                               | Verify connectivity and health           | `test-connectivity.yml`     |
+| [07-observability](./07-observability.md)             | Grafana/Loki/Prometheus (POC only)       | `install-observability.yml` |
+| [08-update-nodes](./08-update-nodes.md)               | Update packages and components           | `deploy-packages.yml`       |
+| [Architecture Diagrams](./architecture-diagrams.html) | Interactive system architecture diagrams | —                           |
 
 ---
 
