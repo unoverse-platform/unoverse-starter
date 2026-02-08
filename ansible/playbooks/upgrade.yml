@@ -18,6 +18,11 @@
         msg: "Upgrading {{ inventory_hostname }} ({{ ansible_host }})"
 
   tasks:
+    - name: Pull latest code
+      command: git pull --rebase --autostash
+      args:
+        chdir: /opt/gravity
+
     - name: Pull new images
       command: docker compose pull
       args:
