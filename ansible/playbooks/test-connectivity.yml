@@ -42,6 +42,7 @@
         - { name: "Workflow", port: 4101 }
         - { name: "Node Service", port: 4102 }
         - { name: "MCP Server", port: 4103 }
+        - { name: "UMAP", port: 5001 }
       register: port_checks
       ignore_errors: yes
 
@@ -84,7 +85,17 @@
         - { name: "Workflow", port: 4101 }
         - { name: "Node Service", port: 4102 }
         - { name: "MCP Server", port: 4103 }
+        - { name: "UMAP", port: 5001 }
       register: health_checks
+      ignore_errors: yes
+
+    - name: "[7b/9] Test UMAP reachable from workflow container (Docker DNS)"
+      shell: |
+        cd /opt/gravity
+        RESULT=$(docker compose exec -T workflow node -e "fetch('http://umap:5001/health').then(r=>r.json()).then(d=>console.log('OK: '+JSON.stringify(d))).catch(e=>console.log('FAILED: '+e.message))" 2>&1)
+        echo "$RESULT"
+        echo "$RESULT" | grep -q "OK:"
+      register: umap_docker_check
       ignore_errors: yes
 
     # ── Application-Level Checks ────────────────────────────────
@@ -218,6 +229,9 @@
           {% for result in health_checks.results %}
             - {{ result.item.name }}: {{ 'OK' if not result.failed else 'FAILED' }}
           {% endfor %}
+
+          ── UMAP (Docker DNS) ──
+          Workflow → umap:5001: {{ 'OK' if umap_docker_check.rc == 0 else 'FAILED — run install-umap.yml' }}
 
           ── API Endpoints (read) ──
           {% for result in api_checks.results %}
