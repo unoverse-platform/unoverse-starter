@@ -9,7 +9,7 @@
 #   - Core services deployed (install.yml)
 #   - DATABASE_URL configured in /opt/gravity/.env
 #   - Required extensions enabled in your DB provider:
-#     postgis, vector, pg_stat_statements
+#     vector, pg_stat_statements
 #     (DigitalOcean: Database → Settings → Allowed Extensions)
 
 - name: Database Setup
@@ -43,7 +43,7 @@
         "const{Pool}=require('pg');
         const p=new Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}});
         (async()=>{
-          const exts=['vector','pg_stat_statements','postgis'];
+          const exts=['vector','pg_stat_statements'];
           const results=[];
           for(const ext of exts){
             try{await p.query('CREATE EXTENSION IF NOT EXISTS '+ext);results.push(ext+': OK')}
@@ -69,7 +69,7 @@
           database provider's dashboard BEFORE running this playbook.
 
           DigitalOcean: Database → Settings → Allowed Extensions
-          Enable: postgis, vector, pg_stat_statements
+          Enable: vector, pg_stat_statements
 
           See docs/runbooks/02-database.md for details.
       when: ext_result.rc != 0
@@ -91,16 +91,13 @@
             try { await fn(); console.log(name + ': OK'); ok++; }
             catch (e) { console.error(name + ': FAILED - ' + e.message); }
           }
-          // Dictionary tables (may fail if PostGIS not available)
+          // Dictionary tables
           try {
             const dict = require('./dist/db/dictionary');
             if (dict.createAllTables) await dict.createAllTables();
             console.log('Dictionary: OK'); ok++;
           } catch (e) {
-            if (e.message && e.message.includes('postgis')) {
-              console.log('Dictionary: SKIPPED (PostGIS not available - enable in DB provider dashboard)');
-              skip++;
-            } else { console.error('Dictionary: FAILED - ' + e.message); }
+            console.error('Dictionary: FAILED - ' + e.message);
           }
           console.log('Done: ' + ok + ' OK, ' + skip + ' skipped');
           process.exit(0);
@@ -137,7 +134,7 @@
           Migration: {{ 'OK' if migrate_result.rc == 0 else 'FAILED — check logs above' }}
 
           If migration failed, check:
-            - Extensions enabled in DB provider (postgis, vector, pg_stat_statements)
+            - Extensions enabled in DB provider (vector, pg_stat_statements)
             - DATABASE_URL in /opt/gravity/.env
             - Database is accessible from VM
             - See docs/runbooks/02-database.md for setup instructions

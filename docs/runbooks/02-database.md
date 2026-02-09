@@ -17,21 +17,12 @@ The `DATABASE_URL` is configured in `ansible/files/.env` and deployed with `inst
 
 ## Database Requirements
 
-| Requirement        | Value                                          |
-| ------------------ | ---------------------------------------------- |
-| PostgreSQL version | 14+                                            |
-| Database name      | `gravity`                                      |
-| SSL                | Required for managed databases                 |
-| Min connections    | 20                                             |
-| **PostGIS**        | **Required** (for Dictionary/spatial features) |
-
-> **⚠️ PostGIS is required.** The Dictionary feature uses spatial queries. Without PostGIS, `db-setup` will fail on dictionary table creation.
->
-> **How to enable PostGIS:**
->
-> - **DigitalOcean Managed DB:** Database → Settings → Extensions → Enable `postgis`
-> - **AWS RDS:** Add `postgis` to your parameter group, or use `CREATE EXTENSION postgis;`
-> - **Self-hosted:** `sudo apt install postgresql-14-postgis-3 && psql -c 'CREATE EXTENSION postgis;'`
+| Requirement        | Value                          |
+| ------------------ | ------------------------------ |
+| PostgreSQL version | 14+                            |
+| Database name      | `gravity`                      |
+| SSL                | Required for managed databases |
+| Min connections    | 20                             |
 
 ## Steps
 
@@ -39,18 +30,17 @@ The `DATABASE_URL` is configured in `ansible/files/.env` and deployed with `inst
 
 **You must enable these extensions before running db-setup.** The playbook cannot install them — they must be enabled at the database provider level.
 
-| Extension            | Required By               | Purpose                         |
-| -------------------- | ------------------------- | ------------------------------- |
-| `vector`             | GravityMemory, Dictionary | Vector embeddings (pgvector)    |
-| `postgis`            | Dictionary                | Spatial/UMAP coordinate storage |
-| `pg_stat_statements` | Executions                | Query performance monitoring    |
+| Extension            | Required By               | Purpose                      |
+| -------------------- | ------------------------- | ---------------------------- |
+| `vector`             | GravityMemory, Dictionary | Vector embeddings (pgvector) |
+| `pg_stat_statements` | Executions                | Query performance monitoring |
 
 #### DigitalOcean Managed Database
 
 1. Go to **DigitalOcean Dashboard** → **Databases** → select your database
 2. Click **Settings** tab
 3. Scroll to **Allowed Extensions** (or **Extensions**)
-4. Search and enable: `postgis`, `vector`, `pg_stat_statements`
+4. Search and enable: `vector`, `pg_stat_statements`
 5. Wait for the database to apply changes (~1 minute)
 
 #### AWS RDS
@@ -58,7 +48,6 @@ The `DATABASE_URL` is configured in `ansible/files/.env` and deployed with `inst
 Connect to your database and run:
 
 ```sql
-CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 ```
@@ -66,8 +55,7 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 #### Self-hosted
 
 ```bash
-sudo apt install postgresql-14-postgis-3 postgresql-14-pgvector
-sudo -u postgres psql -d gravity -c 'CREATE EXTENSION IF NOT EXISTS postgis;'
+sudo apt install postgresql-14-pgvector
 sudo -u postgres psql -d gravity -c 'CREATE EXTENSION IF NOT EXISTS vector;'
 sudo -u postgres psql -d gravity -c 'CREATE EXTENSION IF NOT EXISTS pg_stat_statements;'
 ```
@@ -86,7 +74,7 @@ This creates all required tables:
 - **credentials** — encrypted credential storage
 - **token_usage** — LLM token tracking
 - **gravity_memory** — vector memory store
-- **dictionary** — spatial dictionary with UMAP coordinates (requires PostGIS)
+- **dictionary** — dictionary with UMAP coordinates
 
 ### 3. Verify
 
@@ -109,13 +97,12 @@ Migration: OK
 
 ## Troubleshooting
 
-| Issue                     | Cause                       | Fix                                                            |
-| ------------------------- | --------------------------- | -------------------------------------------------------------- |
-| Connection refused        | Firewall blocking           | Add VM IP to database trusted sources                          |
-| SSL required              | Missing `?sslmode=require`  | Add SSL mode to connection string                              |
-| Auth failed               | Wrong credentials           | Verify username/password in DO/AWS console                     |
-| Database not found        | DB not created              | Create `gravity` database manually                             |
-| **postgis not available** | **Extension not installed** | **Enable PostGIS in your DB provider's dashboard (see above)** |
+| Issue              | Cause                      | Fix                                        |
+| ------------------ | -------------------------- | ------------------------------------------ |
+| Connection refused | Firewall blocking          | Add VM IP to database trusted sources      |
+| SSL required       | Missing `?sslmode=require` | Add SSL mode to connection string          |
+| Auth failed        | Wrong credentials          | Verify username/password in DO/AWS console |
+| Database not found | DB not created             | Create `gravity` database manually         |
 
 ## Creating Database Manually
 
