@@ -79,7 +79,7 @@ async function main() {
         console.log(chalk.magenta("   → " + template.name));
         await generator.generateTemplateOnly(template);
         generated++;
-        console.log(chalk.green("     ✓ Bundled: dist/components/" + template.name + ".js\\n"));
+        console.log(chalk.green("     ✓ Bundled: components/" + template.name + ".js\\n"));
       } catch (error) {
         console.error(chalk.red("     ✗ Failed: " + template.name), error);
       }
@@ -88,8 +88,8 @@ async function main() {
     console.log(chalk.bold.green("\\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"));
     console.log(
       chalk.bold.green(
-        "✓ Successfully generated " + generated + "/" + (components.length + templates.length) + " items"
-      )
+        "✓ Successfully generated " + generated + "/" + (components.length + templates.length) + " items",
+      ),
     );
     console.log(chalk.blue("  • " + components.length + " workflow nodes"));
     console.log(chalk.magenta("  • " + templates.length + " templates"));

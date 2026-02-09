@@ -39,39 +39,44 @@ export class FileGenerator {
     // Generate all files
     this.writeFile(path.join(componentDir, "node", "index.ts"), generateNodeIndex(metadata));
     this.writeFile(path.join(componentDir, "node", "executor.ts"), generateExecutor(metadata));
-    this.writeFile(path.join(componentDir, "service", "templates.ts"), generateTemplates(metadata, html, css, componentUrl));
+    this.writeFile(
+      path.join(componentDir, "service", "templates.ts"),
+      generateTemplates(metadata, html, css, componentUrl),
+    );
     this.writeFile(path.join(componentDir, "service", "publishComponent.ts"), generatePublishComponent());
     this.writeFile(path.join(componentDir, "util", "types.ts"), generateTypes(metadata));
   }
 
   /**
    * Generate bundle only for templates (no workflow node files)
-   * Templates are bundled to dist/components/ but don't get workflow nodes
+   * Templates are bundled to components/ but don't get workflow nodes
    */
   async generateTemplateOnly(metadata: ComponentMetadata): Promise<void> {
     // Bundle as template (full Tailwind CSS)
     await this.convertComponent(metadata, true);
-    // That's it! The converter already saves to dist/components/
+    // That's it! The converter already saves to components/
   }
 
   /**
    * Convert React component to HTML/CSS/JS
    */
-  private async convertComponent(metadata: ComponentMetadata, isTemplate: boolean = false): Promise<{
-    html: string; 
+  private async convertComponent(
+    metadata: ComponentMetadata,
+    isTemplate: boolean = false,
+  ): Promise<{
+    html: string;
     css: string;
     componentUrl: string;
   }> {
-    // Bundle React component to dist/components/
+    // Bundle React component to components/
     const result = await this.converter.convertToHTML(metadata.componentPath, isTemplate);
-    
+
     return {
       html: result.html,
       css: result.css,
       componentUrl: result.componentUrl,
     };
   }
-
 
   /**
    * Write file to disk

@@ -12,7 +12,7 @@ import { build } from "vite";
 export class ReactSSRConverter {
   async convertToHTML(
     componentPath: string,
-    isTemplate: boolean = false
+    isTemplate: boolean = false,
   ): Promise<{
     html: string;
     css: string;
@@ -27,7 +27,7 @@ export class ReactSSRConverter {
       // Setup paths - output to packages/design-system (runtime package)
       const appRoot = path.join(path.dirname(componentPath), "../../../");
       const packagesRoot = path.resolve(appRoot, "../../packages/design-system");
-      const distDir = path.join(packagesRoot, "dist/components");
+      const distDir = path.join(packagesRoot, "components");
       if (!fs.existsSync(distDir)) {
         fs.mkdirSync(distDir, { recursive: true });
       }
@@ -106,9 +106,7 @@ export class ReactSSRConverter {
           },
           postcss: {
             plugins: [
-              (
-                await import("autoprefixer")
-              ).default,
+              (await import("autoprefixer")).default,
 
               // }),
             ],
@@ -138,7 +136,7 @@ export class ReactSSRConverter {
 
         // Prepend CSS storage code to JS bundle
         const cssInjectionCode = `(function(){if(typeof document!=='undefined'){window.__GRAVITY_COMPONENT_CSS__=window.__GRAVITY_COMPONENT_CSS__||{};window.__GRAVITY_COMPONENT_CSS__['${componentName}']=${JSON.stringify(
-          css
+          css,
         )};}})();`;
         fs.writeFileSync(distPath, cssInjectionCode + jsContent);
         fs.unlinkSync(generatedCssPath);
