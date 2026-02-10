@@ -284,6 +284,6 @@ If all tests pass, your deployment is complete!
 
 For ongoing operations:
 
-- **Upgrades:** `ansible-playbook playbooks/upgrade.yml`
+- **Upgrades:** `ansible-playbook playbooks/install.yml` (re-run to pull latest images)
 - **Backups:** `ansible-playbook playbooks/backup.yml`
 - **Rollback:** `ansible-playbook playbooks/rollback.yml`

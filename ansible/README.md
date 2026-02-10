@@ -45,7 +45,7 @@ All playbooks target `hosts: all`. For enterprise multi-VM setups, use `-l` to l
 | `install.yml`           | Fresh install (Docker, images, services)     |
 | `install-umap.yml`      | Install UMAP service (spatial search)        |
 | `install-caddy.yml`     | Caddy reverse proxy with automatic TLS       |
-| `upgrade.yml`           | Pull new images and restart                  |
+| `migrate-db.yml`        | Migrate database between providers           |
 | `rollback.yml`          | Rollback to previous version                 |
 | `health-check.yml`      | Verify all services healthy                  |
 | `db-setup.yml`          | Database setup and migrations                |
@@ -65,7 +65,6 @@ ansible-playbook -i inventory/production.yml playbooks/install.yml
 # Enterprise (multi-VM) — use -l to target a group
 ansible-playbook -i inventory/production.yml playbooks/install.yml -l app_vms
 ansible-playbook -i inventory/production.yml playbooks/install-umap.yml -l ml_vms
-ansible-playbook -i inventory/production.yml playbooks/upgrade.yml -l app_vms
 ```
 
 ## Requirements
