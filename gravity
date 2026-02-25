@@ -346,10 +346,6 @@ check_docker_file_sharing() {
       restricted=true
       location="Desktop"
       ;;
-    "$HOME/Documents"*)
-      restricted=true
-      location="Documents"
-      ;;
     "$HOME/Downloads"*)
       restricted=true
       location="Downloads"
@@ -475,8 +471,23 @@ cmd_start() {
     echo ""
     echo -e "  ${YELLOW}${BOLD}$running/$total services up${NC} ${DIM}($(timer_elapsed))${NC}"
     echo ""
-    info "Run ${BOLD}gravity status${NC} to see which services failed"
-    info "Run ${BOLD}gravity logs <service>${NC} to check logs"
+    # Show which services are stuck and why
+    local created_svcs
+    created_svcs=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format '{{.Name}}\t{{.Status}}' 2>/dev/null | grep -i 'created' | awk -F'\t' '{print $1}')
+    if [ -n "$created_svcs" ]; then
+      echo -e "  ${RED}Services stuck in 'Created' state (never started):${NC}"
+      echo "$created_svcs" | while read -r svc_name; do
+        echo -e "    ${DIM}• $svc_name${NC}"
+      done
+      echo ""
+      echo -e "  ${YELLOW}Common causes:${NC}"
+      echo -e "    • Docker cannot mount project directory (restricted folder)"
+      echo -e "    • Try: ${GREEN}gravity doctor${NC} to diagnose"
+      echo -e "    • Try: ${GREEN}docker compose down && gravity start${NC} to recreate"
+    else
+      info "Run ${BOLD}gravity status${NC} to see which services failed"
+      info "Run ${BOLD}gravity logs <service>${NC} to check logs"
+    fi
   fi
   echo ""
 }
@@ -499,10 +510,10 @@ cmd_status() {
   echo ""
 
   local output
-  output=$(docker compose -f "$ROOT/docker-compose.yml" ps --format "{{.Name}}\t{{.Status}}" 2>/dev/null) || true
+  output=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format "{{.Name}}\t{{.Status}}" 2>/dev/null) || true
 
   if [ -z "$output" ]; then
-    info "No services running. Run ${BOLD}./gravity start${NC}"
+    info "No services found. Run ${BOLD}./gravity start${NC}"
     echo ""
     return
   fi
@@ -513,6 +524,8 @@ cmd_status() {
   while IFS=$'\t' read -r name status; do
     if echo "$status" | grep -qi "up"; then
       echo -e "  ${GREEN}●${NC} $(printf '%-30s' "$name") ${GREEN}${status}${NC}"
+    elif echo "$status" | grep -qi "created"; then
+      echo -e "  ${YELLOW}●${NC} $(printf '%-30s' "$name") ${YELLOW}${status} (never started)${NC}"
     else
       echo -e "  ${RED}●${NC} $(printf '%-30s' "$name") ${RED}${status}${NC}"
     fi
@@ -575,7 +588,7 @@ cmd_update() {
       ok "Code updated"
       rm -f "$git_log"
       # Re-exec with updated script so remaining steps use new code
-      exec "$SCRIPT_DIR/$(basename "$0")" update --continue
+      exec "$ROOT/scripts/gravity" update --continue
     else
       warn "Code update failed — continuing"
       local git_err
@@ -680,7 +693,26 @@ cmd_update() {
   done
   wait "$restart_pid" 2>/dev/null
   printf "\r\033[2K"
-  ok "Services restarted"
+
+  # Verify services actually started (not stuck in Created)
+  sleep 2
+  local up_count created_count total_count
+  total_count=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format "{{.Name}}" 2>/dev/null | wc -l | tr -d ' ')
+  up_count=$(docker compose -f "$ROOT/docker-compose.yml" ps --format "{{.Name}}" --filter "status=running" 2>/dev/null | wc -l | tr -d ' ')
+  created_count=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format "{{.Status}}" 2>/dev/null | grep -ci "created" || echo "0")
+
+  if [ "$up_count" -eq "$total_count" ] && [ "$total_count" -gt 0 ]; then
+    ok "All $up_count services running"
+  elif [ "$created_count" -gt 0 ]; then
+    warn "$up_count/$total_count services running — $created_count stuck in Created state"
+    info "Run ${BOLD}gravity doctor${NC} to diagnose"
+  elif [ "$up_count" -gt 0 ]; then
+    warn "$up_count/$total_count services running"
+    info "Run ${BOLD}gravity status${NC} to check"
+  else
+    fail "No services running after restart"
+    info "Run ${BOLD}gravity doctor${NC} to diagnose"
+  fi
 
   # Summary
   echo ""
@@ -904,21 +936,26 @@ cmd_doctor() {
     ((issues++))
   fi
 
-  # Services running
+  # Services running — use -a to catch Created containers
   local running_output
-  running_output=$(docker compose -f "$ROOT/docker-compose.yml" ps --format "{{.Name}}\t{{.Status}}" 2>/dev/null) || true
+  running_output=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format "{{.Name}}\t{{.Status}}" 2>/dev/null) || true
   if [ -n "$running_output" ]; then
-    local total running
+    local total running created_doc
     total=$(echo "$running_output" | wc -l | tr -d ' ')
     running=$(echo "$running_output" | grep -ci "up" || echo "0")
-    if [ "$running" -eq "$total" ]; then
+    created_doc=$(echo "$running_output" | grep -ci "created" || echo "0")
+    if [ "$running" -eq "$total" ] && [ "$total" -gt 0 ]; then
       ok "All $running services running"
+    elif [ "$created_doc" -gt 0 ]; then
+      fail "$created_doc services stuck in Created state (never started)"
+      info "This usually means Docker cannot mount the project volume"
+      ((issues++))
     else
       warn "$running/$total services running"
       ((issues++))
     fi
   else
-    info "No services running (run ${BOLD}gravity start${NC})"
+    info "No services found (run ${BOLD}gravity start${NC})"
   fi
 
   # Redis
@@ -1011,14 +1048,21 @@ cmd_dev() {
   fi
   ok "npm $(npm --version)"
 
-  # Ensure platform is running
-  local ps
-  ps=$(docker compose -f "$ROOT/docker-compose.yml" ps --format "{{.Name}}" 2>/dev/null) || true
-  if [ -z "$ps" ]; then
+  # Ensure platform is running (check for actually running containers, not just created)
+  local running_count
+  running_count=$(docker compose -f "$ROOT/docker-compose.yml" ps --format "{{.Name}}" --filter "status=running" 2>/dev/null | wc -l | tr -d ' ')
+  if [ "$running_count" -eq 0 ] 2>/dev/null; then
     warn "Platform is not running. Starting it first..."
     cmd_start
   else
-    ok "Platform is running"
+    ok "Platform is running ($running_count services)"
+  fi
+
+  # Re-check after potential cmd_start — bail if still not running
+  running_count=$(docker compose -f "$ROOT/docker-compose.yml" ps --format "{{.Name}}" --filter "status=running" 2>/dev/null | wc -l | tr -d ' ')
+  if [ "$running_count" -eq 0 ] 2>/dev/null; then
+    fail "Platform failed to start — run ${BOLD}gravity doctor${NC} to diagnose"
+    exit 1
   fi
 
   # Install workspace dependencies
@@ -1046,13 +1090,26 @@ cmd_dev() {
   # Restart node-service to pick up newly built packages
   echo ""
   echo "  Restarting node-service..."
-  docker compose -f "$ROOT/docker-compose.yml" restart node-service 2>/dev/null || true
-  ok "node-service restarted"
+  local ns_status
+  ns_status=$(docker compose -f "$ROOT/docker-compose.yml" ps --format '{{.Status}}' node-service 2>/dev/null | head -1)
+  if echo "$ns_status" | grep -qi "up"; then
+    docker compose -f "$ROOT/docker-compose.yml" restart node-service 2>/dev/null || true
+    ok "node-service restarted"
+  else
+    warn "node-service is not running (status: ${ns_status:-unknown}) — skipping restart"
+    info "Run ${BOLD}gravity doctor${NC} to diagnose"
+  fi
 
+  # Final status check
+  running_count=$(docker compose -f "$ROOT/docker-compose.yml" ps --format "{{.Name}}" --filter "status=running" 2>/dev/null | wc -l | tr -d ' ')
   echo ""
   banner "Dev Environment Ready"
   echo ""
-  ok "Platform running — Canvas: http://localhost:3001"
+  if [ "$running_count" -gt 0 ]; then
+    ok "Platform running ($running_count services) — Canvas: http://localhost:3001"
+  else
+    warn "Platform may not be fully running — check ${BOLD}gravity status${NC}"
+  fi
   ok "Custom code in ${BOLD}packages/${NC} is mounted into node-service"
   ok "Components in ${BOLD}apps/design-system/${NC} ready for editing"
   echo ""
@@ -1106,8 +1163,12 @@ cmd_check() {
     if echo "$status" | grep -qi "up"; then
       ok "$svc"
       pass=$((pass + 1))
+    elif echo "$status" | grep -qi "created"; then
+      fail "$svc ${DIM}— stuck in Created (container never started)${NC}"
+    elif [ -z "$status" ]; then
+      fail "$svc ${DIM}— no container found${NC}"
     else
-      fail "$svc ${DIM}— not running${NC}"
+      fail "$svc ${DIM}— $status${NC}"
     fi
   done
   echo ""
@@ -1234,25 +1295,37 @@ cmd_dashboard() {
     return
   fi
 
-  # Quick status
+  # Quick status — use -a to see Created containers too
   local ps
-  ps=$(docker compose -f "$ROOT/docker-compose.yml" ps --format "{{.Name}}\t{{.Status}}" 2>/dev/null) || true
+  ps=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format "{{.Name}}\t{{.Status}}" 2>/dev/null) || true
 
   if [ -n "$ps" ]; then
-    local total running
+    local total running created
     total=$(echo "$ps" | wc -l | tr -d ' ')
     running=$(echo "$ps" | grep -ci "up" || echo "0")
+    created=$(echo "$ps" | grep -ci "created" || echo "0")
 
     echo ""
-    if [ "$running" -eq "$total" ]; then
+    if [ "$running" -eq "$total" ] && [ "$total" -gt 0 ]; then
       echo -e "  ${GREEN}●${NC} ${BOLD}Platform running${NC} ${DIM}— $running services${NC}"
-    else
+      echo ""
+      echo -e "  ${CYAN}Canvas${NC}  ${UNDERLINE}http://localhost:3001${NC}"
+      echo -e "  ${CYAN}API${NC}     ${UNDERLINE}http://localhost:4100${NC}"
+    elif [ "$created" -gt 0 ] && [ "$running" -eq 0 ]; then
+      echo -e "  ${RED}●${NC} ${BOLD}$total containers stuck in Created state${NC}"
+      echo ""
+      echo -e "  Containers were created but never started."
+      echo -e "  Run ${GREEN}${BOLD}gravity doctor${NC} to diagnose"
+    elif [ "$running" -gt 0 ]; then
       echo -e "  ${YELLOW}●${NC} ${BOLD}$running/$total services up${NC}"
+      echo ""
+      echo -e "  ${CYAN}Canvas${NC}  ${UNDERLINE}http://localhost:3001${NC}"
+      echo -e "  ${CYAN}API${NC}     ${UNDERLINE}http://localhost:4100${NC}"
+    else
+      echo -e "  ${RED}●${NC} ${BOLD}Platform not running${NC} ${DIM}— $total containers stopped${NC}"
+      echo ""
+      echo -e "  Run ${GREEN}${BOLD}./gravity start${NC} to launch"
     fi
-
-    echo ""
-    echo -e "  ${CYAN}Canvas${NC}  ${UNDERLINE}http://localhost:3001${NC}"
-    echo -e "  ${CYAN}API${NC}     ${UNDERLINE}http://localhost:4100${NC}"
   else
     echo ""
     echo -e "  ${DIM}●${NC} ${BOLD}Platform stopped${NC}"
