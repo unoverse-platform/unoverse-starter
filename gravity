@@ -106,9 +106,9 @@ install_to_path() {
   echo -e "  ${CYAN}${BOLD}Install gravity command globally?${NC}"
   echo -e "  ${DIM}This lets you run ${NC}${BOLD}gravity start${NC}${DIM} instead of ${NC}${BOLD}./gravity start${NC}"
   echo ""
-  read -p "  Install to /usr/local/bin/gravity? [Y/n] " -n 1 -r
+  read -r -p "  Install to /usr/local/bin/gravity? [Y/n] " REPLY
   echo ""
-  if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+  if [[ ! "$REPLY" =~ ^[Nn]$ ]]; then
     if ln -sf "$script_path" "$target" 2>/dev/null; then
       ok "Installed! You can now use ${BOLD}gravity${NC} from anywhere in this project"
     else
@@ -132,9 +132,9 @@ check_first_run() {
     echo -e "  Looks like this is your first time. Let's get you set up."
     echo -e "  You'll need credentials from your Gravity admin."
     echo ""
-    read -p "  Ready to start setup? [Y/n] " -n 1 -r
+    read -r -p "  Ready to start setup? [Y/n] " REPLY
     echo ""
-    if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+    if [[ ! "$REPLY" =~ ^[Nn]$ ]]; then
       cmd_init
     else
       echo ""
@@ -176,9 +176,9 @@ cmd_init() {
   # Check for existing .env
   if [ -f "$ROOT/.env" ]; then
     echo ""
-    read -p "  .env already exists. Overwrite? [y/N] " -n 1 -r
+    read -r -p "  .env already exists. Overwrite? [y/N] " REPLY
     echo ""
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    if [[ ! "$REPLY" =~ ^[Yy]$ ]]; then
       info "Keeping existing .env"
       cmd_login
       cmd_pull
@@ -556,6 +556,8 @@ cmd_update() {
     # Step 1: Code — pull from customer's fork
     printf "  ${DIM}●${NC} Pulling latest code..."
     local git_ok=true
+    local git_log
+    git_log=$(mktemp)
     (
       cd "$ROOT"
       # Abort any stuck rebase/merge from a previous failed pull
@@ -566,15 +568,22 @@ cmd_update() {
       git reset HEAD -- . >/dev/null 2>&1 || true
       git checkout -- . >/dev/null 2>&1 || true
       # Now pull cleanly
-      git pull --quiet >/dev/null 2>&1
+      git pull --quiet 2>"$git_log"
     ) || git_ok=false
     printf "\r\033[2K"
     if $git_ok; then
       ok "Code updated"
+      rm -f "$git_log"
       # Re-exec with updated script so remaining steps use new code
       exec "$SCRIPT_DIR/$(basename "$0")" update --continue
     else
       warn "Code update failed — continuing"
+      local git_err
+      git_err=$(cat "$git_log" 2>/dev/null | head -5)
+      if [ -n "$git_err" ]; then
+        echo -e "  ${DIM}Reason: $git_err${NC}"
+      fi
+      rm -f "$git_log"
     fi
   fi
 
@@ -728,9 +737,9 @@ cmd_update_nodes() {
 
 cmd_pull() {
   echo ""
-  read -p "  Pull platform images now? (~1.2GB first time) [Y/n] " -n 1 -r
+  read -r -p "  Pull platform images now? (~1.2GB first time) [Y/n] " REPLY
   echo ""
-  if [[ $REPLY =~ ^[Nn]$ ]]; then
+  if [[ "$REPLY" =~ ^[Nn]$ ]]; then
     info "Skipped. Run ${BOLD}./gravity start${NC} later."
     return
   fi
