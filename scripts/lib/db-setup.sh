@@ -57,7 +57,24 @@ cmd_db_setup() {
           if (dict.createAllTables) await dict.createAllTables();
           console.log('  ✓ Dictionary'); ok++;
         } catch (e) { console.error('  ✗ Dictionary: ' + e.message); }
-        console.log('  Done: ' + ok + ' table groups created');
+
+        // Explicit column migrations — ensures columns exist regardless of build version
+        const { Pool: MigPool } = require('pg');
+        const migPool = new MigPool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+        const cols = [
+          { table: 'workflows', column: 'viewport', type: 'JSONB' },
+          { table: 'workflows', column: 'mcp_schema', type: 'JSONB' },
+          { table: 'workflows', column: 'memory_config', type: 'JSONB' },
+        ];
+        for (const c of cols) {
+          try {
+            await migPool.query('ALTER TABLE ' + c.table + ' ADD COLUMN IF NOT EXISTS ' + c.column + ' ' + c.type);
+          } catch (e) { /* column already exists — safe */ }
+        }
+        await migPool.end();
+        console.log('  ✓ Column migrations');
+
+        console.log('  Done: ' + (ok + 1) + ' table groups created');
         process.exit(0);
       })().catch(e => { console.error(e); process.exit(1); });
     " 2>&1 || {
@@ -114,7 +131,24 @@ cmd_db_setup() {
           if (dict.createAllTables) await dict.createAllTables();
           console.log('  ✓ Dictionary'); ok++;
         } catch (e) { console.error('  ✗ Dictionary: ' + e.message); }
-        console.log('  Done: ' + ok + ' table groups created');
+
+        // Explicit column migrations — ensures columns exist regardless of image version
+        const { Pool } = require('pg');
+        const migPool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+        const cols = [
+          { table: 'workflows', column: 'viewport', type: 'JSONB' },
+          { table: 'workflows', column: 'mcp_schema', type: 'JSONB' },
+          { table: 'workflows', column: 'memory_config', type: 'JSONB' },
+        ];
+        for (const c of cols) {
+          try {
+            await migPool.query('ALTER TABLE ' + c.table + ' ADD COLUMN IF NOT EXISTS ' + c.column + ' ' + c.type);
+          } catch (e) { /* column already exists — safe */ }
+        }
+        await migPool.end();
+        console.log('  ✓ Column migrations');
+
+        console.log('  Done: ' + (ok + 1) + ' table groups created');
         process.exit(0);
       })().catch(e => { console.error(e); process.exit(1); });
     " 2>&1 || {
@@ -126,4 +160,9 @@ cmd_db_setup() {
   echo ""
   ok "Database setup complete ${DIM}($(timer_elapsed))${NC}"
   echo ""
+
+  # Auto-verify schema after setup
+  echo "  Verifying schema..."
+  echo ""
+  cmd_db_verify
 }
