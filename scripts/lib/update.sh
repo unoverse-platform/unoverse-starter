@@ -57,7 +57,13 @@ cmd_update() {
     warn "production.yml was missing — restored from example. Edit with your VM details."
   fi
 
-  # Step 2: Images — pull in background with animated spinner
+  # Step 2: Images — login to registry if DOCR_TOKEN is set
+  local docr_token
+  docr_token=$(grep "^DOCR_TOKEN=" "$ROOT/.env" 2>/dev/null | cut -d'=' -f2-)
+  if [ -n "$docr_token" ]; then
+    echo "$docr_token" | docker login registry.digitalocean.com -u "$docr_token" --password-stdin >/dev/null 2>&1 || true
+  fi
+
   local pull_ok=true
   docker compose -f "$ROOT/docker-compose.yml" pull --quiet >/dev/null 2>&1 &
   local pull_pid=$!

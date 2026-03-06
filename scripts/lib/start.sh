@@ -45,6 +45,13 @@ cmd_start() {
     exit 1
   fi
 
+  # Login to registry if DOCR_TOKEN is set
+  local docr_token
+  docr_token=$(grep "^DOCR_TOKEN=" "$ROOT/.env" 2>/dev/null | cut -d'=' -f2-)
+  if [ -n "$docr_token" ]; then
+    echo "$docr_token" | docker login registry.digitalocean.com -u "$docr_token" --password-stdin >/dev/null 2>&1 || true
+  fi
+
   check_docker_file_sharing || exit 1
   check_first_run
   banner "Starting Gravity Platform"
