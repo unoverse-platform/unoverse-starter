@@ -34,6 +34,17 @@ check_docker_file_sharing() {
 }
 
 cmd_start() {
+  # Pre-flight: Docker must be running
+  if ! docker info >/dev/null 2>&1; then
+    echo ""
+    fail "Docker is not running"
+    echo ""
+    echo -e "  Start Docker Desktop, then re-run:"
+    echo -e "    ${GREEN}./gravity start${NC}"
+    echo ""
+    exit 1
+  fi
+
   check_docker_file_sharing || exit 1
   check_first_run
   banner "Starting Gravity Platform"

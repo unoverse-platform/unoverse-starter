@@ -7,6 +7,17 @@ cmd_update() {
   echo ""
   timer_start
 
+  # Pre-flight: Docker must be running
+  if ! docker info >/dev/null 2>&1; then
+    echo ""
+    fail "Docker is not running"
+    echo ""
+    echo -e "  Start Docker Desktop, then re-run:"
+    echo -e "    ${GREEN}./gravity update${NC}"
+    echo ""
+    exit 1
+  fi
+
   # Step 1: Code — pull from customer's fork
   printf "  ${DIM}●${NC} Pulling latest code..."
   local git_ok=true
@@ -133,17 +144,17 @@ cmd_update() {
 
   # Verify services actually started (not stuck in Created)
   sleep 2
-  local up_count created_count total_count
-  total_count=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format "{{.Name}}" 2>/dev/null | wc -l | tr -d ' ')
-  up_count=$(docker compose -f "$ROOT/docker-compose.yml" ps --format "{{.Name}}" --filter "status=running" 2>/dev/null | wc -l | tr -d ' ')
+  local up_count=0 created_count=0 total_count=0
+  total_count=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format "{{.Name}}" 2>/dev/null | grep -c . || echo "0")
+  up_count=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format "{{.Status}}" 2>/dev/null | grep -ci "up\|running" || echo "0")
   created_count=$(docker compose -f "$ROOT/docker-compose.yml" ps -a --format "{{.Status}}" 2>/dev/null | grep -ci "created" || echo "0")
 
-  if [ "$up_count" -eq "$total_count" ] && [ "$total_count" -gt 0 ]; then
+  if [ "${up_count:-0}" -eq "${total_count:-0}" ] && [ "${total_count:-0}" -gt 0 ]; then
     ok "All $up_count services running"
-  elif [ "$created_count" -gt 0 ]; then
+  elif [ "${created_count:-0}" -gt 0 ]; then
     warn "$up_count/$total_count services running — $created_count stuck in Created state"
     info "Run ${BOLD}gravity doctor${NC} to diagnose"
-  elif [ "$up_count" -gt 0 ]; then
+  elif [ "${up_count:-0}" -gt 0 ]; then
     warn "$up_count/$total_count services running"
     info "Run ${BOLD}gravity status${NC} to check"
   else
@@ -165,6 +176,17 @@ cmd_update_nodes() {
   echo -e "  ${BOLD}Updating Nodes${NC}"
   echo ""
   timer_start
+
+  # Pre-flight: Docker must be running
+  if ! docker info >/dev/null 2>&1; then
+    echo ""
+    fail "Docker is not running"
+    echo ""
+    echo -e "  Start Docker Desktop, then re-run:"
+    echo -e "    ${GREEN}./gravity update nodes${NC}"
+    echo ""
+    exit 1
+  fi
 
   # Step 1: Dependencies
   printf "  ${DIM}●${NC} Installing dependencies..."
