@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gravity db-setup
+# gravity db-setup — runs node-pg-migrate to apply all pending migrations
 
 cmd_db_setup() {
   banner "Database Setup"
@@ -14,67 +14,42 @@ cmd_db_setup() {
   fi
   ok "DATABASE_URL configured"
 
+  # Ensure SSL is specified (required by DigitalOcean managed Postgres)
+  if [[ "$db_url" != *"sslmode="* ]]; then
+    if [[ "$db_url" == *"?"* ]]; then
+      db_url="${db_url}&sslmode=require"
+    else
+      db_url="${db_url}?sslmode=require"
+    fi
+  fi
+
   # Detect environment: monorepo (local dev) vs starter (Docker)
   if [ -d "$ROOT/apps/workflow" ]; then
-    # Local dev — run directly via node
+    # ── Local dev — run node-pg-migrate directly ──
     echo ""
-    echo "  Initializing database tables (local dev)..."
+    echo "  Running migrations (local dev)..."
 
-    # Always rebuild workflow to ensure migrations reflect latest code
-    echo "  Building workflow..."
-    (cd "$ROOT" && npx turbo run build --filter=@gravity-platform/gravity-workflow >/dev/null 2>&1) || {
-      fail "Workflow build failed — run 'npx turbo run build' first"
+    NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL="$db_url" \
+      npx node-pg-migrate up \
+        --migrations-dir "$ROOT/apps/workflow/migrations" \
+        --migration-file-language sql \
+        --no-lock \
+        2>&1 | sed 's/^/  /' || {
+      fail "Migrations failed"
       exit 1
     }
 
-    # Run table initialization
-    NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL="$db_url" node --no-warnings -e "
-      const db = require('$ROOT/apps/workflow/dist/db');
-      (async () => {
-        const steps = [
-          ['Extensions', async () => {
-            const { Pool } = require('pg');
-            const p = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
-            for (const ext of ['vector', 'pg_stat_statements']) {
-              try { await p.query('CREATE EXTENSION IF NOT EXISTS ' + ext); }
-              catch (e) { console.log('  ⚠ ' + ext + ': ' + e.message); }
-            }
-            await p.end();
-          }],
-          ['Workflows', () => db.createWorkflowTable ? db.createWorkflowTable() : Promise.resolve()],
-          ['Executions', () => db.createExecutionTables ? db.createExecutionTables() : Promise.resolve()],
-          ['Credentials', () => db.createCredentialsTable ? db.createCredentialsTable() : Promise.resolve()],
-          ['TokenUsage', () => db.createSimpleTokenUsageTable ? db.createSimpleTokenUsageTable() : Promise.resolve()],
-          ['GravityMemory', () => db.createGravityMemoryTables ? db.createGravityMemoryTables() : Promise.resolve()],
-          ['Registry', () => db.createRegistryTables ? db.createRegistryTables() : Promise.resolve()],
-        ];
-        let ok = 0;
-        for (const [name, fn] of steps) {
-          try { await fn(); console.log('  ✓ ' + name); ok++; }
-          catch (e) { console.error('  ✗ ' + name + ': ' + e.message); }
-        }
-        try {
-          const dict = require('$ROOT/apps/workflow/dist/db/dictionary');
-          if (dict.createAllTables) await dict.createAllTables();
-          console.log('  ✓ Dictionary'); ok++;
-        } catch (e) { console.error('  ✗ Dictionary: ' + e.message); }
-        console.log('  Done: ' + ok + ' table groups created');
-        process.exit(0);
-      })().catch(e => { console.error(e); process.exit(1); });
-    " 2>&1 || {
-      fail "Table initialization failed"
-      exit 1
-    }
+    # Seed security corpus (idempotent)
+    _seed_security_corpus "$db_url" "$ROOT/apps/memory/src/security/corpus-seed.json"
+
   else
-    # Starter/production — run via Docker workflow container
-    # The migration code lives inside the workflow image (dist/db/).
-    # The workflow service must be running so we can exec into it.
+    # ── Starter/production — run via Docker workflow container ──
     echo ""
 
     if ! docker compose -f "$ROOT/docker-compose.yml" ps --status running workflow 2>/dev/null | grep -q workflow; then
       echo ""
-      echo -e "  ${YELLOW}The workflow service must be running to initialize the database.${NC}"
-      echo -e "  ${DIM}(Migration code is bundled inside the workflow Docker image)${NC}"
+      echo -e "  ${YELLOW}The workflow service must be running to apply migrations.${NC}"
+      echo -e "  ${DIM}(Migration files are bundled inside the workflow Docker image)${NC}"
       echo ""
       echo -e "  Start services first, then re-run:"
       echo -e "    ${GREEN}./gravity start${NC}"
@@ -83,46 +58,40 @@ cmd_db_setup() {
       exit 1
     fi
 
-    echo "  Initializing database tables (via Docker)..."
+    echo "  Running migrations (via Docker)..."
 
     docker compose -f "$ROOT/docker-compose.yml" exec -T \
-      -e NODE_TLS_REJECT_UNAUTHORIZED=0 workflow node --no-warnings -e "
-      const db = require('./dist/db');
-      (async () => {
-        const steps = [
-          ['Extensions', async () => {
-            const { Pool } = require('pg');
-            const p = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
-            for (const ext of ['vector', 'pg_stat_statements']) {
-              try { await p.query('CREATE EXTENSION IF NOT EXISTS ' + ext); }
-              catch (e) { console.log('  ⚠ ' + ext + ': ' + e.message); }
-            }
-            await p.end();
-          }],
-          ['Workflows', () => db.createWorkflowTable ? db.createWorkflowTable() : Promise.resolve()],
-          ['Executions', () => db.createExecutionTables ? db.createExecutionTables() : Promise.resolve()],
-          ['Credentials', () => db.createCredentialsTable ? db.createCredentialsTable() : Promise.resolve()],
-          ['TokenUsage', () => db.createSimpleTokenUsageTable ? db.createSimpleTokenUsageTable() : Promise.resolve()],
-          ['GravityMemory', () => db.createGravityMemoryTables ? db.createGravityMemoryTables() : Promise.resolve()],
-          ['Registry', () => db.createRegistryTables ? db.createRegistryTables() : Promise.resolve()],
-        ];
-        let ok = 0;
-        for (const [name, fn] of steps) {
-          try { await fn(); console.log('  ✓ ' + name); ok++; }
-          catch (e) { console.error('  ✗ ' + name + ': ' + e.message); }
-        }
-        try {
-          const dict = require('./dist/db/dictionary');
-          if (dict.createAllTables) await dict.createAllTables();
-          console.log('  ✓ Dictionary'); ok++;
-        } catch (e) { console.error('  ✗ Dictionary: ' + e.message); }
-        console.log('  Done: ' + ok + ' table groups created');
-        process.exit(0);
-      })().catch(e => { console.error(e); process.exit(1); });
-    " 2>&1 || {
-      fail "Table initialization failed"
+      -e NODE_TLS_REJECT_UNAUTHORIZED=0 workflow \
+      npx node-pg-migrate up \
+        --migrations-dir /app/migrations \
+        --migration-file-language sql \
+        --no-lock \
+        2>&1 | sed 's/^/  /' || {
+      fail "Migrations failed"
       exit 1
     }
+
+    # Seed security corpus via Docker
+    docker compose -f "$ROOT/docker-compose.yml" exec -T \
+      -e NODE_TLS_REJECT_UNAUTHORIZED=0 workflow node --no-warnings -e "
+      const fs = require('fs');
+      const { Pool } = require('pg');
+      (async () => {
+        try {
+          const seedData = JSON.parse(fs.readFileSync('/app/security-corpus-seed.json', 'utf-8'));
+          const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+          for (const a of seedData) {
+            await pool.query(
+              'INSERT INTO security_attack_corpus (id,category,label,attack_prompt,expected_result,severity,source,is_active) VALUES (\$1,\$2,\$3,\$4,\$5,\$6,\$7,true) ON CONFLICT (id) DO NOTHING',
+              [a.id, a.category, a.label, a.attack_prompt, a.expected_result, a.severity, a.source]
+            );
+          }
+          console.log('  ✓ Seeded ' + seedData.length + ' security corpus attacks');
+          await pool.end();
+        } catch (e) { console.warn('  ⚠ Security corpus seed skipped: ' + e.message); }
+        process.exit(0);
+      })();
+    " 2>&1 || true
   fi
 
   echo ""
@@ -133,4 +102,35 @@ cmd_db_setup() {
   echo "  Verifying schema..."
   echo ""
   cmd_db_verify
+}
+
+# Seed security attack corpus (local dev helper)
+_seed_security_corpus() {
+  local db_url="$1"
+  local seed_file="$2"
+
+  if [ ! -f "$seed_file" ]; then
+    echo "  ⚠ Security corpus seed file not found — skipping"
+    return 0
+  fi
+
+  NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL="$db_url" node --no-warnings -e "
+    const fs = require('fs');
+    const { Pool } = require('pg');
+    (async () => {
+      try {
+        const seedData = JSON.parse(fs.readFileSync('$seed_file', 'utf-8'));
+        const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
+        for (const a of seedData) {
+          await pool.query(
+            'INSERT INTO security_attack_corpus (id,category,label,attack_prompt,expected_result,severity,source,is_active) VALUES (\$1,\$2,\$3,\$4,\$5,\$6,\$7,true) ON CONFLICT (id) DO NOTHING',
+            [a.id, a.category, a.label, a.attack_prompt, a.expected_result, a.severity, a.source]
+          );
+        }
+        console.log('  ✓ Seeded ' + seedData.length + ' security corpus attacks');
+        await pool.end();
+      } catch (e) { console.warn('  ⚠ Security corpus seed skipped: ' + e.message); }
+      process.exit(0);
+    })();
+  " 2>&1 || true
 }

@@ -7,7 +7,7 @@
 #
 # Usage:
 #   ./gravity init      Interactive setup wizard
-#   ./gravity db-setup  Create database tables (safe to re-run)
+#   ./gravity db-setup  Run database migrations (safe to re-run)
 #   ./gravity start     Start the platform
 #   ./gravity stop      Stop the platform
 #   ./gravity status    Show service health
