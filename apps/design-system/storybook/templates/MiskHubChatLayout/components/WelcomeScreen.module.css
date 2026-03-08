@@ -1,0 +1,148 @@
+/* WelcomeScreen - Centered welcome with suggestion cards for Misk Hub */
+@import "../../../styles/index.css";
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--spacing-6);
+}
+
+.content {
+  max-width: 48rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Logo */
+.logoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-4);
+}
+
+.logo {
+  width: 180px;
+  height: auto;
+  object-fit: contain;
+}
+
+.logoPlaceholder {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--misk-teal), var(--misk-teal-hover));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoIcon {
+  width: 40px;
+  height: 40px;
+  color: #ffffff;
+}
+
+/* Title */
+.title {
+  font-size: var(--text-headline-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-gray-900);
+  margin-top: var(--spacing-2);
+}
+
+.subtitle {
+  font-size: var(--text-body-md);
+  color: var(--color-gray-600);
+  margin-top: var(--spacing-1);
+  margin-bottom: var(--spacing-6);
+}
+
+/* Suggestion cards grid */
+.suggestionsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-4);
+}
+
+.suggestionCard {
+  position: relative;
+  background-color: #ffffff;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-4);
+  padding-left: var(--spacing-5);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+/* Misk teal accent bar on left edge */
+.suggestionCard::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: var(--misk-teal);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.suggestionCard:hover::after {
+  opacity: 1;
+}
+
+.suggestionCard:hover {
+  background-color: var(--misk-teal-50);
+  border-color: var(--misk-teal-200);
+  box-shadow: var(--shadow-md);
+}
+
+.suggestionIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background-color: var(--misk-teal-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-2);
+  transition: background-color 0.2s ease;
+}
+
+.suggestionCard:hover .suggestionIcon {
+  background-color: var(--misk-teal-100);
+}
+
+.suggestionIconSvg {
+  width: 22px;
+  height: 22px;
+  color: var(--misk-teal);
+}
+
+.suggestionTitle {
+  font-size: var(--text-body-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-900);
+}
+
+.suggestionQuestion {
+  font-size: var(--text-body-sm);
+  color: var(--color-gray-500);
+  margin-top: var(--spacing-2);
+  line-height: var(--line-height-body);
+}
+
+/* Footer hint */
+.footerHint {
+  margin-top: var(--spacing-12);
+  font-size: var(--text-body-sm);
+  color: var(--color-gray-400);
+}

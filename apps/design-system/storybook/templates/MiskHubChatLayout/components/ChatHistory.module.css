@@ -1,0 +1,36 @@
+/* ChatHistory for MiskHubChatLayout - Pure CSS Module */
+@import "../../../styles/index.css";
+
+.historyContainer {
+  max-width: 64rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.historyContainer > * + * {
+  margin-top: var(--spacing-4);
+}
+
+.userMessageContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.userMessageBubble {
+  background-color: var(--misk-teal);
+  color: #ffffff;
+  border-radius: var(--radius-2xl);
+  border-top-right-radius: var(--radius-sm);
+  padding: var(--spacing-2) var(--spacing-4);
+  padding-bottom: var(--spacing-2);
+  max-width: 80%;
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.userMessageText {
+  font-size: var(--text-body-md);
+  line-height: var(--line-height-body);
+  font-weight: var(--font-weight-regular);
+}

@@ -67,6 +67,19 @@
   --sab-slate: #42505c;
   --sab-slate-light: #536270;
   --sab-slate-dark: #343f48;
+
+  /* Misk Brand Colors - Teal/Cyan */
+  --misk-teal: #00b4d8;
+  --misk-teal-hover: #0096b7;
+  --misk-teal-active: #007a96;
+  --misk-teal-50: #ecfeff;
+  --misk-teal-100: #cffafe;
+  --misk-teal-200: #a5f3fc;
+
+  /* Misk Dark/Navy */
+  --misk-navy: #1a2744;
+  --misk-navy-light: #2a3a5c;
+  --misk-navy-dark: #0f1a30;
 }
 
 /**

@@ -1,0 +1,143 @@
+/* MiskHubChatLayout - Clean chat interface for Misk Hub youth platform */
+@import "../../styles/index.css";
+
+.container {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: var(--spacing-8);
+  background-color: var(--color-gray-100);
+  font-family: var(--font-sans);
+  box-sizing: border-box;
+}
+
+.chatWindow {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 64rem;
+  background-color: #ffffff;
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+}
+
+/* Header with Misk Hub branding */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--spacing-3) var(--spacing-6);
+  background: #ffffff;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.headerBrand {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-1);
+}
+
+.headerLogo {
+  height: 32px;
+  width: auto;
+}
+
+.headerText {
+  font-size: var(--text-body-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--misk-teal);
+  font-family: var(--font-sans);
+}
+
+/* Messages area */
+.messagesArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-6) var(--spacing-8);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Remove padding when focus mode is active - component fills entire area */
+.messagesAreaFocused {
+  padding: 0;
+  overflow: hidden;
+}
+
+.messagesContent {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  justify-content: flex-end;
+}
+
+.messagesInner > * + * {
+  margin-top: var(--spacing-4);
+}
+
+/* Focus Mode - renders at template level, outside scrollable area */
+.focusContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: #ffffff;
+  animation: focusFadeIn 0.2s ease-out;
+}
+
+.focusCloseButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #374151;
+  transition: background 0.2s, color 0.2s, transform 0.15s;
+  z-index: 10;
+}
+
+.focusCloseButton:hover {
+  background: #ffffff;
+  color: #111827;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.focusContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+@keyframes focusFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Input area */
+.inputArea {
+  padding: var(--spacing-5) var(--spacing-8);
+  background-color: #ffffff;
+}

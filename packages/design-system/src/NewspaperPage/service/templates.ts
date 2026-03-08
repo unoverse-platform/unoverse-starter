@@ -7,7 +7,7 @@ import { NewspaperPageTemplate } from "../util/types";
 
 export function loadDefaultTemplate(): NewspaperPageTemplate {
   return {
-    componentUrl: '/components/NewspaperPage.js?v=1772361383714',
+    componentUrl: '/components/NewspaperPage.js?v=1772955897488',
   };
 }
 
