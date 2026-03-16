@@ -9,14 +9,36 @@ const meta: Meta<typeof NewspaperPage> = {
     workflowSize: { width: 1060, height: 3300 },
   },
   argTypes: {
-    articles: {
+    mainArticles: {
       control: "object",
-      description: "Articles JSON — LLM-generated reporter stories (IDs 1–8, sequential)",
+      description: "Main Articles JSON — Articles 1 & 7 (main story + continuation)",
+      workflowInput: true,
+    },
+    obituary: {
+      control: "object",
+      description: "Obituary JSON — Article 8",
+      workflowInput: true,
+    },
+    featureArticles: {
+      control: "object",
+      description: "Feature Articles JSON — Articles 2, 4, 6 (local feature, cameo, filler)",
+      workflowInput: true,
+    },
+    newsArticles: {
+      control: "object",
+      description: "News Articles JSON — Articles 3 & 5 (red herring + secondary news)",
       workflowInput: true,
     },
     components: {
       control: "object",
-      description: "Components JSON — masthead, banner, sheriff, editor, horoscopes, bestsellers, classifieds",
+      description:
+        "Components JSON — masthead, banner, sheriff, editor, horoscopes, bestsellers, classifieds (optional, uses generic default)",
+      workflowInput: true,
+    },
+    images: {
+      control: "object",
+      description:
+        "Array of 4 image URLs — [article2_photo, article7_photo_left, article7_photo_right, article8_photo]",
       workflowInput: true,
     },
   },

@@ -8,8 +8,12 @@ export interface NewspaperPageConfig {
   focusable?: boolean;
   /** Focus Mode Label - name shown in chat input when this component is focused */
   focusLabel?: string;
-  articles?: object;
+  mainArticles?: object;
+  obituary?: object;
+  featureArticles?: object;
+  newsArticles?: object;
   components?: object;
+  images?: object;
 }
 
 export interface NewspaperPageOutput {

@@ -7,7 +7,7 @@ import { AutopsyReportTemplate } from "../util/types";
 
 export function loadDefaultTemplate(): AutopsyReportTemplate {
   return {
-    componentUrl: '/components/AutopsyReport.js?v=1772979658600',
+    componentUrl: '/components/AutopsyReport.js?v=1773586679056',
   };
 }
 

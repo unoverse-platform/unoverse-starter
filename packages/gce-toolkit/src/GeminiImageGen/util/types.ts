@@ -5,7 +5,6 @@
 export interface GeminiImageGenConfig {
   model: string;
   prompt: string;
-  numberOfImages?: number;
   fileName?: string;
   referenceImageUrl?: string;
 }

@@ -16,7 +16,7 @@ import type {
 } from "./types";
 import type { LayoutSlot, PageLayout } from "./layouts";
 import { FRONT_LAYOUT, BACK_LAYOUT } from "./layouts";
-import { defaultNewspaperContent, assembleNewspaper } from "./defaults";
+import { defaultNewspaperContent, assembleNewspaper, GENERIC_COMPONENTS } from "./defaults";
 
 /* ─────────────────────────────────────────────
  * MASTHEAD
@@ -116,21 +116,22 @@ function ShortNoteBlock({ article, variant = "dark" }: { article: Article; varia
  * PHOTO BLOCK
  * ───────────────────────────────────────────── */
 function PhotoBlockEl({ slot }: { slot: LayoutSlot }) {
+  const aspectRatio =
+    slot.photoAspect === "portrait"
+      ? "3/4"
+      : slot.photoAspect === "square"
+        ? "1/1"
+        : slot.photoAspect === "wide"
+          ? "3/1"
+          : "16/9";
+
   return (
     <div className={styles.photoBlock}>
-      <div
-        className={styles.photoPlaceholder}
-        style={{
-          aspectRatio:
-            slot.photoAspect === "portrait"
-              ? "3/4"
-              : slot.photoAspect === "square"
-                ? "1/1"
-                : slot.photoAspect === "wide"
-                  ? "3/1"
-                  : "16/9",
-        }}
-      />
+      {slot.photoUrl ? (
+        <img src={slot.photoUrl} alt={slot.photoCaption || ""} className={styles.photoImage} style={{ aspectRatio }} />
+      ) : (
+        <div className={styles.photoPlaceholder} style={{ aspectRatio }} />
+      )}
       {slot.photoCaption && <p className={styles.photoCaption}>{slot.photoCaption}</p>}
       {slot.photoByline && <p className={styles.photoCreditLine}>{slot.photoByline}</p>}
     </div>
@@ -328,9 +329,57 @@ function NewspaperPageSingle({ layout, content }: { layout: PageLayout; content:
 /* ─────────────────────────────────────────────
  * MAIN COMPONENT — one call = front + back page
  * ───────────────────────────────────────────── */
-export default function NewspaperPage({ articles, components }: NewspaperPageProps) {
-  const content: NewspaperInput =
-    articles && components ? assembleNewspaper(articles, components) : defaultNewspaperContent;
+export default function NewspaperPage({
+  mainArticles, // Prompt 1: articles 1, 7
+  obituary, // Prompt 2: article 8
+  featureArticles, // Prompt 3: articles 2, 4, 6
+  newsArticles, // Prompt 4: articles 3, 5
+  components, // Hardcoded or generated
+  images, // Array of 4 image URLs: [article2_photo, article7_photo_left, article7_photo_right, article8_photo]
+}: NewspaperPageProps) {
+  let content: NewspaperInput;
+
+  // Merge all 4 article arrays if provided
+  if (mainArticles || obituary || featureArticles || newsArticles) {
+    const allArticles = [
+      ...(mainArticles?.articles || []),
+      ...(obituary?.articles || []),
+      ...(featureArticles?.articles || []),
+      ...(newsArticles?.articles || []),
+    ];
+
+    // Articles 1 and 7 never render inline photos — their images
+    // are handled by standalone photo layout slots on the page
+    allArticles.forEach((article) => {
+      if (article.id === "1" || article.id === "7") {
+        article.hasPhoto = false;
+      }
+    });
+
+    // Map images to articles if provided
+    // images[0] -> article 2, images[1] -> back page photo slots, images[2] -> back page photo slots, images[3] -> article 8
+    if (images && images.length >= 4) {
+      allArticles.forEach((article) => {
+        if (article.id === "2" && images[0]) {
+          article.photoUrl = images[0];
+        } else if (article.id === "8" && images[3]) {
+          article.photoUrl = images[3];
+        }
+      });
+    }
+
+    // Merge provided components with generic defaults
+    // This allows LLM to generate partial components (e.g., just classifieds/horoscopes/bestsellers)
+    const finalComponents = {
+      ...GENERIC_COMPONENTS,
+      ...(components || {}),
+    };
+
+    content = assembleNewspaper({ articles: allArticles }, finalComponents);
+  } else {
+    // Fallback to default content for Storybook preview
+    content = defaultNewspaperContent;
+  }
 
   React.useEffect(() => {
     const fontId = "gravity-newspaper-fonts";
@@ -344,10 +393,38 @@ export default function NewspaperPage({ articles, components }: NewspaperPagePro
     }
   }, []);
 
+  // Inject image URLs and captions into back page photo slots
+  // Photo captions come from articles 1 and 7 (main articles LLM output)
+  // images[0] -> article 2 (handled above), images[1] -> left photo, images[2] -> right photo, images[3] -> article 8 (handled above)
+  const article1 = content.articles.find((a) => a.id === "1");
+  const article7 = content.articles.find((a) => a.id === "7");
+
+  const frontLayout = FRONT_LAYOUT;
+  const backLayout = {
+    ...BACK_LAYOUT,
+    slots: BACK_LAYOUT.slots.map((slot) => {
+      if (slot.name === "back_r1_photo_left") {
+        return {
+          ...slot,
+          ...(images && images[1] ? { photoUrl: images[1] } : {}),
+          ...(article1?.photoCaption ? { photoCaption: article1.photoCaption } : {}),
+        };
+      }
+      if (slot.name === "back_r1_photo_right") {
+        return {
+          ...slot,
+          ...(images && images[2] ? { photoUrl: images[2] } : {}),
+          ...(article7?.photoCaption ? { photoCaption: article7.photoCaption } : {}),
+        };
+      }
+      return slot;
+    }),
+  };
+
   return (
-    <div className={styles.document}>
-      <NewspaperPageSingle layout={FRONT_LAYOUT} content={content} />
-      <NewspaperPageSingle layout={BACK_LAYOUT} content={content} />
-    </div>
+    <>
+      <NewspaperPageSingle layout={frontLayout} content={content} />
+      <NewspaperPageSingle layout={backLayout} content={content} />
+    </>
   );
 }

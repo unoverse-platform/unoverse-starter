@@ -57,7 +57,6 @@ export async function generateImages(
     log.info("Calling Gemini Image Generation API", {
       model: config.model,
       promptLength: config.prompt.length,
-      numberOfImages: config.numberOfImages || 1,
     });
 
     // Initialize Gemini client

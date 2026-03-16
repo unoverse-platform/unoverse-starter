@@ -7,7 +7,7 @@ import { ProfileReportTemplate } from "../util/types";
 
 export function loadDefaultTemplate(): ProfileReportTemplate {
   return {
-    componentUrl: '/components/ProfileReport.js?v=1772979658755',
+    componentUrl: '/components/ProfileReport.js?v=1773586679215',
   };
 }
 

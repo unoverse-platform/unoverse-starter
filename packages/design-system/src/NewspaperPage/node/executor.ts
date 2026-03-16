@@ -33,11 +33,23 @@ export default class NewspaperPageExecutor extends PromiseNode {
     if (config.focusLabel !== undefined) {
       props.focusLabel = config.focusLabel;
     }
-    if (config.articles !== undefined) {
-      props.articles = config.articles;
+    if (config.mainArticles !== undefined) {
+      props.mainArticles = config.mainArticles;
+    }
+    if (config.obituary !== undefined) {
+      props.obituary = config.obituary;
+    }
+    if (config.featureArticles !== undefined) {
+      props.featureArticles = config.featureArticles;
+    }
+    if (config.newsArticles !== undefined) {
+      props.newsArticles = config.newsArticles;
     }
     if (config.components !== undefined) {
       props.components = config.components;
+    }
+    if (config.images !== undefined) {
+      props.images = config.images;
     }
 
     // Load template (just need componentUrl)

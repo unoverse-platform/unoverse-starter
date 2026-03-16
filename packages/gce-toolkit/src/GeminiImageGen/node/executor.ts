@@ -3,7 +3,11 @@
  * Handles image generation using Google's Gemini models
  */
 
-import { getPlatformDependencies, type NodeExecutionContext, type ValidationResult } from "@gravity-platform/plugin-base";
+import {
+  getPlatformDependencies,
+  type NodeExecutionContext,
+  type ValidationResult,
+} from "@gravity-platform/plugin-base";
 import { generateImages } from "../service";
 import { GeminiImageGenConfig, GeminiImageGenOutput } from "../util/types";
 
@@ -30,20 +34,13 @@ export default class GeminiImageGenExecutor extends PromiseNode<GeminiImageGenCo
       };
     }
 
-    if (config.numberOfImages && (config.numberOfImages < 1 || config.numberOfImages > 10)) {
-      return {
-        success: false,
-        error: "Number of images must be between 1 and 10",
-      };
-    }
-
     return { success: true };
   }
 
   protected async executeNode(
     inputs: Record<string, any>,
     config: GeminiImageGenConfig,
-    context: NodeExecutionContext
+    context: NodeExecutionContext,
   ): Promise<GeminiImageGenOutput> {
     // Build credential context for the service
     const credentialContext = this.buildCredentialContext(context);

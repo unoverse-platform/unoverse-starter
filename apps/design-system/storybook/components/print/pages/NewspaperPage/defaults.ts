@@ -36,6 +36,149 @@ export const HARDCODED_POSIE: Article = {
 };
 
 /* ─────────────────────────────────────────────
+ * GENERIC COMPONENTS — hardcoded defaults
+ *
+ * Use this as the default Components JSON when you
+ * don't want to generate these via LLM. Generic enough
+ * to work with any mystery setting.
+ * ───────────────────────────────────────────── */
+
+export const GENERIC_COMPONENTS: ComponentsPayload = {
+  masthead: {
+    paperName: "THE DAILY CHRONICLE",
+    tagline: "Your Trusted Source Since 1952",
+    date: "Sunday, March 15, 2026",
+    price: "$2.50",
+    edition: "Morning Edition",
+  },
+  breakingBanner: {
+    label: "INVESTIGATION UPDATE",
+    headline: "AUTHORITIES CONTINUE INVESTIGATION INTO SUSPICIOUS DEATH",
+  },
+  sheriffStatement: {
+    id: "sheriff",
+    label: "BREAKING",
+    headline: "Officials Issue Statement On Ongoing Investigation",
+    body: "Local authorities have requested all witnesses remain available for follow-up interviews in the coming days. A forensic perimeter has been established at the scene. The medical examiner's office expects to release preliminary findings within 48 to 72 hours, according to a spokesperson. The location remains closed to visitors until further notice. A press conference has been scheduled for Monday morning. Anyone with information is urged to contact the tip line. Detectives from the Major Crimes division have been assigned to the case.",
+  },
+  editorsNote: {
+    id: "editor",
+    label: "EDITOR'S NOTE",
+    headline: "Our Coverage Continues As The Story Develops",
+    body: "The Daily Chronicle is committed to fair, accurate, and responsible reporting of this developing story. We will update readers in print and online as new information is released by law enforcement. Tips may be submitted confidentially to our newsroom. All sources will be protected. We urge the community to cooperate fully with investigators and to refrain from speculation that could hinder the progress of the case. Additional reporting staff have been assigned to ensure comprehensive and timely coverage.",
+  },
+  horoscopes: [
+    {
+      sign: "Aries",
+      dates: "Mar 21–Apr 19",
+      text: "A confrontation you have been avoiding can no longer wait. The longer you delay, the more it costs you. Face it directly.",
+    },
+    {
+      sign: "Taurus",
+      dates: "Apr 20–May 20",
+      text: "Material concerns weigh heavily this week. Consider carefully whether the price — financial or otherwise — is truly worth paying.",
+    },
+    {
+      sign: "Gemini",
+      dates: "May 21–Jun 20",
+      text: "Two competing truths demand your attention. Only one is the real story. Take time to distinguish fact from feeling.",
+    },
+    {
+      sign: "Cancer",
+      dates: "Jun 21–Jul 22",
+      text: "Family loyalties are tested in unexpected ways. Examine where your allegiances truly lie before events make the choice for you.",
+    },
+    {
+      sign: "Leo",
+      dates: "Jul 23–Aug 22",
+      text: "Your public image has long mattered deeply — perhaps too much. What are you protecting, and at what cost?",
+    },
+    {
+      sign: "Virgo",
+      dates: "Aug 23–Sep 22",
+      text: "Details you overlooked are returning to significance. Go back and look again. Something important was hiding in plain sight.",
+    },
+    {
+      sign: "Libra",
+      dates: "Sep 23–Oct 22",
+      text: "Balance is elusive when secrets tip the scales. The path to equilibrium runs through honesty, even uncomfortable honesty.",
+    },
+    {
+      sign: "Scorpio",
+      dates: "Oct 23–Nov 21",
+      text: "Secrets buried for months may resurface with force. Prepare yourself. The reckoning has been building quietly.",
+    },
+    {
+      sign: "Sagittarius",
+      dates: "Nov 22–Dec 21",
+      text: "Your instincts have been right all along. Trust what you already suspect. The evidence is there if you look.",
+    },
+    {
+      sign: "Capricorn",
+      dates: "Dec 22–Jan 19",
+      text: "Ambition casts a shadow. Examine your motives with unusual care before taking the next step.",
+    },
+    {
+      sign: "Aquarius",
+      dates: "Jan 20–Feb 18",
+      text: "An unexpected alliance proves more valuable than anticipated. Not all friendships are what they seem on the surface.",
+    },
+    {
+      sign: "Pisces",
+      dates: "Feb 19–Mar 20",
+      text: "Escape is tempting. But the truth follows wherever you go. Better to turn and face it here.",
+    },
+  ],
+  bestsellers: {
+    category: "Fiction",
+    books: [
+      { rank: 1, title: "The Inheritance Games", author: "Jennifer Lynn Barnes" },
+      { rank: 2, title: "A Good Girl's Guide to Murder", author: "Holly Jackson" },
+      { rank: 3, title: "14 Ways to Die", author: "Vincent Chu" },
+      { rank: 4, title: "Everyone In My Family Has Killed Someone", author: "Benjamin Stevenson" },
+      { rank: 5, title: "The Family Game", author: "Catherine Steadman" },
+      { rank: 6, title: "The Maid", author: "Nita Prose" },
+      { rank: 7, title: "Arsenic and Adobo", author: "Mia P. Manansala" },
+      { rank: 8, title: "The House in the Pines", author: "Ana Reyes" },
+      { rank: 9, title: "The Last Thing He Told Me", author: "Laura Dave" },
+      { rank: 10, title: "The Silent Patient", author: "Alex Michaelides" },
+    ],
+  },
+  classifieds: [
+    {
+      id: "cl_1",
+      category: "SERVICES",
+      text: "Debt consolidation — fast, discreet, confidential. No credit check required. Free initial consultation. Call today.",
+    },
+    {
+      id: "cl_2",
+      category: "FOR SALE",
+      text: "Vintage collection — over 200 items including rare reserves. Climate-controlled storage. Serious inquiries only. By appointment.",
+    },
+    {
+      id: "cl_3",
+      category: "LOST & FOUND",
+      text: "Small gold locket, initials engraved on back. Lost downtown Saturday evening. Substantial reward offered, no questions asked.",
+    },
+    {
+      id: "cl_4",
+      category: "EMPLOYMENT",
+      text: "Manager wanted for established property. Must have 5+ years experience and strong references. Live-in quarters available.",
+    },
+    {
+      id: "cl_5",
+      category: "SERVICES",
+      text: "Private investigation — discreet, licensed, and bonded. Background checks, surveillance, missing persons. 20 years experience. Free consultation.",
+    },
+    {
+      id: "cl_6",
+      category: "RENTALS",
+      text: "Furnished cottage. One bedroom, updated kitchen, excellent views. $2,800/mo, 12-month lease minimum. No pets, no smoking. References required.",
+    },
+  ],
+};
+
+/* ─────────────────────────────────────────────
  * STORYBOOK SAMPLE — wine murder scenario for preview
  *
  * This is example content only. In production, the LLM
@@ -44,17 +187,8 @@ export const HARDCODED_POSIE: Article = {
  * ───────────────────────────────────────────── */
 
 export const defaultNewspaperContent: NewspaperInput = {
-  masthead: {
-    paperName: "THE NAPA VALLEY REGISTER",
-    tagline: "Serving Wine Country Since 1952",
-    date: "Sunday, October 13, 2024",
-    price: "$2.50",
-    edition: "Morning Edition",
-  },
-  breakingBanner: {
-    label: "INVESTIGATION UPDATE",
-    headline: "INVESTIGATION DEEPENS AS NEW DETAILS EMERGE FROM BLACKWELL ESTATE DEATH",
-  },
+  masthead: GENERIC_COMPONENTS.masthead,
+  breakingBanner: GENERIC_COMPONENTS.breakingBanner,
 
   /* ── ARTICLES ── */
   articles: [

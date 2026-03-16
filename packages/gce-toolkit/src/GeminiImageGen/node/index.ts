@@ -68,14 +68,6 @@ export function createNodeDefinition(): EnhancedNodeDefinition {
             editable: true,
           },
         },
-        numberOfImages: {
-          type: "number",
-          title: "Number of Images",
-          description: "Number of images to generate (1-10)",
-          default: 1,
-          minimum: 1,
-          maximum: 10,
-        },
         fileName: {
           type: "string",
           title: "File Name Prefix",

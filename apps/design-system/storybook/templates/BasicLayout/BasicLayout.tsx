@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect, useRef } from "react";
-import { renderComponent } from "../core";
+import { renderComponent, useStreamingState } from "../core";
 import type { BasicLayoutProps } from "./types";
 import styles from "./BasicLayout.module.css";
 
@@ -12,6 +12,7 @@ export default function BasicLayout(props: BasicLayoutProps) {
   const { client, autoScroll = true } = props;
 
   const history = client.history.entries;
+  useStreamingState(history);
   const endRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -50,11 +51,7 @@ export default function BasicLayout(props: BasicLayoutProps) {
           return components.map((component) => {
             if (!component.Component) return null;
 
-            return (
-              <div key={component.id}>
-                {renderComponent(component, { streamingState }, client?.openFocus)}
-              </div>
-            );
+            return <div key={component.id}>{renderComponent(component, { streamingState }, client?.openFocus)}</div>;
           });
         })}
         <div ref={endRef} />

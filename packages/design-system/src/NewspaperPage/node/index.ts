@@ -42,14 +42,34 @@ export function createNodeDefinition(): EnhancedNodeDefinition {
                         "focusable": true
                   }
             },
-            "articles": {
+            "mainArticles": {
                   "type": "object",
-                  "title": "Articles JSON — LLM-generated reporter stories (IDs 1–8, sequential)",
+                  "title": "Main Articles JSON — Articles 1 & 7 (main story + continuation)",
+                  "ui:field": "template"
+            },
+            "obituary": {
+                  "type": "object",
+                  "title": "Obituary JSON — Article 8",
+                  "ui:field": "template"
+            },
+            "featureArticles": {
+                  "type": "object",
+                  "title": "Feature Articles JSON — Articles 2, 4, 6 (local feature, cameo, filler)",
+                  "ui:field": "template"
+            },
+            "newsArticles": {
+                  "type": "object",
+                  "title": "News Articles JSON — Articles 3 & 5 (red herring + secondary news)",
                   "ui:field": "template"
             },
             "components": {
                   "type": "object",
-                  "title": "Components JSON — masthead, banner, sheriff, editor, horoscopes, bestsellers, classifieds",
+                  "title": "Components JSON — masthead, banner, sheriff, editor, horoscopes, bestsellers, classifieds (optional, uses generic default)",
+                  "ui:field": "template"
+            },
+            "images": {
+                  "type": "object",
+                  "title": "Array of 4 image URLs — [article2_photo, article7_photo_left, article7_photo_right, article8_photo]",
                   "ui:field": "template"
             }
       },

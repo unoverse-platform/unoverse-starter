@@ -32,31 +32,38 @@ export function createNodeDefinition(): EnhancedNodeDefinition {
       { name: "output", type: NodeInputType.ANY },
       { name: "ids", type: NodeInputType.OBJECT },
     ],
-  // Schema for the node configuration UI
-  configSchema: {
-    type: "object",
-    properties: {
-      code: {
-        type: "object",
-        title: "Code",
-        description: "JS Code to transform data",
-        default: "",
-        "ui:field": "template",
+    // Schema for the node configuration UI
+    configSchema: {
+      type: "object",
+      properties: {
+        code: {
+          type: "object",
+          title: "Code",
+          description: "JS Code to transform data",
+          default: "",
+          "ui:field": "template",
+        },
+        generateIds: {
+          type: "boolean",
+          title: "Generate IDs",
+          description: "Generate content IDs",
+          default: false,
+          "ui:widget": "toggle",
+        },
+        saveToContext: {
+          type: "boolean",
+          title: "Save to Context",
+          description: "Save output to workflow context for template access",
+          default: false,
+          "ui:widget": "toggle",
+        },
       },
-      generateIds: {
-        type: "boolean",
-        title: "Generate IDs",
-        description: "Generate content IDs",
-        default: false,
-        "ui:widget": "toggle",
-      },
+      required: ["code"],
     },
-    required: ["code"],
-  },
-  // Declare capabilities
-  capabilities: {
-    isTrigger: false,
-  },
+    // Declare capabilities
+    capabilities: {
+      isTrigger: false,
+    },
   };
 }
 

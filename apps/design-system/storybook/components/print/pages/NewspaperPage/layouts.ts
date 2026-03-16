@@ -34,6 +34,8 @@ export interface LayoutSlot {
   photoCaption?: string;
   photoByline?: string;
   photoAspect?: "landscape" | "portrait" | "square" | "wide";
+  /** For photo slots — dynamic image URL */
+  photoUrl?: string;
 }
 
 export interface PageLayout {

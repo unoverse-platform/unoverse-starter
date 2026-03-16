@@ -124,6 +124,10 @@ export interface NewspaperInput {
 }
 
 export interface NewspaperPageProps {
-  articles?: ArticlesPayload;
-  components?: ComponentsPayload;
+  mainArticles?: ArticlesPayload; // Prompt 1: articles 1, 7
+  obituary?: ArticlesPayload; // Prompt 2: article 8
+  featureArticles?: ArticlesPayload; // Prompt 3: articles 2, 4, 6
+  newsArticles?: ArticlesPayload; // Prompt 4: articles 3, 5
+  components?: ComponentsPayload; // Hardcoded or generated
+  images?: string[]; // Array of 4 image URLs in order: [article2_photo, article7_photo_left, article7_photo_right, article8_photo]
 }

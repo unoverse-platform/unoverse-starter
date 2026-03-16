@@ -10,8 +10,8 @@ export default function PDFViewer({ url }: PDFViewerProps) {
     return <div className={styles.placeholder}>No PDF URL provided</div>;
   }
 
-  // Add #view=FitH to hide sidebar and fit horizontally
-  const pdfUrl = `${url}#toolbar=0&navpanes=0&view=FitH`;
+  // Tabloid is 11x17" portrait - use 100% zoom for proper display
+  const pdfUrl = `${url}#toolbar=0&navpanes=0&zoom=100`;
 
   const handleOpenInNewTab = () => {
     window.open(url, "_blank");
