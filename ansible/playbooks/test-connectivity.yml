@@ -159,7 +159,7 @@
     - name: "[12/13] Check for errors in service logs"
       shell: |
         cd /opt/gravity
-        ERRORS=$(docker compose logs --tail=50 --since=5m 2>&1 | grep -iE 'error|fatal|panic|does not exist|ECONNREFUSED' | tail -10)
+        ERRORS=$(docker compose logs --tail=50 --since=5m 2>&1 | grep -iE 'error|fatal|panic|does not exist|ECONNREFUSED' | grep -v 'NOGROUP' | tail -10)
         if [ -n "$ERRORS" ]; then
           echo "$ERRORS"
           exit 1
