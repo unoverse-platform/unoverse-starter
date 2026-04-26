@@ -41,6 +41,7 @@ export interface StreamResponseProcessor {
   getTextOutput(): string;
   getTranscription(): string;
   getAssistantResponse(): string;
+  emitFinal(): void;
   cleanup(): void;
   handleError(error: any): Promise<void>;
 }
@@ -65,7 +66,7 @@ export class NovaSpeechResponseProcessor implements StreamResponseProcessor {
     sessionId: string,
     promptId: string,
     loggerName: string = "ResponseProcessor",
-    private emit?: (output: any) => void
+    private emit?: (output: any) => void,
   ) {
     this.logger = createLogger(loggerName);
 
@@ -184,7 +185,7 @@ export class NovaSpeechResponseProcessor implements StreamResponseProcessor {
 
     // Handle audio content start
     if (ContentHandler.isAudioContent(event)) {
-      this.audioHandler.handleAudioStart();
+      await this.audioHandler.handleAudioStart();
     }
   }
 
@@ -326,6 +327,10 @@ export class NovaSpeechResponseProcessor implements StreamResponseProcessor {
 
   getAudioOutput(): string | undefined {
     return this.audioHandler.getAudioOutput();
+  }
+
+  emitFinal(): void {
+    this.textAccumulator.emitFinal();
   }
 
   getUsageStats(): StreamUsageStats {

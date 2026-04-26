@@ -19,6 +19,8 @@ export interface CallAvatarProps {
   isSpeaking?: boolean;
   /** Whether currently connecting */
   isConnecting?: boolean;
+  /** Whether the call is active (connected or connecting) — hides rings when ended */
+  isActive?: boolean;
   /** Size variant */
   size?: "small" | "medium" | "large";
 }
@@ -28,6 +30,7 @@ export function CallAvatar({
   name = "Assistant",
   isSpeaking = false,
   isConnecting = false,
+  isActive = false,
   size = "large",
 }: CallAvatarProps) {
   const initials = name
@@ -43,10 +46,10 @@ export function CallAvatar({
         isConnecting ? styles.connecting : ""
       }`}
     >
-      {/* Outer glow rings */}
-      <div className={styles.glowRing1} />
-      <div className={styles.glowRing2} />
-      <div className={styles.glowRing3} />
+      {/* Outer glow rings — only when call is active */}
+      {isActive && <div className={styles.glowRing1} />}
+      {isActive && <div className={styles.glowRing2} />}
+      {isActive && <div className={styles.glowRing3} />}
 
       {/* Avatar */}
       <div className={styles.avatar}>
@@ -57,8 +60,8 @@ export function CallAvatar({
         )}
       </div>
 
-      {/* Audio wave indicator */}
-      {isSpeaking && (
+      {/* Audio wave indicator — only when active and speaking */}
+      {isActive && isSpeaking && (
         <div className={styles.audioWave}>
           <div className={styles.bar} />
           <div className={styles.bar} />

@@ -12,9 +12,10 @@
  * - Call duration timer
  */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useVoiceCall } from "./hooks/useVoiceCall";
 import { CallAvatar, CallControls, ConnectionStatus } from "./components";
+import type { ResponseComponent, AssistantResponse } from "../core/types";
 import type { SABVoiceLayoutProps } from "./types";
 import styles from "./SABVoiceLayout.module.css";
 
@@ -34,6 +35,53 @@ export default function SABVoiceLayout(props: SABVoiceLayoutProps) {
     _storybook_listening = false,
   } = props;
 
+  // Focus mode — display controlled locally, but driven by client.focusState changes
+  // client.focusState is set by processComponentInit (via openFocus) on every COMPONENT_INIT,
+  // including repeat calls for the same component, which is how re-open after close works.
+  const [focusedComponent, setFocusedComponent] = useState<ResponseComponent | null>(null);
+  const isFocusOpen = focusedComponent !== null;
+
+  const history = client?.history?.entries ?? [];
+  const focusedComponentId = client?.focusState?.focusedComponentId ?? null;
+
+  // When focusState points to a component ID, find it in history and open the panel.
+  // Depends on both focusedComponentId AND history because openFocus and addComponentToResponse
+  // are async — history may not yet contain the component when focusedComponentId first changes.
+  useEffect(() => {
+    if (!focusedComponentId) return;
+    for (const entry of history) {
+      if (entry.type !== "assistant_response") continue;
+      for (const component of (entry as AssistantResponse).components) {
+        if (component.id === focusedComponentId) {
+          setFocusedComponent(component);
+          return;
+        }
+      }
+    }
+  }, [focusedComponentId, history]);
+
+  const closeFocus = () => {
+    setFocusedComponent(null);
+    client?.closeFocus?.();
+  };
+
+  // Notify the outer drawer to expand when focus panel opens, collapse when it closes
+  useEffect(() => {
+    if (isFocusOpen) {
+      window.dispatchEvent(
+        new CustomEvent("gravity:layout", {
+          detail: { type: "expand", width: "85vw" },
+        }),
+      );
+    } else {
+      window.dispatchEvent(
+        new CustomEvent("gravity:layout", {
+          detail: { type: "collapse" },
+        }),
+      );
+    }
+  }, [isFocusOpen]);
+
   // Voice call hook - uses client.audio for all audio operations
   const {
     connectionStatus,
@@ -41,6 +89,8 @@ export default function SABVoiceLayout(props: SABVoiceLayoutProps) {
     isAssistantSpeaking,
     isUserSpeaking,
     isMuted,
+    isLookingUp,
+    lookupToolName,
     callDuration,
     startCall,
     endCall,
@@ -83,12 +133,12 @@ export default function SABVoiceLayout(props: SABVoiceLayoutProps) {
           data: {},
           componentId: "SABVoiceLayout",
         },
-      })
+      }),
     );
   };
 
   return (
-    <div className={styles.container}>
+    <div className={isFocusOpen ? styles.splitContainer : styles.container}>
       {/* Back button */}
       <button type="button" onClick={handleBackClick} className={styles.backButton} aria-label="Back to chat">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={styles.backIcon}>
@@ -100,61 +150,106 @@ export default function SABVoiceLayout(props: SABVoiceLayoutProps) {
         </svg>
       </button>
 
-      {/* Background effects */}
-      <div className={styles.backgroundGradient} />
-      <div className={styles.backgroundOrb1} />
-      <div className={styles.backgroundOrb2} />
+      {/* ── Left: voice panel ── */}
+      <div className={isFocusOpen ? styles.voicePanel : styles.voicePanelFull}>
+        {/* Background effects */}
+        <div className={styles.backgroundGradient} />
+        <div className={styles.backgroundOrb1} />
+        <div className={styles.backgroundOrb2} />
 
-      {/* Main content */}
-      <div className={styles.content}>
-        {/* Header */}
-        <div className={styles.header}>
-          <h1 className={styles.brandName}>{brandName}</h1>
-          <ConnectionStatus status={displayStatus} duration={callDuration} error={error} />
-        </div>
-
-        {/* Avatar section */}
-        <div className={styles.avatarSection}>
-          <CallAvatar
-            avatarUrl={logoUrl}
-            name={assistantName}
-            isSpeaking={displaySpeaking}
-            isConnecting={displayStatus === "connecting"}
-            size="large"
-          />
-          <div className={styles.assistantInfo}>
-            <h2 className={styles.assistantName}>{assistantName}</h2>
-            <p className={styles.assistantSubtitle}>{assistantSubtitle}</p>
+        {/* Main content */}
+        <div className={styles.content}>
+          {/* Header */}
+          <div className={styles.header}>
+            <h1 className={styles.brandName}>{brandName}</h1>
+            <ConnectionStatus status={displayStatus} duration={callDuration} error={error} />
           </div>
-        </div>
 
-        {/* User speaking indicator - wrapper reserves space to prevent layout shift */}
-        <div className={styles.userSpeakingWrapper}>
-          {displayListening && (
-            <div className={styles.userSpeaking}>
-              <span className={styles.userSpeakingDot} />
-              <span>You are speaking...</span>
+          {/* Avatar section */}
+          <div className={styles.avatarSection}>
+            <CallAvatar
+              avatarUrl={logoUrl}
+              name={assistantName}
+              isSpeaking={displaySpeaking}
+              isConnecting={displayStatus === "connecting"}
+              isActive={displayActive || displayStatus === "connecting"}
+              size="large"
+            />
+            <div className={styles.assistantInfo}>
+              <h2 className={styles.assistantName}>{assistantName}</h2>
+              <p className={styles.assistantSubtitle}>{assistantSubtitle}</p>
             </div>
+          </div>
+
+          {/* Status indicator - shows knowledge-base lookup OR user speaking */}
+          <div className={styles.userSpeakingWrapper}>
+            {isLookingUp ? (
+              <div className={styles.lookingUp}>
+                <span className={styles.lookingUpDot} />
+                <span className={styles.lookingUpDot} />
+                <span className={styles.lookingUpDot} />
+                <span>
+                  {lookupToolName === "findIntent"
+                    ? "Searching the knowledge base..."
+                    : `Looking up ${lookupToolName ?? "information"}...`}
+                </span>
+              </div>
+            ) : displayListening ? (
+              <div className={styles.userSpeaking}>
+                <span className={styles.userSpeakingDot} />
+                <span>You are speaking...</span>
+              </div>
+            ) : null}
+          </div>
+
+          {/* Controls */}
+          <div className={styles.controls}>
+            <CallControls
+              isCallActive={displayActive}
+              isMuted={isMuted}
+              isConnecting={displayStatus === "connecting"}
+              onStartCall={startCall}
+              onEndCall={endCall}
+              onToggleMute={toggleMute}
+            />
+          </div>
+
+          {/* Instructions */}
+          {!displayActive && (
+            <p className={styles.instructions}>
+              Tap the button above to start a voice conversation with {assistantName}
+            </p>
           )}
         </div>
-
-        {/* Controls */}
-        <div className={styles.controls}>
-          <CallControls
-            isCallActive={displayActive}
-            isMuted={isMuted}
-            isConnecting={displayStatus === "connecting"}
-            onStartCall={startCall}
-            onEndCall={endCall}
-            onToggleMute={toggleMute}
-          />
-        </div>
-
-        {/* Instructions */}
-        {!displayActive && (
-          <p className={styles.instructions}>Tap the button above to start a voice conversation with {assistantName}</p>
-        )}
       </div>
+      {/* end voicePanel */}
+
+      {/* ── Right: focus / streamed component panel ── */}
+      {isFocusOpen && focusedComponent && (
+        <div className={styles.focusPanel}>
+          <button
+            type="button"
+            onClick={closeFocus}
+            className={styles.focusCloseButton}
+            aria-label="Close panel"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+          <div className={styles.focusPanelContent}>
+            {focusedComponent.Component && (
+              <focusedComponent.Component
+                key={focusedComponent.id}
+                {...focusedComponent.props}
+                nodeId={focusedComponent.nodeId}
+                chatId={focusedComponent.chatId}
+                displayState="focused"
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

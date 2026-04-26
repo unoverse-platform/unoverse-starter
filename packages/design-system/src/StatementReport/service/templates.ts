@@ -7,7 +7,7 @@ import { StatementReportTemplate } from "../util/types";
 
 export function loadDefaultTemplate(): StatementReportTemplate {
   return {
-    componentUrl: '/components/StatementReport.js?v=1773906074521',
+    componentUrl: '/components/StatementReport.js?v=1777191292300',
   };
 }
 

@@ -6,6 +6,7 @@ import { BedrockRuntimeClient, InvokeModelWithBidirectionalStreamCommand } from 
 import { getPlatformDependencies } from "@gravity-platform/plugin-base";
 import { EventQueue } from "./EventQueue";
 import { NovaSpeechSession } from "./SessionManager";
+import { NOVA_MODEL_ID } from "../../../constants";
 
 const { createLogger } = getPlatformDependencies();
 const logger = createLogger("StreamHandler");
@@ -21,9 +22,8 @@ export class StreamHandler {
    */
   async startStream(
     session: NovaSpeechSession,
-    config: { modelId?: string },
     eventQueue: EventQueue,
-    outputHandler: (response: any, session: NovaSpeechSession) => Promise<void>
+    outputHandler: (response: any, session: NovaSpeechSession) => Promise<void>,
   ): Promise<void> {
     try {
       // console.log("\n📤 STARTING NOVA SPEECH STREAM"); // Commented out - too verbose
@@ -36,14 +36,14 @@ export class StreamHandler {
       // EventQueue already implements async iterator that yields { chunk: { bytes: Uint8Array } }
       logger.info("🚀 Sending InvokeModelWithBidirectionalStreamCommand...", {
         sessionId: session.sessionId,
-        modelId: config.modelId || "amazon.nova-sonic-v1:0",
+        modelId: NOVA_MODEL_ID,
       });
 
       const response = await this.bedrockClient.send(
         new InvokeModelWithBidirectionalStreamCommand({
-          modelId: config.modelId || "amazon.nova-sonic-v1:0",
+          modelId: NOVA_MODEL_ID,
           body: eventQueue,
-        })
+        }),
       );
 
       logger.info("✅ Got response from Nova, processing output stream...", {

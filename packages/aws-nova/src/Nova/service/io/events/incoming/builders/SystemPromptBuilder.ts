@@ -68,8 +68,8 @@ export class SystemPromptBuilder {
    * Creates a text input event containing the system prompt
    */
   static createTextInput(promptName: string, contentName: string, content: string): TextInputEvent {
-    // Log the actual content length to debug token counting issue
-    console.log(`📊 SYSTEM PROMPT STATS: Length=${content.length}, Preview="${content.substring(0, 100)}..."`);
+    // eslint-disable-next-line no-console
+    console.log(`[SystemPromptBuilder] System prompt: ${content.length} chars`);
 
     const event: TextInputEvent = {
       event: {
@@ -105,7 +105,7 @@ export class SystemPromptBuilder {
    */
   static buildSystemPromptEvents(
     promptName: string,
-    systemPrompt: string
+    systemPrompt: string,
   ): Array<ContentStartEvent | TextInputEvent | ContentEndEvent> {
     const contentName = uuid();
 

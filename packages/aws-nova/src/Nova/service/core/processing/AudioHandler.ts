@@ -43,26 +43,29 @@ export class AudioHandler {
 
   /**
    * Handle audio content start - send NOVA_SPEECH_STARTED
+   *
+   * Awaited so that SPEECH_STARTED reaches the client before any audio
+   * chunks, giving the client time to mute the mic and avoid echo on the
+   * first milliseconds of assistant speech.
    */
-  handleAudioStart(): void {
+  async handleAudioStart(): Promise<void> {
     const { metadata } = this.context;
     const conversationId = metadata.conversationId;
 
-    // console.log("🔊 Assistant started speaking - publishing SPEECH_STARTED state"); // Commented out - too verbose
     this.audioState.generationComplete = false;
 
     const publisher = AudioPublisherFactory.getPublisher(conversationId);
 
-    publisher
-      .publishState({
+    try {
+      await publisher.publishState({
         state: "SPEECH_STARTED",
         conversationId,
         metadata,
         message: "Assistant started speaking - microphone should be muted",
-      })
-      .catch((error: any) => {
-        logger.error("Failed to publish SPEECH_STARTED", { error: error.message });
       });
+    } catch (error: any) {
+      logger.error("Failed to publish SPEECH_STARTED", { error: error.message });
+    }
   }
 
   /**

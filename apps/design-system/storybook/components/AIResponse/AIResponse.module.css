@@ -61,6 +61,9 @@
 }
 
 /* Text content inherits prose styles from global prose.css via the 'prose' class */
+.textContent {
+  max-width: 620px !important;
+}
 
 .cursor {
   display: inline-block;

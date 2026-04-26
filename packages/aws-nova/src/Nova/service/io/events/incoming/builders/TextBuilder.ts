@@ -75,7 +75,12 @@ export class TextBuilder {
    * Creates a text input event containing the user message
    */
   static createTextInput(promptName: string, contentName: string, content: string): TextInputEvent {
-    console.log(`📊 TEXT INPUT: Length=${content.length}, Content="${content}"`);
+    // eslint-disable-next-line no-console
+    console.log(
+      `[TextBuilder] Text input: ${content.length} chars, preview="${content.substring(0, 60).replace(/\n/g, " ")}${
+        content.length > 60 ? "..." : ""
+      }"`,
+    );
 
     const event: TextInputEvent = {
       event: {
@@ -112,7 +117,7 @@ export class TextBuilder {
    */
   static buildTextInputEvents(
     promptName: string,
-    text: string
+    text: string,
   ): Array<TextContentStartEvent | TextInputEvent | TextContentEndEvent> {
     const contentName = uuid();
 

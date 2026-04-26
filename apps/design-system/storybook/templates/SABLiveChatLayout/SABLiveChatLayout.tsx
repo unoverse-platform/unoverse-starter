@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo, useCallback } from "react";
-import { StreamingState } from "../core";
+import { StreamingState, useFocusedComponent } from "../core";
 import type { AssistantResponse } from "../core";
 import ChatInput from "../../components/ChatInput";
 import { ChatHistory } from "./components/ChatHistory";
@@ -39,13 +39,16 @@ export default function SABLiveChatLayout(props: SABLiveChatLayoutProps) {
   // Access history directly from client
   const history = client.history.entries;
 
+  // Focus panel — streamed component renders on the right
+  const { isFocusOpen, focusedComponent, closeFocus } = useFocusedComponent(history, client);
+
   // Wrap sendMessage to also trigger streaming state
   const sendToWorkflow = useCallback(
     (message: string) => {
       onStateChange?.({ isStreaming: true });
       client.sendMessage(message);
     },
-    [client, onStateChange]
+    [client, onStateChange],
   );
 
   // Callback to send agent messages through server pipeline
@@ -66,7 +69,7 @@ export default function SABLiveChatLayout(props: SABLiveChatLayoutProps) {
         })),
       });
     },
-    [client]
+    [client],
   );
 
   // Callback when chat ends - emit action for client to handle (like Card2 pattern)
@@ -81,7 +84,7 @@ export default function SABLiveChatLayout(props: SABLiveChatLayoutProps) {
           data: { reason: "user_ended" },
           componentId: "SABLiveChatLayout",
         },
-      })
+      }),
     );
   }, [onLiveAgentModeChange]);
 
@@ -115,7 +118,7 @@ export default function SABLiveChatLayout(props: SABLiveChatLayoutProps) {
         client.sendMessage(message);
       }
     },
-    [amazonConnect, client]
+    [amazonConnect, client],
   );
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -124,7 +127,7 @@ export default function SABLiveChatLayout(props: SABLiveChatLayoutProps) {
   // Check if any response is currently streaming
   const isStreaming = useMemo(() => {
     return history.some(
-      (entry) => entry.type === "assistant_response" && entry.streamingState === StreamingState.STREAMING
+      (entry) => entry.type === "assistant_response" && entry.streamingState === StreamingState.STREAMING,
     );
   }, [history]);
 
@@ -161,8 +164,8 @@ export default function SABLiveChatLayout(props: SABLiveChatLayoutProps) {
   const isInputDisabled = isStreaming || amazonConnect.isConnecting;
 
   return (
-    <div className={styles.container}>
-      <div className={styles.chatWindow}>
+    <div className={isFocusOpen ? styles.splitContainer : styles.container}>
+      <div className={isFocusOpen ? styles.chatWindowSplit : styles.chatWindow}>
         {/* Header with logo */}
         <div className={styles.header}>
           <div className={styles.headerBrand}>
@@ -213,6 +216,32 @@ export default function SABLiveChatLayout(props: SABLiveChatLayoutProps) {
           </div>
         </div>
       </div>
+
+      {/* ── Right: focus / streamed component panel ── */}
+      {isFocusOpen && focusedComponent && (
+        <div className={styles.focusPanel}>
+          <button
+            type="button"
+            onClick={() => closeFocus?.()}
+            className={styles.focusCloseButton}
+            aria-label="Close panel"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+          <div className={styles.focusPanelContent}>
+            {focusedComponent.Component && (
+              <focusedComponent.Component
+                {...focusedComponent.props}
+                nodeId={focusedComponent.nodeId}
+                chatId={focusedComponent.chatId}
+                displayState="focused"
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

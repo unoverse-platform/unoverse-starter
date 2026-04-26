@@ -133,27 +133,20 @@ export class AudioEventBuilder {
 
     // Process audio data
     let audioBuffer: Buffer;
-    let originalBase64Length = 0;
 
     if (Buffer.isBuffer(audioData)) {
       audioBuffer = audioData;
     } else if (typeof audioData === "string") {
       // Assume base64 string, convert to buffer
-      originalBase64Length = audioData.length;
       audioBuffer = Buffer.from(audioData, "base64");
 
       // Validate the audio format (16-bit PCM should have even byte count)
       if (audioBuffer.length % 2 !== 0) {
-        console.warn(`⚠️ Audio buffer has odd byte count (${audioBuffer.length}), may not be valid 16-bit PCM`);
+        // eslint-disable-next-line no-console
+        console.warn(
+          `[AudioEventBuilder] Audio buffer has odd byte count (${audioBuffer.length}), may not be valid 16-bit PCM`,
+        );
       }
-
-      // Log audio stats for debugging
-      console.log(`📊 Audio validation:`, {
-        originalBase64Length,
-        decodedBufferLength: audioBuffer.length,
-        expectedSamples: audioBuffer.length / 2, // 16-bit = 2 bytes per sample
-        durationSeconds: audioBuffer.length / 2 / 16000, // 16kHz sample rate
-      });
     } else {
       throw new Error("audioData must be a Buffer or base64 string");
     }
@@ -164,7 +157,12 @@ export class AudioEventBuilder {
     const frameSize = 1024; // 32ms frames
     const chunks = this.chunkAudioBuffer(audioBuffer, frameSize);
 
-    console.log(`📦 Creating ${chunks.length} audio frames of ~32ms each (${frameSize} bytes per frame)`);
+    // Single concise per-utterance summary (decoded bytes, duration, frame count)
+    const durationSec = (audioBuffer.length / 2 / 16000).toFixed(2);
+    // eslint-disable-next-line no-console
+    console.log(
+      `[AudioEventBuilder] User audio: ${audioBuffer.length} bytes (${durationSec}s) -> ${chunks.length} frames @ ${frameSize}B`,
+    );
 
     // Verify total chunk size matches original
     const totalChunkBytes = chunks.reduce((sum, chunk) => {
@@ -173,7 +171,7 @@ export class AudioEventBuilder {
 
     if (totalChunkBytes !== audioBuffer.length) {
       console.error(
-        `❌ Audio chunking error: original ${audioBuffer.length} bytes, chunks total ${totalChunkBytes} bytes`
+        `❌ Audio chunking error: original ${audioBuffer.length} bytes, chunks total ${totalChunkBytes} bytes`,
       );
     }
 

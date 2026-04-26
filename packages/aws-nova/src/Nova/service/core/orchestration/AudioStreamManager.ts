@@ -9,7 +9,6 @@ import { NovaSpeechSession } from "../streaming";
 import { WebSocketAudioPublisher } from "../../io/publishers/WebSocketAudioPublisher";
 import { EventMetadataProcessor, EventMetadata } from "../../io/events/metadata/EventMetadataProcessor";
 import {
-  AudioEventBuilder,
   EndEventBuilder,
   ToolResponseBuilder,
   TextBuilder,
@@ -228,29 +227,10 @@ export class AudioStreamManager {
     }
   }
 
-  private setupCompletionHandler(session: NovaSpeechSession, eventMetadata: EventMetadata, promptName: string): void {
-    // Cast to the actual implementation type which has onCompletionEnd
-    const processor = session.responseProcessor as any;
-    if (processor.onCompletionEnd !== undefined) {
-      processor.onCompletionEnd = () => {
-        // this.logger.info("✅ Completion received, sending promptEnd", { // Commented out - too verbose
-        //   sessionId: session.sessionId,
-        //   promptName,
-        // });
-
-        const promptEndEvent = EndEventBuilder.createPromptEnd(promptName);
-        const promptEndWithMetadata = EventMetadataProcessor.addMetadata(promptEndEvent, eventMetadata);
-        session.eventQueue?.enqueue(promptEndWithMetadata);
-
-        setTimeout(() => {
-          if (session.eventQueue?.active) {
-            this.logger.info("Closing event queue after completion", {
-              sessionId: session.sessionId,
-            });
-            session.eventQueue.close();
-          }
-        }, TIMING_DELAYS.PROMPT_END);
-      };
-    }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private setupCompletionHandler(_session: NovaSpeechSession, _eventMetadata: EventMetadata, _promptName: string): void {
+    // completionEnd from Nova means "I finished speaking this turn" — NOT end of conversation.
+    // promptEnd + sessionEnd + queue close are sent only when END_CALL is received (endAudioStreaming).
+    // Nothing to do here; leave the stream open for the next user utterance.
   }
 }

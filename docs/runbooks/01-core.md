@@ -40,6 +40,7 @@ cp ansible/inventory/production.yml.example ansible/inventory/production.yml
 
 Then edit `ansible/inventory/production.yml`:
 
+**If your VM allows direct root SSH login** (e.g. DigitalOcean droplets with root key):
 ```yaml
 all:
   children:
@@ -49,6 +50,19 @@ all:
           ansible_host: <YOUR_VM_IP>
           ansible_user: root
 ```
+
+**If your VM uses a default non-root user with passwordless sudo** (e.g. Azure `azureuser`, AWS `ubuntu`, GCP `debian`):
+```yaml
+all:
+  children:
+    app_vms:
+      hosts:
+        app-vm-1:
+          ansible_host: <YOUR_VM_IP>
+          ansible_user: azureuser   # or ubuntu, debian, etc.
+```
+
+> **Do not set `ansible_become_password` or `ansible_become_flags`** for these cloud VMs. Their default users already have passwordless sudo configured by the cloud provider. Adding an empty password (`ansible_become_password: ""`) will cause a 12s timeout error. The `ansible.cfg` in this repo handles privilege escalation automatically.
 
 > **Note:** `production.yml` is gitignored — it will not be overwritten when you run `gravity update`. Only the `.example` file is tracked in git.
 
@@ -132,6 +146,7 @@ Internal Only (SSH tunnel required):
 | DOCR login failed   | Invalid token    | Get a new DOCR token from your Gravity admin   |
 | Service unhealthy   | Missing env vars | Check `.env` file on VM at `/opt/gravity/.env` |
 | Port already in use | Previous install | Run `docker compose down` first                |
+| `Timeout (12s) waiting for privilege escalation prompt` | `ansible_become_password` set to empty string in inventory | Remove `ansible_become_password` and `ansible_become_flags` from inventory entirely — cloud default users (azureuser, ubuntu) have passwordless sudo and need no password |
 
 ## Next Steps
 

@@ -22,6 +22,7 @@ export class TextAccumulator {
   private textOutput = "";
   private currentRole: "USER" | "ASSISTANT" | null = null;
   private isAssistantFinalResponse = false;
+  private allTurns: Array<{ query: string; response: string }> = [];
 
   private readonly logger: any;
   private readonly sessionId: string;
@@ -91,22 +92,32 @@ export class TextAccumulator {
    * Called at END_TURN when we have a complete turn
    */
   emitConversation(): void {
-    if (this.emit && this.transcription && this.assistantResponse) {
-      this.logger.info(`🎯 Emitting complete conversation pair`, {
+    // Accumulate turns — don't emit mid-session as it triggers workflow completion
+    if (this.transcription && this.assistantResponse) {
+      this.logger.info(`🎯 Turn complete (accumulated, not emitted)`, {
         sessionId: this.sessionId,
         queryLength: this.transcription.length,
         responseLength: this.assistantResponse.length,
       });
-
-      this.emit({
-        __outputs: {
-          text: {
-            query: this.transcription,
-            response: this.assistantResponse,
-          },
-        },
-      });
+      this.allTurns.push({ query: this.transcription, response: this.assistantResponse });
     }
+  }
+
+  emitFinal(): void {
+    if (!this.emit || this.allTurns.length === 0) return;
+    const lastTurn = this.allTurns[this.allTurns.length - 1];
+    this.logger.info(`🏁 Emitting final conversation`, {
+      sessionId: this.sessionId,
+      turns: this.allTurns.length,
+    });
+    this.emit({
+      __outputs: {
+        text: {
+          query: lastTurn.query,
+          response: lastTurn.response,
+        },
+      },
+    });
   }
 
   /**

@@ -25,7 +25,6 @@ export class ToolUseHandler {
    */
   static parseToolUseEvent(data: any): ToolUseEvent | null {
     if (data?.event?.toolUse) {
-      console.log("🔧 [NOVA TOOL USE EVENT]:", JSON.stringify(data, null, 2));
       return data as ToolUseEvent;
     }
     return null;

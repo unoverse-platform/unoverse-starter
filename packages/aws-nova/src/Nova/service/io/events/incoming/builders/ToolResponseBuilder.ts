@@ -4,6 +4,20 @@
 
 import { v4 as uuid } from "uuid";
 
+/**
+ * Ensure the tool-result JSON is a top-level OBJECT.
+ * Bedrock Nova Sonic rejects arrays/primitives at the top level with
+ * "Unsupported JSON type in Tool Result". If the MCP returned an array
+ * or scalar, wrap it under `results`. Otherwise pass through unchanged —
+ * same behaviour as ChatGPTAgent (which sends the raw result).
+ */
+function ensureJsonObject(toolResult: any): any {
+  if (toolResult !== null && typeof toolResult === "object" && !Array.isArray(toolResult)) {
+    return toolResult;
+  }
+  return { results: toolResult ?? null };
+}
+
 export interface ToolContentStartEvent {
   event: {
     contentStart: {
@@ -60,7 +74,6 @@ export class ToolResponseBuilder {
         },
       },
     };
-    console.log("🔧 TOOL CONTENT START EVENT:", JSON.stringify(event, null, 2));
     return event;
   }
 
@@ -68,18 +81,27 @@ export class ToolResponseBuilder {
    * Creates tool result event
    */
   static createToolResult(promptName: string, contentName: string, toolResult: any): ToolResultEvent {
-    // Nova expects the tool result content to be a stringified JSON
-    // Format the results in a simple structure
-    const formattedResult = {
-      results: Array.isArray(toolResult) ? toolResult : [toolResult],
-    };
+    // Pass the raw MCP result through (same as ChatGPTAgent). Only guarantee
+    // the top-level is a JSON object, since Bedrock rejects arrays/primitives.
+    const objectResult = ensureJsonObject(toolResult);
 
-    // Stringify and truncate if too large (Nova has limits on tool result size)
-    let content = JSON.stringify(formattedResult);
-    const MAX_TOOL_RESULT_LENGTH = 8000; // ~8KB limit to be safe
-    if (content.length > MAX_TOOL_RESULT_LENGTH) {
-      console.log(`⚠️ Tool result too large (${content.length} chars), truncating to ${MAX_TOOL_RESULT_LENGTH}`);
-      content = content.substring(0, MAX_TOOL_RESULT_LENGTH) + "... [truncated]";
+    let content = JSON.stringify(objectResult);
+    const MAX_TOOL_RESULT_LENGTH = 8000;
+    const originalLength = content.length;
+
+    if (originalLength > MAX_TOOL_RESULT_LENGTH) {
+      // Don't slice mid-escape; substitute a safe truncation marker object so
+      // Bedrock still sees valid JSON.
+      content = JSON.stringify({
+        truncated: true,
+        originalLength,
+        maxLength: MAX_TOOL_RESULT_LENGTH,
+        preview: JSON.stringify(objectResult).substring(0, 500),
+      });
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[ToolResponseBuilder] Tool result too large: ${originalLength} chars, sent truncated summary instead`,
+      );
     }
 
     const event = {
@@ -92,7 +114,6 @@ export class ToolResponseBuilder {
         },
       },
     };
-    console.log("🔧 TOOL RESULT EVENT:", JSON.stringify(event, null, 2));
     return event;
   }
 
@@ -108,7 +129,6 @@ export class ToolResponseBuilder {
         },
       },
     };
-    console.log("🔧 TOOL CONTENT END EVENT:", JSON.stringify(event, null, 2));
     return event;
   }
 
@@ -132,7 +152,7 @@ export class ToolResponseBuilder {
     promptName: string,
     contentName: string,
     toolUseId: string,
-    toolResult: any
+    toolResult: any,
   ): any[] {
     return [
       this.createContentStart(promptName, contentName, toolUseId),

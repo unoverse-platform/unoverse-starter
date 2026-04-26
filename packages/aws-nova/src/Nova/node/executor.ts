@@ -6,6 +6,7 @@
 import { getPlatformDependencies } from "@gravity-platform/plugin-base";
 import { AWSNovaSpeechConfig } from "../../util/types";
 import type { VoiceOption } from "../service";
+import { NOVA_MODEL_ID } from "../constants";
 
 const { CallbackNode, saveTokenUsage, createLogger } = getPlatformDependencies();
 
@@ -37,7 +38,7 @@ export default class NovaSpeechExecutor extends CallbackNode<AWSNovaSpeechConfig
     event: { type: string; inputs?: any; config?: any },
     state: NovaSpeechState,
     emit: (output: any) => void,
-    context?: any // NodeExecutionContext from the framework
+    context?: any, // NodeExecutionContext from the framework
   ): Promise<NovaSpeechState> {
     // If already complete, return
     if (state.isComplete) {
@@ -121,7 +122,7 @@ export default class NovaSpeechExecutor extends CallbackNode<AWSNovaSpeechConfig
         },
         metadata,
         context, // Pass the context (same as PromiseNodes!)
-        emit // Pass the emit function so TextAccumulator can emit outputs!
+        emit, // Pass the emit function so TextAccumulator can emit outputs!
         // Note: userQuery param omitted - Nova discovers ALL MCPs at session start
       );
       const textOutput = stats.textOutput;
@@ -150,7 +151,7 @@ export default class NovaSpeechExecutor extends CallbackNode<AWSNovaSpeechConfig
             executionId: metadata.executionId,
             nodeId: context.nodeId,
             nodeType: "AWSNovaSpeech",
-            model: "amazon.nova-2-sonic-v1:0",
+            model: NOVA_MODEL_ID,
             usage: {
               total_tokens: stats.total_tokens,
               input_tokens: stats.inputTokens || 0,
@@ -161,7 +162,7 @@ export default class NovaSpeechExecutor extends CallbackNode<AWSNovaSpeechConfig
           this.logger.info(
             `Nova Speech token usage saved: ${stats.total_tokens} tokens (input: ${stats.inputTokens || 0}, output: ${
               stats.outputTokens || 0
-            })`
+            })`,
           );
         } catch (error: any) {
           this.logger.error("Failed to save Nova Speech token usage", { error: error.message });

@@ -2,11 +2,10 @@
  * useVoiceCall - Orchestrates voice call flow
  *
  * This hook manages the complete voice call lifecycle:
- * - START_CALL via GraphQL
- * - Audio streaming via unified WebSocket /ws/gravity
- * - Microphone capture with VAD (from client.audio)
- * - Audio playback (from client.audio)
- * - END_CALL via GraphQL
+ * - START_CALL via REST (`POST /api/workflows/:id/execute`) — not GraphQL.
+ * - Continuous mic streaming over the unified WebSocket `/ws/gravity` (binary).
+ * - Audio playback for the assistant response (provider-side VAD).
+ * - END_CALL via WebSocket control message (`AUDIO_CONTROL { command: "stop" }`).
  *
  * State is managed centrally in Zustand store (useAIContext).
  * This hook reads from the store and provides actions.
@@ -34,6 +33,10 @@ export interface UseVoiceCallReturn {
   isUserSpeaking: boolean;
   /** Whether microphone is muted */
   isMuted: boolean;
+  /** Whether the agent is currently calling a tool / searching the knowledge base */
+  isLookingUp: boolean;
+  /** Name of the tool currently being called (when isLookingUp is true) */
+  lookupToolName: string | null;
   /** Call duration in seconds */
   callDuration: number;
   /** Start the call */
@@ -56,6 +59,8 @@ export function useVoiceCall(options: UseVoiceCallOptions): UseVoiceCallReturn {
   const [isMuted, setIsMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [lookupToolName, setLookupToolName] = useState<string | null>(null);
 
   // isAssistantSpeaking and isUserSpeaking come from shared lib (client.audio)
   // The shared lib handles muting, VAD pause/resume, and state management
@@ -86,7 +91,8 @@ export function useVoiceCall(options: UseVoiceCallOptions): UseVoiceCallReturn {
     chatIdRef.current = chatId;
 
     try {
-      // 1. Send START_CALL via GraphQL (don't await - it may hang)
+      // 1. Send START_CALL via REST (don't await — the workflow stays open
+      // for the duration of the call; resolution would block the UI).
       console.log("[useVoiceCall] Sending START_CALL", { workflowId, targetTriggerNode });
       sendVoiceCallMessage({
         message: "Start call",
@@ -152,10 +158,15 @@ export function useVoiceCall(options: UseVoiceCallOptions): UseVoiceCallReturn {
     chatIdRef.current = null;
   }, [audio, workflowId]);
 
-  // Toggle mute
+  // Toggle mute. Drives the manual mute control on the mic capture pipeline.
+  // (Auto-mute during assistant playback was removed to support barge-in.)
   const toggleMute = useCallback(() => {
-    setIsMuted((prev) => !prev);
-  }, []);
+    setIsMuted((prev) => {
+      const next = !prev;
+      audio?.capture.setMuted?.(next);
+      return next;
+    });
+  }, [audio]);
 
   // Subscribe to audio state changes for connection status only
   // isAssistantSpeaking is managed by shared lib (client.audio.isAssistantSpeaking)
@@ -166,6 +177,19 @@ export function useVoiceCall(options: UseVoiceCallOptions): UseVoiceCallReturn {
       console.log("[useVoiceCall] Audio state changed:", event.state);
       if (event.state === "SESSION_ENDED") {
         setConnectionStatus("ended");
+      }
+      if (event.state === "USER_SPEECH_STARTED") {
+        // Barge-in: cut assistant playback the moment VAD detects user speech
+        audio.playback.stopAll();
+      }
+      if (event.state === "TOOL_USE") {
+        setIsLookingUp(true);
+        const name = (event.metadata?.toolName as string | undefined) ?? null;
+        setLookupToolName(name);
+      }
+      if (event.state === "TOOL_USE_COMPLETED") {
+        setIsLookingUp(false);
+        setLookupToolName(null);
       }
     });
 
@@ -195,6 +219,8 @@ export function useVoiceCall(options: UseVoiceCallOptions): UseVoiceCallReturn {
     isAssistantSpeaking,
     isUserSpeaking,
     isMuted,
+    isLookingUp,
+    lookupToolName,
     callDuration,
     startCall,
     endCall,

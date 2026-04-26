@@ -79,7 +79,6 @@ export class ContentHandler {
    */
   static parseContentStartEvent(data: any): ContentStartOutputEvent | null {
     if (data?.event?.contentStart) {
-      console.log("🎯 [NOVA CONTENT START EVENT]:", JSON.stringify(data, null, 2));
       return data as ContentStartOutputEvent;
     }
     return null;
@@ -90,7 +89,6 @@ export class ContentHandler {
    */
   static parseContentEndEvent(data: any): ContentEndOutputEvent | null {
     if (data?.event?.contentEnd) {
-      console.log("🏁 [NOVA CONTENT END EVENT]:", JSON.stringify(data, null, 2));
       return data as ContentEndOutputEvent;
     }
     return null;
@@ -122,7 +120,6 @@ export class ContentHandler {
    */
   static parseTextOutputEvent(data: any): TextOutputEvent | null {
     if (data?.event?.textOutput) {
-      console.log("📝 [NOVA TEXT OUTPUT EVENT]:", JSON.stringify(data, null, 2));
       return data as TextOutputEvent;
     }
     return null;

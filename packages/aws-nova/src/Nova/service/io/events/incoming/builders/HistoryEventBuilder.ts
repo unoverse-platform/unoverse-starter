@@ -82,7 +82,7 @@ export class HistoryEventBuilder {
   static createMessageEvents(
     promptName: string,
     message: string,
-    role: "USER" | "ASSISTANT"
+    role: "USER" | "ASSISTANT",
   ): Array<ContentStartEvent | TextInputEvent | ContentEndEvent> {
     const contentName = uuid();
 
@@ -94,11 +94,7 @@ export class HistoryEventBuilder {
     const textInputEvent = this.createTextInput(promptName, contentName, truncatedMessage);
     const contentEndEvent = this.createContentEnd(promptName, contentName);
 
-    console.log(
-      `🎯 HISTORY ${role} INPUT EVENT (${truncatedMessage.length} chars):`,
-      JSON.stringify(textInputEvent, null, 2)
-    );
-    // console.log(`🎯 HISTORY ${role} END EVENT:`, JSON.stringify(contentEndEvent, null, 2)); // Commented out - too verbose
+    // Per-message JSON dump dropped; summary fires once in buildHistoryEvents.
 
     return [startEvent, textInputEvent, contentEndEvent];
   }
@@ -108,7 +104,7 @@ export class HistoryEventBuilder {
    */
   static truncateHistory(
     history: HistoryMessage[],
-    logger?: { warn: (message: string, data?: any) => void }
+    logger?: { warn: (message: string, data?: any) => void },
   ): HistoryMessage[] {
     // Start with the most recent messages
     let truncatedHistory = history.slice(-MAX_HISTORY_MESSAGES);
@@ -143,7 +139,7 @@ export class HistoryEventBuilder {
   static buildHistoryEvents(
     promptName: string,
     history: HistoryMessage[],
-    logger?: { warn: (message: string, data?: any) => void }
+    logger?: { warn: (message: string, data?: any) => void },
   ): Array<ContentStartEvent | TextInputEvent | ContentEndEvent> {
     // console.log(`📚 Creating conversation history events for ${history.length} messages`); // Commented out - too verbose
 
@@ -156,8 +152,9 @@ export class HistoryEventBuilder {
       events.push(...this.createMessageEvents(promptName, message.content, message.role));
     }
 
+    // eslint-disable-next-line no-console
     console.log(
-      `✅ Created ${events.length} history events from ${truncatedHistory.length} messages (original: ${history.length})`
+      `[HistoryEventBuilder] Created ${events.length} events from ${truncatedHistory.length} messages (original: ${history.length})`,
     );
     return events;
   }

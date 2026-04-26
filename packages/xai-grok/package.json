@@ -1,0 +1,26 @@
+{
+  "name": "@gravity-platform/xai-grok",
+  "version": "1.0.0",
+  "description": "xAI Grok Voice Agent integration for Gravity workflow system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@gravity-platform/plugin-base": "*",
+    "pino": "^10.1.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.14",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

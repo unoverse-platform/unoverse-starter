@@ -5,6 +5,17 @@
 import { Subject } from "rxjs";
 import { take } from "rxjs/operators";
 import { firstValueFrom } from "rxjs";
+import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+
+const { createLogger } = getPlatformDependencies();
+const logger = createLogger("EventQueue");
+
+/**
+ * Maximum number of events allowed in the queue before we start dropping
+ * the oldest audio frames to prevent unbounded growth if the Bedrock
+ * consumer stalls.
+ */
+const MAX_QUEUE_SIZE = 500;
 
 /**
  * Manages event queuing and streaming for Nova Speech sessions
@@ -14,15 +25,44 @@ export class EventQueue {
   private queueSignal = new Subject<void>();
   private closeSignal = new Subject<void>();
   private isActive = true;
+  private droppedCount = 0;
+  private audioFrameRun = { count: 0, bytes: 0 };
 
   constructor(private sessionId: string) {}
 
   /**
-   * Adds an event to the queue
+   * Adds an event to the queue.
+   *
+   * - If the queue is closed, silently drops the event instead of throwing,
+   *   so late-arriving audio frames from the WebSocket don't crash handlers.
+   * - If the queue is at MAX_QUEUE_SIZE, drops the oldest audioInput event
+   *   (preserving control/session events) to cap memory usage.
    */
   enqueue(event: any): void {
     if (!this.isActive) {
-      throw new Error("Cannot enqueue events after queue is closed");
+      return;
+    }
+
+    if (this.queue.length >= MAX_QUEUE_SIZE) {
+      const dropIdx = this.queue.findIndex((e) => e?.event?.audioInput);
+      if (dropIdx >= 0) {
+        this.queue.splice(dropIdx, 1);
+        this.droppedCount++;
+        if (this.droppedCount % 50 === 1) {
+          logger.warn("EventQueue full - dropping oldest audioInput events", {
+            sessionId: this.sessionId,
+            queueSize: this.queue.length,
+            droppedCount: this.droppedCount,
+          });
+        }
+      } else {
+        // All control events - refuse to grow further
+        logger.warn("EventQueue full of control events - refusing enqueue", {
+          sessionId: this.sessionId,
+          queueSize: this.queue.length,
+        });
+        return;
+      }
     }
 
     this.queue.push(event);
@@ -40,7 +80,7 @@ export class EventQueue {
    * Streams events from the queue
    */
   async *streamEvents() {
-    console.log(`📤 [EventQueue] Starting stream for session ${this.sessionId}`);
+    logger.debug("Starting stream", { sessionId: this.sessionId });
     try {
       while (this.isActive || this.queue.length > 0) {
         // Wait for events if queue is empty
@@ -78,9 +118,29 @@ export class EventQueue {
             const eventJson = JSON.stringify(event);
             const textEncoder = new TextEncoder();
 
-            // Log event type being sent
+            // Log every non-audio event individually; aggregate audioInput
+            // frames into a single summary line when a non-audio event
+            // follows. Avoids ~30 log lines/sec during active capture.
             const eventType = Object.keys(event?.event || {})[0] || "unknown";
-            console.log(`📤 [EventQueue] Yielding event: ${eventType} (${eventJson.length} bytes)`);
+            if (eventType === "audioInput") {
+              this.audioFrameRun.count++;
+              this.audioFrameRun.bytes += eventJson.length;
+            } else {
+              if (this.audioFrameRun.count > 0) {
+                logger.info("Yielded audioInput run", {
+                  sessionId: this.sessionId,
+                  frames: this.audioFrameRun.count,
+                  totalBytes: this.audioFrameRun.bytes,
+                });
+                this.audioFrameRun.count = 0;
+                this.audioFrameRun.bytes = 0;
+              }
+              logger.info("Yielding event", {
+                sessionId: this.sessionId,
+                eventType,
+                bytes: eventJson.length,
+              });
+            }
 
             // Match the exact format from the working example
             yield {
@@ -106,6 +166,17 @@ export class EventQueue {
         return;
       }
       throw error;
+    } finally {
+      // Flush any pending audioInput run so its count isn't lost on close
+      if (this.audioFrameRun.count > 0) {
+        logger.info("Yielded audioInput run (final)", {
+          sessionId: this.sessionId,
+          frames: this.audioFrameRun.count,
+          totalBytes: this.audioFrameRun.bytes,
+        });
+        this.audioFrameRun.count = 0;
+        this.audioFrameRun.bytes = 0;
+      }
     }
   }
 

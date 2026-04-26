@@ -12,7 +12,6 @@ import { EventInitializer } from "./EventInitializer";
 import { AudioStreamManager } from "./AudioStreamManager";
 import { StreamProcessor } from "./StreamProcessor";
 import { delay } from "../../utils/timing";
-import { WebSocketAudioSubscriber } from "../../io/websocket/WebSocketAudioSubscriber";
 
 const { createLogger } = getPlatformDependencies();
 
@@ -20,7 +19,6 @@ const { createLogger } = getPlatformDependencies();
  * Orchestrates Nova Speech sessions
  */
 export class SessionOrchestrator {
-  private readonly modelId = "amazon.nova-sonic-v1:0";
   private readonly logger = createLogger("SessionOrchestrator");
   private eventInitializer: EventInitializer;
   private audioStreamManager: AudioStreamManager;
@@ -39,7 +37,7 @@ export class SessionOrchestrator {
     config: NovaSpeechConfig,
     metadata: StreamingMetadata,
     context: any,
-    emit?: (output: any) => void
+    emit?: (output: any) => void,
   ): Promise<StreamUsageStats> {
     // Check for MCP services and get tools if available (using context.api like OpenAI)
     const api = context?.api;
@@ -63,17 +61,12 @@ export class SessionOrchestrator {
             },
           }));
 
-          // Create service functions for each tool
+          // Create service functions for each tool (same shape as ChatGPTAgent)
           config.mcpService = {};
           for (const [methodName] of Object.entries(mcpSchema.methods)) {
             config.mcpService[methodName] = async (input: any) => {
-              // Include workflowId in the input for data isolation (required by PostgresFetch)
-              const inputWithWorkflow = {
-                ...input,
-                workflowId: context.workflowId || metadata.workflowId,
-              };
-              this.logger.info(`📞 Calling MCP method: ${methodName}`, { input: inputWithWorkflow });
-              return api.callService(methodName, inputWithWorkflow, context);
+              this.logger.info(`⚡ Calling MCP: ${methodName}`, { input });
+              return api.callService(methodName, input, context);
             };
           }
 
@@ -111,7 +104,7 @@ export class SessionOrchestrator {
       metadata.workflowId || "unknown",
       metadata.chatId || "unknown",
       undefined, // loggerName
-      emit // Pass the emit function
+      emit, // Pass the emit function
     );
 
     const session = sessionManager.createSession(config, metadata, responseProcessor);
@@ -121,11 +114,8 @@ export class SessionOrchestrator {
     session.eventQueue = new EventQueue(sessionId);
 
     // Start streaming
-    const streamPromise = streamHandler.startStream(
-      session,
-      { modelId: this.modelId },
-      session.eventQueue,
-      (response, session) => this.streamProcessor.processOutputStream(response, session)
+    const streamPromise = streamHandler.startStream(session, session.eventQueue, (response, session) =>
+      this.streamProcessor.processOutputStream(response, session),
     );
 
     streamPromise.catch(async (error) => {
@@ -189,6 +179,9 @@ export class SessionOrchestrator {
       // Re-throw other errors
       throw error;
     }
+
+    // Emit final text output now that the session is truly over
+    session.responseProcessor?.emitFinal();
 
     // Get results
     const result = session.responseProcessor?.getUsageStats() || {

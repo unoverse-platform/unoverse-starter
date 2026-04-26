@@ -20,6 +20,7 @@
     "vite": "^6.4.1"
   },
   "dependencies": {
+    "@gravity-platform/gravity-client": "github:gravity-platform/gravity-client",
     "chalk": "^5.6.2",
     "clsx": "^2.0.0",
     "lucide-react": "^0.546.0",

@@ -151,12 +151,14 @@ export interface GravityClient {
 
   /** Audio utilities for voice calls */
   audio?: {
-    /** Microphone capture with VAD */
+    /** Microphone capture (continuous; provider-side VAD) */
     capture: {
       startCapture: () => Promise<{ success: boolean; reason?: string }>;
       stopCapture: () => Promise<{ success: boolean; reason?: string }>;
+      /** Manually mute / unmute outgoing mic frames (keeps stream open) */
+      setMuted: (muted: boolean) => void;
       isCapturing: boolean;
-      /** Whether user is currently speaking (VAD detected speech) */
+      /** Whether user is currently speaking (server-driven VAD signal) */
       isSpeaking: boolean;
       isLoading: boolean;
       error: string | null;
@@ -182,7 +184,7 @@ export interface GravityClient {
     /** Wait for a specific audio state (e.g., SESSION_READY before starting mic) */
     waitForState?: (
       targetState: string,
-      timeoutMs?: number
+      timeoutMs?: number,
     ) => Promise<{ state: string; metadata?: Record<string, any> }>;
   };
 }
