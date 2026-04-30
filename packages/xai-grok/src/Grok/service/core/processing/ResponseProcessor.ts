@@ -16,6 +16,10 @@ export class GrokResponseProcessor {
 
   onToolUse?: (toolUse: { toolName: string; toolInput: any; callId: string }) => void;
 
+  emitProgress(text: string): void {
+    this.textAccumulator.emitProgress(text);
+  }
+
   constructor(
     private sessionId: string,
     private metadata: StreamingMetadata,

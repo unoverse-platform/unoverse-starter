@@ -6,6 +6,7 @@ export class TextAccumulator {
   private transcription = "";
   private assistantResponse = "";
   private allTurns: Array<{ query: string; response: string }> = [];
+  private progressLog = "";
   private readonly logger = createLogger("GrokTextAccumulator");
 
   constructor(
@@ -25,15 +26,23 @@ export class TextAccumulator {
     this.transcription = transcript;
   }
 
+  emitProgress(text: string): void {
+    this.progressLog += text;
+    this.emit?.({ __outputs: { progress: this.progressLog } });
+  }
+
   emitConversation(): void {
-    // Accumulate turns — don't emit mid-session as it triggers workflow completion
-    this.logger.debug("Turn complete (accumulated, not emitted)", {
+    this.logger.debug("Turn complete", {
       sessionId: this.sessionId,
       queryLength: this.transcription.length,
       responseLength: this.assistantResponse.length,
     });
     if (this.transcription || this.assistantResponse) {
       this.allTurns.push({ query: this.transcription, response: this.assistantResponse });
+      const turnNum = this.allTurns.length;
+      const q = this.transcription ? `Q${turnNum}: ${this.transcription}\n` : "";
+      const a = this.assistantResponse ? `A${turnNum}: ${this.assistantResponse}\n` : "";
+      this.emitProgress(q + a);
     }
   }
 

@@ -15,7 +15,16 @@ all:
   hosts:
     gravity-prod:
       ansible_host: <YOUR_VM_IP>
-      ansible_user: root
+      ansible_user: root   # DigitalOcean / direct root SSH
+
+# If your VM uses a non-root user with passwordless sudo (Azure azureuser, AWS ubuntu, GCP debian):
+# Do NOT add ansible_become_password or ansible_become_flags — cloud VMs have passwordless sudo by default.
+# Adding ansible_become_password: "" will cause a 12s timeout error.
+#
+#   hosts:
+#     gravity-prod:
+#       ansible_host: <YOUR_VM_IP>
+#       ansible_user: azureuser   # or ubuntu, debian, etc.
 
 # =============================================================================
 # ENTERPRISE — Multi-VM (uncomment below, remove the POC section above)

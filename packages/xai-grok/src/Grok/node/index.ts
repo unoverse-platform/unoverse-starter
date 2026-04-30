@@ -36,6 +36,11 @@ export function createNodeDefinition(): EnhancedNodeDefinition {
         type: NodeInputType.OBJECT,
         description: "MCP tool results",
       },
+      {
+        name: "progress",
+        type: NodeInputType.STRING,
+        description: "Real-time progress log of tool calls and conversation turns",
+      },
     ],
     configSchema: {
       type: "object",

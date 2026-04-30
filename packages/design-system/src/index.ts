@@ -20,6 +20,7 @@ import { CardCarouselNode } from "./CardCarousel/node";
 import { CardFinderNode } from "./CardFinder/node";
 import { ChatInputNode } from "./ChatInput/node";
 import { ListPickerNode } from "./ListPicker/node";
+import { MarkdownRendererNode } from "./MarkdownRenderer/node";
 import { PDFViewerNode } from "./PDFViewer/node";
 
 // Print page nodes
@@ -42,6 +43,7 @@ const nodes = [
   CardFinderNode,
   ChatInputNode,
   ListPickerNode,
+  MarkdownRendererNode,
   PDFViewerNode,
   // Print pages
   AutopsyReportNode,

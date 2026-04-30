@@ -1,0 +1,25 @@
+{
+  "name": "@gravity-platform/smart-document",
+  "version": "0.1.0",
+  "description": "SmartDocument node: agent-managed long-form markdown document with MCP edit tools (view / create / str_replace / insert). Redis-backed state.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@gravity-platform/plugin-base": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

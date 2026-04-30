@@ -3,8 +3,9 @@
  *
  * Runs the full spatial ingestion pipeline:
  *   1. LLM extraction  → node-service /execute (OpenAIStructuredOutput)
- *   2. Embeddings      → OpenAI text-embedding-3-large via node-service
- *   3. Returns         → SpatialEntry[] ready for dictionaryDB.uploadEntries()
+ *   2. Embeddings      → OpenAI text-embedding-3-large (direct API, batch)
+ *   3. Build entries   → SpatialEntry[] with 1536D embeddings
+ *   4. Upload to DB    → workflow-service POST /dictionary/upload
  *
  * Prompts and schemas are COPIED from:
  *   apps/server/src/services/contentEngine/extraction/prompts.ts
@@ -16,6 +17,7 @@ import { createHash } from "crypto";
 import { SpatialEntry } from "../util/types";
 
 const NODE_SERVICE_URL = process.env.NODE_SERVICE_URL || "http://localhost:4102";
+const WORKFLOW_SERVICE_URL = process.env.WORKFLOW_SERVICE_URL || "http://localhost:4101";
 
 export interface RunPipelineInput {
   rawContent: string;
@@ -45,7 +47,7 @@ export async function runSpatialIngestPipeline(input: RunPipelineInput): Promise
       nodeType: "OpenAIStructuredOutput",
       inputs: { content: rawContent, schema },
       config: {
-        model: "gpt-4o",
+        model: "gpt-5.1",
         instructions: systemPrompt,
         schemaName: `${category}_extraction`,
       },
@@ -65,17 +67,19 @@ export async function runSpatialIngestPipeline(input: RunPipelineInput): Promise
     return { success: false, entries: [] };
   }
 
-  // Step 2: Embeddings
+  // Step 2: Embeddings — call OpenAI directly (batch input)
   const embeddingTexts = objects.map(buildEmbeddingText);
 
-  const embedRes = await fetch(`${NODE_SERVICE_URL}/execute`, {
+  const embedRes = await fetch("https://api.openai.com/v1/embeddings", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${openAIApiKey}`,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify({
-      nodeType: "OpenAIEmbedding",
-      inputs: { texts: embeddingTexts },
-      config: { model: "text-embedding-3-large", dimensions: 1536 },
-      context: { credentials: { openAICredential: { apiKey: openAIApiKey } } },
+      model: "text-embedding-3-large",
+      dimensions: 1536,
+      input: embeddingTexts,
     }),
   });
 
@@ -85,7 +89,7 @@ export async function runSpatialIngestPipeline(input: RunPipelineInput): Promise
   }
 
   const embedData = (await embedRes.json()) as any;
-  const embeddings: number[][] = embedData.result?.embeddings || [];
+  const embeddings: number[][] = (embedData.data || []).map((d: any) => d.embedding);
 
   // Step 3: Build entries
   const entries: SpatialEntry[] = objects.map((obj, i) => ({
@@ -108,7 +112,22 @@ export async function runSpatialIngestPipeline(input: RunPipelineInput): Promise
     },
   }));
 
-  return { success: true, entries };
+  // Step 4: Upload entries to dictionary_need_states via workflow service
+  const uploadRes = await fetch(`${WORKFLOW_SERVICE_URL}/dictionary/upload`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ entries, upsert: true }),
+  });
+
+  if (!uploadRes.ok) {
+    const err = await uploadRes.text();
+    throw new Error(`SpatialIngest: upload failed (${uploadRes.status}): ${err}`);
+  }
+
+  // Strip embeddings from returned entries to keep the node output small
+  const entriesForOutput = entries.map(({ embedding_original, ...rest }) => rest);
+
+  return { success: true, entries: entriesForOutput as SpatialEntry[] };
 }
 
 // ---------------------------------------------------------------------------

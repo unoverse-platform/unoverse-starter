@@ -86,19 +86,68 @@ export class SessionOrchestrator {
     // Tool use handler
     responseProcessor.onToolUse = async ({ toolName, toolInput, callId }) => {
       this.logger.info("Tool use", { toolName, callId });
+      responseProcessor.emitProgress(`Calling tool: ${toolName}...\n`);
+      const startTime = Date.now();
       let result: any;
       let toolError: string | undefined;
       try {
         if (config.mcpService?.[toolName]) {
           result = await config.mcpService[toolName](toolInput);
+          const endTime = Date.now();
+          responseProcessor.emitProgress(`Tool complete: ${toolName}\n`);
           emit?.({ __outputs: { mcpResult: { name: toolName, arguments: toolInput, result } } });
+          if (context?.api?.saveMCPTrace && metadata.executionId && metadata.nodeId) {
+            context.api.saveMCPTrace({
+              executionId: metadata.executionId,
+              parentNodeId: metadata.nodeId,
+              toolName,
+              arguments: toolInput,
+              result,
+              startTime,
+              endTime,
+              duration: endTime - startTime,
+              success: true,
+            }).catch((err: any) => this.logger.warn("Failed to save MCP trace", { error: err?.message }));
+          }
         } else {
           toolError = `No handler for tool: ${toolName}`;
           result = { error: toolError };
+          const endTime = Date.now();
+          responseProcessor.emitProgress(`Tool error: ${toolName} — ${toolError}\n`);
+          if (context?.api?.saveMCPTrace && metadata.executionId && metadata.nodeId) {
+            context.api.saveMCPTrace({
+              executionId: metadata.executionId,
+              parentNodeId: metadata.nodeId,
+              toolName,
+              arguments: toolInput,
+              result: null,
+              startTime,
+              endTime,
+              duration: endTime - startTime,
+              success: false,
+              error: toolError,
+            }).catch((err: any) => this.logger.warn("Failed to save MCP trace", { error: err?.message }));
+          }
         }
       } catch (err: any) {
         toolError = `Tool execution failed: ${err.message}`;
         result = { error: toolError };
+        const endTime = Date.now();
+        responseProcessor.emitProgress(`Tool error: ${toolName} — ${toolError}\n`);
+        if (context?.api?.saveMCPTrace && metadata.executionId && metadata.nodeId) {
+          context.api.saveMCPTrace({
+            executionId: metadata.executionId,
+            parentNodeId: metadata.nodeId,
+            toolName,
+            arguments: toolInput,
+            result: null,
+            startTime,
+            endTime,
+            duration: endTime - startTime,
+            success: false,
+            error: toolError,
+          }).catch((err2: any) => this.logger.warn("Failed to save MCP trace", { error: err2?.message }));
+        }
       }
 
       // Notify the client that the tool call finished so the UI can dismiss
