@@ -40,13 +40,22 @@ cmd_deploy() {
   # Generate a temporary inventory from .env.production
   local tmp_inventory
   tmp_inventory=$(mktemp)
-  cat > "$tmp_inventory" << EOF
+  cat > "$tmp_inventory" << 'EOF'
 all:
   hosts:
     gravity-prod:
-      ansible_host: $deploy_host
-      ansible_user: $deploy_user
+      ansible_host: DEPLOY_HOST_PLACEHOLDER
+      ansible_user: DEPLOY_USER_PLACEHOLDER
 EOF
+
+  # Replace placeholders with actual values
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s/DEPLOY_HOST_PLACEHOLDER/$deploy_host/g" "$tmp_inventory"
+    sed -i '' "s/DEPLOY_USER_PLACEHOLDER/$deploy_user/g" "$tmp_inventory"
+  else
+    sed -i "s/DEPLOY_HOST_PLACEHOLDER/$deploy_host/g" "$tmp_inventory"
+    sed -i "s/DEPLOY_USER_PLACEHOLDER/$deploy_user/g" "$tmp_inventory"
+  fi
 
   local ansible_dir="$ROOT/ansible"
   local subcommand="${1:-full}"
