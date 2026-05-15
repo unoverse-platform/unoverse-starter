@@ -54,32 +54,18 @@ cmd_update() {
   fi
 
   echo ""
-  local pull_start=$(date +%s)
-  local pull_ok=true
-
-  # Run pull with output, parse service names as they complete
-  docker compose -f "$ROOT/docker-compose.yml" pull 2>&1 | while IFS= read -r line; do
-    # Parse lines like "server Pulled" or "✔ workflow Pulled"
-    if echo "$line" | grep -qE "(Pulled|✔.*Pulled)"; then
-      local service=$(echo "$line" | sed -E 's/.*[[:space:]]([a-z-]+)[[:space:]]Pulled.*/\1/' | sed 's/✔//' | xargs)
-      if [ -n "$service" ]; then
-        local elapsed=$(( $(date +%s) - pull_start ))
-        echo "  ${GREEN}✓${NC} ${service} ${DIM}(${elapsed}s)${NC}"
-      fi
-    fi
-  done
-
-  # Check exit code
-  if [ $? -ne 0 ]; then
-    pull_ok=false
-  fi
-
+  info "Pulling images..."
   echo ""
-  if $pull_ok; then
+
+  local pull_start=$(date +%s)
+  if docker compose -f "$ROOT/docker-compose.yml" pull; then
     local total_elapsed=$(( $(date +%s) - pull_start ))
-    ok "Images pulled ${DIM}(${total_elapsed}s total)${NC}"
+    echo ""
+    ok "Images pulled ${DIM}(${total_elapsed}s)${NC}"
   else
+    echo ""
     fail "Image pull failed — check network/registry and run ${BOLD}gravity update${NC} again"
+    exit 1
   fi
 
   # Step 3: Build packages (requires Node.js — installed by install.yml)
