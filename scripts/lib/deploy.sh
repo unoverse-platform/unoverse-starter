@@ -121,14 +121,6 @@ EOF
         "$ansible_dir/playbooks/install-umap.yml" \
         -e "env_file=$env_prod"
       ;;
-    harden)
-      info "Running security hardening..."
-      echo ""
-      ansible-playbook \
-        -i "$tmp_inventory" \
-        "$ansible_dir/playbooks/harden.yml" \
-        -e "env_file=$env_prod"
-      ;;
     test|check)
       info "Running connectivity test..."
       echo ""
@@ -146,7 +138,6 @@ EOF
       echo "  db         Run database setup"
       echo "  caddy      Install Caddy TLS reverse proxy"
       echo "  umap       Install UMAP AI service"
-      echo "  harden     Security hardening"
       echo "  test       Run connectivity test"
       rm -f "$tmp_inventory"
       exit 1
