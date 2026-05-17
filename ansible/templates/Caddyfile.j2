@@ -11,8 +11,7 @@
         path /mem-api/*
     }
     handle @mem-api {
-        uri strip_prefix /mem-api
-        rewrite * /api{path}
+        uri replace /mem-api /api
         reverse_proxy localhost:4104
     }
 
@@ -49,8 +48,7 @@
 # Canvas UI - root domain
 {{ caddy_domain }} {
     handle /mem-api/* {
-        uri strip_prefix /mem-api
-        rewrite * /api{path}
+        uri replace /mem-api /api
         reverse_proxy localhost:4104
     }
 
