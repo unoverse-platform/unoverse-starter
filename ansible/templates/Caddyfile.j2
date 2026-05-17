@@ -6,6 +6,16 @@
 {% if caddy_behind_lb %}
 # Behind Load Balancer - HTTP only (LB terminates TLS)
 :80 {
+    @mem-api {
+        host {{ caddy_domain }}
+        path /mem-api/*
+    }
+    handle @mem-api {
+        uri strip_prefix /mem-api
+        rewrite * /api{path}
+        reverse_proxy localhost:4104
+    }
+
     @canvas host {{ caddy_domain }}
     handle @canvas {
         reverse_proxy localhost:3001
@@ -38,7 +48,15 @@
 
 # Canvas UI - root domain
 {{ caddy_domain }} {
-    reverse_proxy localhost:3001
+    handle /mem-api/* {
+        uri strip_prefix /mem-api
+        rewrite * /api{path}
+        reverse_proxy localhost:4104
+    }
+
+    handle {
+        reverse_proxy localhost:3001
+    }
 }
 
 # API Server
