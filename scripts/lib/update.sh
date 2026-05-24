@@ -42,17 +42,31 @@ cmd_update() {
     fi
     rm -f "$git_log"
 
-    # Recovery: force-sync when git is broken
-    printf "  ${DIM}●${NC} Forcing sync with remote..."
-    (
-      cd "$ROOT"
-      git fetch origin >/dev/null 2>&1 || true
-      local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
-      git reset --hard origin/$branch >/dev/null 2>&1 || true
-      git clean -fd >/dev/null 2>&1 || true
-    )
-    printf "\r\033[2K"
-    ok "Forced sync completed"
+    # Recovery: download latest gravity script from GitHub, then force-sync
+    printf "  ${DIM}●${NC} Downloading latest update script..."
+    local temp_update=$(mktemp)
+    if curl -fsSL "https://raw.githubusercontent.com/gravity-platform/gravity-starter/main/scripts/lib/update.sh" -o "$temp_update" 2>/dev/null; then
+      cp "$temp_update" "$GRAVITY_LIB/update.sh"
+      rm -f "$temp_update"
+      printf "\r\033[2K"
+      ok "Update script refreshed"
+
+      # Now force-sync with the new script
+      printf "  ${DIM}●${NC} Forcing sync with remote..."
+      (
+        cd "$ROOT"
+        git fetch origin >/dev/null 2>&1 || true
+        local branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+        git reset --hard origin/$branch >/dev/null 2>&1 || true
+        git clean -fd >/dev/null 2>&1 || true
+      )
+      printf "\r\033[2K"
+      ok "Forced sync completed"
+    else
+      printf "\r\033[2K"
+      fail "Recovery failed — run: cd $ROOT && git reset --hard origin/main"
+      exit 1
+    fi
   fi
 
   # Safety: restore production.yml from example if missing
