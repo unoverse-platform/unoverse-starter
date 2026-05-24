@@ -219,6 +219,51 @@ export default createPlugin({
 });
 ```
 
+## Package Marketplace Metadata (REQUIRED)
+
+Every package must include a rich `gravity` field in `package.json` for the marketplace. See `10-package-marketplace.md` for full schema.
+
+**Minimum required `gravity` field:**
+
+```json
+"gravity": {
+  "displayName": "My Package",
+  "category": "ai",
+  "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v.../icon.webp",
+  "nodes": [
+    {
+      "name": "My Node",
+      "type": "PromiseNode",
+      "description": "One-line description of what this node does",
+      "category": "AI",
+      "mcp": false
+    }
+  ],
+  "features": [
+    "Feature one",
+    "Feature two",
+    "Feature three"
+  ],
+  "credentials": [
+    {
+      "name": "API Key",
+      "type": "myApiKey",
+      "required": true,
+      "description": "Where to get this credential"
+    }
+  ]
+}
+```
+
+**Categories:** `ai` | `storage` | `ingest` | `communication` | `cloud` | `flow` | `media` | `search` | `productivity`
+
+**Rules:**
+- `displayName` — short human-friendly name (no org prefix, no "integration for Gravity")
+- `features` — 3-8 short capability strings (what users can DO, not implementation details)
+- `nodes[]` — object array, not string array. Each node needs `name`, `type`, `description`, `category`
+- `credentials[]` — list what API keys/tokens the user needs to provide
+- `logoUrl` — square icon, hosted on Cloudinary, .webp or .svg preferred
+
 ## Workflow checklist
 
 1. Pick PromiseNode vs CallbackNode (§ Decide the node type).
@@ -227,13 +272,14 @@ export default createPlugin({
 4. Implement the executor; keep it thin — delegate to the service.
 5. Implement the service; fetch credentials via `api.getNodeCredentials()`.
 6. Register in `src/index.ts`.
-7. `npm run build`, then test via the debug resolver:
+7. **Populate `gravity` field in package.json** with marketplace metadata (displayName, category, features, nodes as objects, credentials).
+8. `npm run build`, then test via the debug resolver:
    ```bash
    curl -X POST http://localhost:4000/api/debug/execute-node \
      -H "Content-Type: application/json" \
      -d '{"nodeType":"MyNode","config":{...},"inputs":{...}}'
    ```
-8. Publish.
+9. Publish.
 
 ## Common error → fix table
 
@@ -267,3 +313,5 @@ Study these published packages when a pattern is unclear:
 - `07-service-connectors.md` — provider/consumer contract
 - `08-mcp-services.md` — pure vs workflow MCP nodes, `executeNodeWithRouting`
 - `09-signal-routing.md` — route table, connector dependencies, signal types
+- `10-package-marketplace.md` — marketplace schema, categories, features format
+- `11-agent-skills.md` — MCP `instructions` field for nodes with complex tool protocols
