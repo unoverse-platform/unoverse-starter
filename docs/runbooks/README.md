@@ -151,7 +151,7 @@ Both files live at the project root:
 │  Contains: VM target, real Redis, real DB, TLS enabled, DOMAIN   │
 │                                                                  │
 │  Example values:                                                 │
-│    DEPLOY_HOST=YOUR_VM_IP                                   │
+│    DEPLOY_HOST=134.209.106.203                                   │
 │    DEPLOY_USER=root                                              │
 │    REDIS_HOST=your-redis.db.ondigitalocean.com                   │
 │    REDIS_PORT=25061                                              │

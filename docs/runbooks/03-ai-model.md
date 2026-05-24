@@ -101,11 +101,11 @@ The `test-connectivity.yml` playbook checks:
 ```
 UMAP SERVICE DEPLOYED
 ============================================
-Host: gravity-prod (YOUR_VM_IP)
+Host: gravity-prod (134.209.106.203)
 
 Health: OK
 
-Internal URL: http://YOUR_VM_IP:5001
+Internal URL: http://134.209.106.203:5001
 ============================================
 ```
 
