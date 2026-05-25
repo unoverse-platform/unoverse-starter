@@ -4,18 +4,11 @@ Set up your local development environment for building on Gravity.
 
 ---
 
-## ⚠️ IMPORTANT: What You Have Access To
+## How It Works
 
-As a developer, you work with **your organization's fork** of gravity-starter:
+[`gravity-starter`](https://github.com/gravity-platform/gravity-starter) is an open-source starter kit. You **fork** it to your own GitHub account, then build your custom nodes, components, and workflows on top of the platform.
 
-| ✅ You Have Access To                  | ❌ You Do NOT Have Access To      |
-| -------------------------------------- | --------------------------------- |
-| Your org's fork of `gravity-starter`   | `GravityPlatform` (core platform) |
-| Custom nodes in `packages/`            | Core service source code          |
-| UI components in `apps/design-system/` | Server, Workflow, Canvas source   |
-| Docker images (pre-built binaries)     | Platform IP                       |
-
-**The core platform runs as Docker images.** You never see or modify the source code — you build ON TOP of it.
+The core platform runs as Docker images — you pull pre-built binaries and build ON TOP of them.
 
 ---
 
@@ -33,33 +26,32 @@ Install these on your machine:
 
 ---
 
-## Step 1: Get Access
+## Step 1: Fork & Clone
 
-Ask your Gravity admin for:
-
-1. Access to your org's fork of `gravity-starter` (GitHub)
-2. **DOCR Token** — for pulling Docker images (DigitalOcean Container Registry)
-3. **DATABASE_URL** — PostgreSQL connection string
-4. **Redis credentials** — host, port, password
-5. **Auth credentials** — AUTH_ISSUER, AUTH_CLIENT_ID, AUTH_AUDIENCE
-
----
-
-## Step 2: Clone YOUR ORG'S Starter Repo
-
-> ⚠️ **Clone your organization's fork, NOT the gravity-platform repo.**
+1. Fork [`gravity-platform/gravity-starter`](https://github.com/gravity-platform/gravity-starter) to your own GitHub account
+2. Clone your fork:
 
 ```bash
-# Replace YOUR_ORG with your organization name
-git clone https://github.com/YOUR_ORG/gravity-starter.git ~/gravity
+git clone https://github.com/YOUR_USERNAME/gravity-starter.git ~/gravity
 cd ~/gravity
 ```
 
-If your org uses a private repo, include your credentials:
+3. Add the upstream remote so you can pull future platform updates:
 
 ```bash
-git clone https://YOUR_USERNAME:YOUR_GITHUB_TOKEN@github.com/YOUR_ORG/gravity-starter.git ~/gravity
+git remote add upstream https://github.com/gravity-platform/gravity-starter.git
 ```
+
+---
+
+## Step 2: Get Your Credentials
+
+When you sign up for Gravity, you'll receive:
+
+1. **DOCR Token** — for pulling Docker images (DigitalOcean Container Registry)
+2. **DATABASE_URL** — PostgreSQL connection string
+3. **Redis credentials** — host, port, password
+4. **Auth credentials** — AUTH_ISSUER, AUTH_CLIENT_ID, AUTH_AUDIENCE
 
 ---
 
@@ -207,11 +199,12 @@ gravity stop
 
 ## Updating the Platform
 
-When your admin releases a new version:
+When a new platform version is released:
 
 ```bash
 cd ~/gravity
-git pull              # Get latest starter code
+git fetch upstream
+git merge upstream/main  # Pull latest starter code from upstream
 gravity update           # Pull latest images and restart
 ```
 
