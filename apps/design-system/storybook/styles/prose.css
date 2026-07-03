@@ -284,9 +284,13 @@
   margin: 0.75em auto;
 }
 
-/* Keep last element inline for cursor (but not if it contains images) */
+/* Trim the trailing margin on the last block so the content box ends flush.
+   This used to be `display: inline` (to seat a streaming cursor beside the last
+   line), but inline/inline-block strips the width cap from markdown-to-jsx's
+   single wrapper <div> and lets long text overflow the node. Keep it block-level
+   so the max-width cap always holds and text wraps/stays contained. */
 .prose > *:last-child {
-  display: inline;
+  margin-bottom: 0;
 }
 
 .prose > *:last-child:has(img) {

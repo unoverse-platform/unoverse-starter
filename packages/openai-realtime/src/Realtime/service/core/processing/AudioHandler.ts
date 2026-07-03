@@ -1,9 +1,6 @@
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
 import { StreamingMetadata } from "../../../../util/types";
 import { WebSocketAudioPublisher } from "../../io/publishers/WebSocketAudioPublisher";
 
-const { createLogger } = getPlatformDependencies();
-const logger = createLogger("RealtimeAudioHandler");
 
 export class AudioHandler {
   private chunkIndex = 0;
@@ -43,6 +40,20 @@ export class AudioHandler {
       message: "Assistant finished speaking",
     });
     await this.publisher.cleanup(this.conversationId);
+  }
+
+  /**
+   * User barge-in: drop buffered assistant audio instead of flushing it, but
+   * still send SPEECH_ENDED — the client relies on it to unmute the mic
+   */
+  async handleInterruption(): Promise<void> {
+    this.publisher.discardBuffer(this.conversationId);
+    await this.publisher.publishState({
+      state: "SPEECH_ENDED",
+      conversationId: this.conversationId,
+      metadata: this.metadata,
+      message: "Assistant interrupted by user",
+    });
   }
 
   cleanup(): void {

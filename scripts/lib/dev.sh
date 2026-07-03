@@ -57,16 +57,16 @@ cmd_dev() {
   (cd "$ROOT" && npm run gen:nodes >/dev/null 2>&1) || warn "gen:nodes skipped (no design-system changes)"
   ok "Node generation complete"
 
-  # Restart node-service to pick up newly built packages
+  # Restart unoverse (the node plane) to pick up newly built packages
   echo ""
-  echo "  Restarting node-service..."
+  echo "  Restarting unoverse..."
   local ns_status
-  ns_status=$(docker compose -f "$ROOT/docker-compose.yml" ps --format '{{.Status}}' node-service 2>/dev/null | head -1)
+  ns_status=$(docker compose -f "$ROOT/docker-compose.yml" ps --format '{{.Status}}' unoverse 2>/dev/null | head -1)
   if echo "$ns_status" | grep -qi "up"; then
-    docker compose -f "$ROOT/docker-compose.yml" restart node-service 2>/dev/null || true
-    ok "node-service restarted"
+    docker compose -f "$ROOT/docker-compose.yml" restart unoverse 2>/dev/null || true
+    ok "unoverse restarted"
   else
-    warn "node-service is not running (status: ${ns_status:-unknown}) — skipping restart"
+    warn "unoverse is not running (status: ${ns_status:-unknown}) — skipping restart"
     info "Run ${BOLD}gravity doctor${NC} to diagnose"
   fi
 
@@ -80,7 +80,7 @@ cmd_dev() {
   else
     warn "Platform may not be fully running — check ${BOLD}gravity status${NC}"
   fi
-  ok "Custom code in ${BOLD}packages/${NC} is mounted into node-service"
+  ok "Custom code in ${BOLD}packages/${NC} is mounted into unoverse"
   ok "Components in ${BOLD}apps/design-system/${NC} ready for editing"
   echo ""
   info "After making changes:"

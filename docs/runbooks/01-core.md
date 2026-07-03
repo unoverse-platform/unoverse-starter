@@ -8,10 +8,12 @@ Deploy the core Gravity Platform services to a VM.
 | ---------------- | ---- | ----------------------------------- |
 | **server**       | 4100 | API gateway                         |
 | **workflow**     | 4101 | XState orchestration engine         |
-| **node-service** | 4102 | Node execution service              |
+| **unoverse**     | 4105 | Node plane — authors, distributes, and executes package nodes |
 | **mcp-server**   | 4103 | MCP (Model Context Protocol) server |
 | **memory**       | 4104 | Evidence-based user memory          |
 | **canvas**       | 3001 | Web UI                              |
+
+> **Unoverse has two ports.** `:4105` is the public port (JWT-gated: MCP defs, workbench, `/plugins` management, `/health`). `:4106` is the internal node runtime (`/execute`, `/nodes`, `/skills`, `/health`) — it lives on the Docker network only and is deliberately never published or proxied; network isolation is the trust boundary.
 
 ## VM Requirements
 
@@ -76,11 +78,11 @@ cd ansible
 ansible-playbook -i inventory/production.yml playbooks/install.yml
 ```
 
-This installs Docker, Node.js, pulls DOCR images, and starts **core platform** (server, workflow, node-service, mcp-server, memory, canvas).
+This installs Docker, Node.js, pulls DOCR images, and starts **core platform** (server, workflow, unoverse, mcp-server, memory, canvas).
 
 ### 3. Deploy Customer Packages
 
-Rsyncs packages from your local machine to the server, builds them, and restarts node-service:
+Rsyncs packages from your local machine to the server, builds them, and restarts unoverse:
 
 ```bash
 gravity deploy packages
@@ -116,7 +118,7 @@ Host: gravity-prod (<YOUR_VM_IP>)
 Service Health:
   - Server:       OK
   - Workflow:      OK
-  - Node Service:  OK
+  - Unoverse:      OK
   - MCP Server:    OK
   - Memory:        OK
   - Canvas:        OK

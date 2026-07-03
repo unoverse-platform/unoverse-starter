@@ -62,7 +62,7 @@ async handleServiceCall(method, params, config, context) {
 }
 ```
 
-`executeNodeWithRouting` runs `executeNode` locally (producing `{ __outputs: { ... } }`) and bridges the result into the workflow engine so the node's outputs propagate along data edges — exactly as if the graph had triggered it. The bridge works transparently for package nodes running in node-service.
+`executeNodeWithRouting` runs `executeNode` locally (producing `{ __outputs: { ... } }`) and bridges the result into the workflow engine so the node's outputs propagate along data edges — exactly as if the graph had triggered it. The bridge works transparently for package nodes running in the unoverse node runtime.
 
 Pattern 1 re-runs the node's own `executeNode` — use it when the MCP params map cleanly onto what `executeNode` expects. Pattern 2 wraps results you've already computed — use it when the MCP path and the workflow path do different work (as in SpatialSearch, where `handleServiceCall` uses `searchKnowledgeBase` while `executeNode` runs `MultiTypeExecutor`).
 

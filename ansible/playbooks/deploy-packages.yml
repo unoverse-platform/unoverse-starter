@@ -1,7 +1,7 @@
 ---
 # Deploy Customer Packages
 # Rsyncs packages/ and apps/design-system/ from local machine to server,
-# builds them, and restarts node-service.
+# builds them, and restarts unoverse (the node plane).
 #
 # Usage (via gravity CLI — recommended):
 #   gravity deploy packages
@@ -79,10 +79,10 @@
       debug:
         msg: "{{ build_result.stdout_lines[-10:] | default(['done']) }}"
 
-    - name: "[5/5] Restart node-service"
+    - name: "[5/5] Restart unoverse (reloads customer node packages)"
       shell: |
         cd {{ gravity_dir }}
-        docker compose restart node-service 2>&1
+        docker compose restart unoverse 2>&1
       register: restart_result
       ignore_errors: yes
 

@@ -30,9 +30,11 @@
         reverse_proxy localhost:4103
     }
 
-    @memory host memory.{{ caddy_domain }}
-    handle @memory {
-        reverse_proxy localhost:4104
+    # Unoverse node plane (MCP defs + plugin management) — JWT-gated in-app (:4105).
+    # The internal :4106 node runtime is Docker-network-only and is NEVER proxied.
+    @unoverse host unoverse.{{ caddy_domain }}
+    handle @unoverse {
+        reverse_proxy localhost:4105
     }
 
 {% if caddy_include_umap %}
@@ -67,9 +69,10 @@ mcp.{{ caddy_domain }} {
     reverse_proxy localhost:4103
 }
 
-# Memory Server
-memory.{{ caddy_domain }} {
-    reverse_proxy localhost:4104
+# Unoverse node plane (MCP defs + plugin management) — JWT-gated in-app (:4105).
+# The internal :4106 node runtime is Docker-network-only and is NEVER proxied.
+unoverse.{{ caddy_domain }} {
+    reverse_proxy localhost:4105
 }
 
 {% if caddy_include_umap %}
@@ -81,3 +84,7 @@ umap.{{ caddy_domain }} {
 {% endif %}
 
 # NOTE: SAB is deployed separately to CDN (Vercel/Netlify).
+# NOTE: The memory dashboard (:4104) is NEVER exposed via a subdomain (SSH tunnel
+# only — runbook 05-caddy); only the /mem-api/* API rewrite on the root domain is public.
+# NOTE: Caddy is a PLAIN reverse proxy — no jwt/forward_auth. Auth is enforced
+# in-app (AUTH_ENABLED); Caddy is optional and never load-bearing (AUTH_REMEDIATION.md).

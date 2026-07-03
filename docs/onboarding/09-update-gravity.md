@@ -59,7 +59,7 @@ If you've changed packages but don't need new platform images:
 gravity update nodes
 ```
 
-This rebuilds packages, generates nodes, and restarts only the node-service — much faster than a full `gravity update`.
+This rebuilds packages, generates nodes, and restarts only unoverse — much faster than a full `gravity update`.
 
 ---
 

@@ -41,7 +41,7 @@ ansible-playbook -i inventory/production.yml playbooks/deploy-packages.yml
 | **1. Install deps** | `npm install` | Installs workspace dependencies |
 | **2. Build packages** | `npm run build --workspaces` | Compiles TypeScript → `dist/` for all packages |
 | **3. Generate nodes** | `npm run gen:nodes` | Scans `apps/design-system/storybook/` and generates workflow nodes + component bundles in `packages/design-system/` |
-| **4. Restart node-service** | `docker compose restart node-service` | Reloads built packages and plugins |
+| **4. Restart unoverse** | `docker compose restart unoverse` | Reloads built packages into the node plane |
 | **5. Restart workflow** | `docker compose restart workflow` | Picks up new node definitions |
 | **6. Restart server** | `docker compose restart server` | Reloads component bundles served at `/components/*.js` |
 
@@ -62,8 +62,9 @@ npm run build --workspaces --if-present
 # 4. Regenerate nodes from design system
 npm run gen:nodes
 
-# 5. Restart services that load packages
-docker compose restart node-service workflow server
+# 5. Restart services that load packages (in this order: unoverse first —
+#    workflow pulls its node catalog from unoverse)
+docker compose restart unoverse workflow server
 
 # 6. Verify
 ./gravity status
@@ -113,8 +114,10 @@ npm run gen:nodes
 # Full health check
 ./gravity check
 
-# Check plugins loaded in node-service
-curl -s http://localhost:4102/plugins | python3 -m json.tool | head -20
+# Check nodes loaded in unoverse (:4106 is Docker-internal and :4105 /plugins
+# is JWT-gated, so count from inside the container)
+docker compose exec -T unoverse node -e \
+  "fetch('http://127.0.0.1:4106/nodes').then(r=>r.json()).then(d=>console.log((d.nodes||[]).length)).catch(()=>console.log(0))"
 
 # Check component bundles served
 curl -s -o /dev/null -w '%{http_code}' http://localhost:4100/components/AIResponse.js
@@ -128,7 +131,7 @@ curl -s -o /dev/null -w '%{http_code}' http://localhost:4100/components/AIRespon
 | New component not in Canvas | `gen:nodes` not run | `./gravity gendesign` |
 | Node shows in Canvas but errors | Package not built | `./gravity build` |
 | Component renders old version | Server serving cached bundle | `docker compose restart server` |
-| `plugins: 0` in status | node-service didn't load packages | Check `docker compose logs node-service` |
+| `nodes: 0` in status | unoverse didn't load packages | Check `docker compose logs unoverse` |
 | Build fails | Missing plugin-base | `npm run build -w @gravity-platform/plugin-base` first |
 | gen:nodes fails | design-system not built | `npm run build -w @gravity-platform/design-system-dev` first |
 

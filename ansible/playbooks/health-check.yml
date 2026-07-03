@@ -17,7 +17,9 @@
       loop:
         - { name: server, port: 4100 }
         - { name: workflow, port: 4101 }
-        - { name: node-service, port: 4102 }
+        # unoverse: host-side check uses the published :4105 (/health is public);
+        # :4106 (internal node runtime) is deliberately not published by compose.
+        - { name: unoverse, port: 4105 }
         - { name: mcp-server, port: 4103 }
         - { name: memory, port: 4104 }
         - { name: umap, port: 5001 }
@@ -31,9 +33,9 @@
         return_content: yes
       register: ready_results
       loop:
+        # unoverse has no /ready route — its /health above covers it.
         - { name: server, port: 4100 }
         - { name: workflow, port: 4101 }
-        - { name: node-service, port: 4102 }
         - { name: mcp-server, port: 4103 }
         - { name: memory, port: 4104 }
         - { name: umap, port: 5001 }

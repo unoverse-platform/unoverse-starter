@@ -7,7 +7,7 @@ import { CardCarouselTemplate } from "../util/types";
 
 export function loadDefaultTemplate(): CardCarouselTemplate {
   return {
-    componentUrl: '/components/CardCarousel.js?v=1778133575795',
+    componentUrl: '/components/CardCarousel.js?v=1782360484353',
   };
 }
 

@@ -44,7 +44,7 @@
                 <p className="text-xs text-gray-700 font-mono">registry.digitalocean.com/gravity-repo</p>
               </div>
               <div className="space-y-2">
-                {["server", "workflow", "node-service", "mcp-server", "canvas"].map(svc => (
+                {["server", "workflow", "unoverse", "memory", "mcp-server", "canvas"].map(svc => (
                   <div key={svc} className="bg-blue-100 px-3 py-1.5 rounded text-xs font-semibold text-blue-800">{svc}</div>
                 ))}
               </div>
@@ -72,7 +72,7 @@
                 <p className="text-xs text-green-900"><strong>Playbook:</strong> deploy-packages.yml</p>
               </div>
               <div className="mt-2 bg-yellow-100 rounded p-2">
-                <p className="text-xs text-yellow-800">node-service can start without packages &mdash; it will have no custom nodes until deploy-packages.yml is run.</p>
+                <p className="text-xs text-yellow-800">unoverse can start without packages &mdash; it will have no custom nodes until deploy-packages.yml is run.</p>
               </div>
             </div>
           </div>

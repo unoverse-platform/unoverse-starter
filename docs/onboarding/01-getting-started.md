@@ -125,18 +125,18 @@ All checks should pass:
 
   ✓ server
   ✓ workflow
-  ✓ node-service
+  ✓ unoverse
   ✓ canvas
   ✓ umap
   ✓ mcp-server
 
   ✓ server health :4100
   ✓ workflow health :4101
-  ✓ node-service health :4102
+  ✓ unoverse health :4105
   ✓ umap health :5001
 
   ✓ 12/12 packages built
-  ✓ 12 plugins loaded
+  ✓ 97 nodes loaded
   ✓ Component bundles served
   ✓ Canvas http://localhost:3001
 
@@ -221,7 +221,7 @@ gravity update           # Pull latest images and restart
 | `gravity status`       | Show service health                                 |
 | `gravity logs`         | Stream logs                                         |
 | `gravity update`       | Pull latest images and restart                      |
-| `gravity update nodes` | Rebuild packages and restart node-service           |
+| `gravity update nodes` | Rebuild packages and restart unoverse               |
 | `gravity check`        | Run full health check                               |
 | `gravity doctor`       | Diagnose issues                                     |
 | `gravity dev`          | Install deps, generate nodes, start dev environment |

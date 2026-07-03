@@ -5,8 +5,6 @@
 - name: Rollback Gravity Platform
   hosts: all
   become: yes
-  vars_files:
-    - ../vars/secrets.yml
   vars:
     rollback_version: "{{ previous_version | default('latest') }}"
 
@@ -50,7 +48,7 @@
       loop:
         - { name: server, port: 4100 }
         - { name: workflow, port: 4101 }
-        - { name: node-service, port: 4102 }
+        - { name: unoverse, port: 4105 }
       when: item.name in gravity_services
 
   post_tasks:

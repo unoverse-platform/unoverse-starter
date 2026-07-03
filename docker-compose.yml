@@ -3,9 +3,10 @@
 # =============================================================================
 #
 # LAYER 1: CORE PLATFORM (Pre-compiled via GitHub Actions → DOCR)
-#   - server, workflow, canvas, umap, node-service, mcp-server, memory
+#   - server, workflow, canvas, umap, unoverse, mcp-server, memory
 #   - Code protected, pulled as images
-#   - node-service mounts ./packages for auto-discovery of custom nodes
+#   - unoverse (the node plane) mounts ./packages for auto-discovery of custom nodes
+#     (node-service is retired — unoverse absorbed it)
 #
 # LAYER 2: CLIENT-SPECIFIC
 #   - packages/ (custom nodes, design-system components)
@@ -40,7 +41,8 @@ services:
       - AUTH_ISSUER=${AUTH_ISSUER}
       - AUTH_AUDIENCE=${AUTH_AUDIENCE}
       - WORKFLOW_SERVICE_URL=http://workflow:4101
-      - NODE_SERVICE_URL=http://node-service:4102
+      # Internal Unoverse runtime (skills/prompt-blocks fetches) — server-to-server lane.
+      - UNOVERSE_SERVICE_URL=http://unoverse:4106
     labels:
       - "com.docker.compose.service=server"
     # depends_on: redis - removed, services connect to REDIS_HOST from .env
@@ -61,11 +63,16 @@ services:
       - REDIS_NAMESPACE=${REDIS_NAMESPACE}
       - DATABASE_URL=${DATABASE_URL}
       - SERVER_WS_URL=ws://server:4100
-      - NODE_SERVICE_URL=http://node-service:4102
       - UMAP_SERVICE_URL=http://umap:5001
+      # Internal Unoverse runtime port (ungated, never published) — the node catalog source.
+      - UNOVERSE_SERVICE_URL=http://unoverse:4106
     labels:
       - "com.docker.compose.service=workflow"
-    # depends_on: redis - removed, services connect to REDIS_HOST from .env
+    # Wait for Unoverse's catalog to be loaded before workflow pulls it (the old
+    # node-service `nodes:ready` reload that covered this race was removed).
+    depends_on:
+      unoverse:
+        condition: service_healthy
     restart: unless-stopped
 
   # Canvas UI - React frontend (lightweight - static files via nginx)
@@ -80,10 +87,14 @@ services:
       - VITE_AUTH_ISSUER=${AUTH_ISSUER}
       - VITE_AUTH_CLIENT_ID=${AUTH_CLIENT_ID}
       - VITE_AUTH_AUDIENCE=${AUTH_AUDIENCE}
+      # Unoverse public URL (JWT-gated :4105) — the browser calls it directly for
+      # component/template defs (MCP) and plugin management. Derived from DOMAIN
+      # (Caddy route unoverse.<domain>) unless UNOVERSE_URL overrides it.
+      - VITE_UNOVERSE_SERVICE_URL=${UNOVERSE_URL:-${DOMAIN:+https://unoverse.${DOMAIN}}}
       - MEMORY_SERVICE_URL=http://memory:4104
     depends_on:
       - server
-      - node-service
+      - unoverse
     restart: unless-stopped
 
   # UMAP Service - Python ML service
@@ -95,36 +106,55 @@ services:
       - umap_models:/app/models
     restart: unless-stopped
 
-  # Node Service - plugin execution (heavy - runs AI nodes, external API calls)
-  # DOCR image with packages mounted at runtime for auto-discovery
-  node-service:
-    image: registry.digitalocean.com/gravity-repo/gravity-node-service:latest
+  # Unoverse - node plane (author·distribute·execute): the relocated node runtime +
+  # workbench + MCP. TWO listeners:
+  #   :4105 = PUBLIC (MCP + workbench), JWT-gated — published below.
+  #   :4106 = INTERNAL node runtime (catalog + execute), UNGATED — deliberately NOT
+  #           published. Only the Docker network reaches it; that isolation IS the
+  #           trust boundary (workflow pulls its node catalog from here).
+  unoverse:
+    image: registry.digitalocean.com/gravity-repo/gravity-unoverse:latest
     # For local development, build from source instead:
     # build:
     #   context: .
-    #   dockerfile: apps/node-service/Dockerfile
-    #   args:
-    #     - NODE_ENV=production
+    #   dockerfile: apps/unoverse/Dockerfile
     ports:
-      - "4102:4102"
-    volumes:
-      - ./packages:/app/packages # Mount packages for auto-discovery
-      - ./node_modules:/app/host_node_modules # Hoisted package deps
+      - "4105:4105" # PUBLIC port only — do NOT add "4106:4106" (keep the runtime internal)
     environment:
       - NODE_ENV=production
-      - NODE_PATH=/app/host_node_modules
-      - PORT=4102
-      - PACKAGES_PATH=/app/packages
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_TLS=${REDIS_TLS}
-      - REDIS_NAMESPACE=${REDIS_NAMESPACE}
+      - UNOVERSE_WORKBENCH=0
+      - UNOVERSE_PORT=4105
+      - UNOVERSE_RUNTIME_PORT=4106
+      - AUTH_ISSUER=${AUTH_ISSUER}
+      - AUTH_AUDIENCE=${AUTH_AUDIENCE}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
       - SERVER_WS_URL=ws://server:4100
       - WORKFLOW_SERVICE_URL=http://workflow:4101
+      # Marketplace installs node packages here at runtime (npm) — nodes are NOT baked
+      # into the image; only the core workflow nodes ship with the platform (in the
+      # workflow image). This volume persists installs across restarts.
+      - PLUGINS_DIR=/app/plugins
+      # Legacy customer packages (Layer 2, deploy-packages.yml) — same mounts
+      # node-service had, so customer-built nodes keep auto-discovering. The dist
+      # bundles are CJS, so NODE_PATH resolves their hoisted deps.
+      - PACKAGES_PATH=/app/host_packages
+      - NODE_PATH=/app/host_node_modules
+    volumes:
+      - unoverse_plugins:/app/plugins
+      - ./packages:/app/host_packages # Customer node packages (auto-discovery)
+      - ./node_modules:/app/host_node_modules # Hoisted package deps
+    healthcheck:
+      # Ready = internal runtime port up (nodes are loaded into memory BEFORE it binds).
+      test:
+        ["CMD", "node", "-e", "fetch('http://127.0.0.1:4106/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
     labels:
-      - "com.docker.compose.service=node-service"
-    # depends_on: redis - removed, services connect to REDIS_HOST from .env
+      - "com.docker.compose.service=unoverse"
+    depends_on:
+      - server
     restart: unless-stopped
 
   # MCP Server - OpenAI Apps integration (lightweight - HTTP server)
@@ -207,5 +237,6 @@ services:
 
 volumes:
   umap_models:
+  unoverse_plugins: # Marketplace-installed node packages (persisted across restarts)
   loki_data:
   grafana_data:

@@ -8,6 +8,14 @@ const meta: Meta<typeof BookingWidget> = {
   parameters: {
     layout: "fullscreen",
     workflowSize: { width: 750, height: 400 }, // Default size for workflow editor
+    // AI selection guidance — surfaced into the generated node definition and
+    // ranked by the Unoverse MCP catalog. Say when to pick this vs. siblings.
+    ai: {
+      description:
+        "Structured booking card showing travel/reservation details with confirm, edit, and cancel actions.",
+      whenToUse:
+        "Pick when presenting a concrete booking or reservation the user confirms or edits. For free-form AI answers use AIResponse; for plain documents use MarkdownRenderer.",
+    },
   },
   tags: ["autodocs"],
   argTypes: {

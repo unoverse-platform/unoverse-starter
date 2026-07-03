@@ -1,0 +1,129 @@
+/* MetricGrid - responsive grid of KPI tiles. Pure CSS Module. */
+@import "../../styles/index.css";
+
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--text-headline-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-4);
+}
+
+.tile {
+  --metric-accent: var(--color-chart-1);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-4);
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.tile:hover {
+  box-shadow: var(--shadow-hover-md);
+  transform: translateY(var(--hover-lift-sm));
+}
+
+.tileHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+}
+
+.label {
+  font-size: var(--text-label-md);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-label);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-body-sm);
+  color: var(--metric-accent);
+  background-color: color-mix(in srgb, var(--metric-accent) 12%, transparent);
+}
+
+.value {
+  font-family: var(--font-heading);
+  font-size: var(--text-headline-md);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-headline);
+  letter-spacing: var(--letter-spacing-headline);
+  color: var(--color-text-primary);
+}
+
+.affix {
+  font-size: var(--text-title-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin: 0 0.0625em;
+}
+
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--text-label-md);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.arrow {
+  font-size: var(--text-label-sm);
+  line-height: 1;
+}
+
+.deltaValue {
+  font-variant-numeric: tabular-nums;
+}
+
+.deltaLabel {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-tertiary);
+}
+
+.positive {
+  color: var(--color-success-600);
+}
+
+.negative {
+  color: var(--color-error-600);
+}
+
+.neutral {
+  color: var(--color-text-tertiary);
+}
+
+.empty {
+  padding: var(--spacing-8);
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-size: var(--text-body-sm);
+  border: 1px dashed var(--color-border-default);
+  border-radius: var(--radius-lg);
+}

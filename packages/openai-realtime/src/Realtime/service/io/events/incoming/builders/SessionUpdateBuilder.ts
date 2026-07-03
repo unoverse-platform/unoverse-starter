@@ -14,7 +14,21 @@ export class SessionUpdateBuilder {
     const turnDetection =
       config.turnDetection === "disabled"
         ? null
-        : { type: config.turnDetection === "server_vad" ? "server_vad" : "semantic_vad" };
+        : config.turnDetection === "server_vad"
+          ? {
+              type: "server_vad" as const,
+              create_response: true,
+              interrupt_response: true,
+              silence_duration_ms: 700,
+              prefix_padding_ms: 300,
+              threshold: 0.7,
+            }
+          : {
+              type: "semantic_vad" as const,
+              create_response: true,
+              interrupt_response: true,
+              eagerness: "high",
+            };
 
     const session: Record<string, unknown> = {
       type: "realtime",
@@ -23,6 +37,8 @@ export class SessionUpdateBuilder {
       audio: {
         input: {
           format: { type: "audio/pcm", rate: 24000 },
+          noise_reduction: { type: "near_field" },
+          transcription: { model: "gpt-4o-mini-transcribe" },
           turn_detection: turnDetection,
         },
         output: {

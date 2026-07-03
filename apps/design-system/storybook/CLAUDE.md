@@ -76,6 +76,11 @@ const meta: Meta<typeof MyNode> = {
   parameters: {
     layout: "padded",
     workflowSize: { width: 750, height: 400 }, // canvas size
+    // AI selection guidance — REQUIRED. See "AI selection guidance" below.
+    ai: {
+      description: "One line: what this component renders (be concrete).",
+      whenToUse: "When to pick this vs. sibling components — name the alternatives.",
+    },
   },
   argTypes: {
     // Every prop that should be bindable from the workflow
@@ -91,6 +96,31 @@ export const Default: Story = { args: MyNodeDefaults };
 ```
 
 `workflowSize` drives `nodeSize` on the canvas. `workflowInput: true` marks the prop as workflow-bindable. The generator uses these.
+
+### AI selection guidance (`parameters.ai`)
+
+The AI workflow-builder chooses *which* display component to emit. It does this through the Unoverse MCP node catalog, which **embeds each node's `description` + `whenToUse`** and ranks by similarity to the step's task. A component with no guidance falls back to a generated boilerplate description (`"<Name> UI component from design system"`) — making every display component look identical to the ranker, so the right one rarely surfaces.
+
+Author a `parameters.ai` block in the story `meta`. The generator (`ComponentScanner` → `NodeIndexGenerator`) writes `description` and `whenToUse` into the generated node definition; `CatalogService` consumes them automatically (no other wiring).
+
+```ts
+parameters: {
+  workflowSize: { width: 750, height: 400 },
+  ai: {
+    // What it renders — concrete, one line. Replaces the boilerplate description.
+    description: "Streaming conversational AI answer: markdown body, thinking dots, follow-up chips.",
+    // When to pick this vs. siblings — name the alternatives by component name.
+    whenToUse: "Default for chat-style streamed replies. For a static document use MarkdownRenderer; for a booking confirmation use BookingWidget.",
+  },
+},
+```
+
+**Rules** (mirror code nodes' `whenToUse`):
+
+1. `whenToUse` is selection guidance, not a restated description — say when to pick this **versus its siblings**, naming the alternatives (e.g. "for X use MarkdownRenderer").
+2. 1–2 sentences, under ~250 chars.
+3. `description` states what the component renders, concretely (data + key affordances), not marketing.
+4. `gen:nodes` **warns** for any component missing `parameters.ai.whenToUse` — treat the warning as a TODO, it does not fail the build.
 
 ### Component source rules
 
@@ -165,7 +195,8 @@ New component:
 - [ ] `<Name>.module.css` — CSS module, imports shared styles
 - [ ] `defaults.ts` — exports `<Name>Defaults`
 - [ ] `<Name>.stories.tsx` — meta with `workflowSize`, every workflow-bindable prop uses `control: "object"` + `workflowInput: true`
-- [ ] `npm run gen:nodes` succeeds
+- [ ] `<Name>.stories.tsx` — meta with `parameters.ai = { description, whenToUse }` (AI selection guidance — see § AI selection guidance)
+- [ ] `npm run gen:nodes` succeeds (no `parameters.ai.whenToUse` warning for this component)
 - [ ] Generated `configSchema` for bindable props reads `{ "type": "object", "ui:field": "template" }`
 - [ ] Dev server restarted; node visible in editor; can bind `return input.<field>` from an upstream node
 

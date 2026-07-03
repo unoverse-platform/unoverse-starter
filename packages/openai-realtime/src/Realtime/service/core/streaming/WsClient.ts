@@ -23,14 +23,22 @@ export class WsClient {
     return new Promise((resolve, reject) => {
       if (!this.ws) return reject(new Error("WebSocket not initialized"));
 
+      let settled = false;
+
       this.ws.once("open", () => {
+        settled = true;
         this.logger.info("OpenAI Realtime WebSocket connected");
         resolve();
       });
 
-      this.ws.once("error", (err) => {
-        this.logger.error("WebSocket connection error", { error: err.message });
-        reject(err);
+      // Persistent handler: an unhandled 'error' event on the socket would crash
+      // the process. Rejects the connect promise only during the connection phase.
+      this.ws.on("error", (err) => {
+        this.logger.error("WebSocket error", { error: err.message });
+        if (!settled) {
+          settled = true;
+          reject(err);
+        }
       });
 
       this.ws.on("message", (data: WebSocket.Data) => {

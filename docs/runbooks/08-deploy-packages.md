@@ -25,7 +25,7 @@ This playbook:
 
 1. Rsyncs `packages/` and `apps/design-system/` from your local machine to the server
 2. Runs `npm install` + `turbo build` on the server
-3. Restarts `node-service` to load the built packages
+3. Restarts `unoverse` to load the built packages (compose mounts `./packages` into the container at `/app/host_packages`; `PACKAGES_PATH=/app/host_packages`)
 
 ## Verify
 
@@ -33,7 +33,7 @@ This playbook:
 gravity deploy test
 ```
 
-Check the **Plugins & Packages** section — `plugins` should be > 0.
+Check the **Plugins & Packages** section — `nodes` should be > 0.
 
 ## Expected Output
 
@@ -50,10 +50,10 @@ Restart: OK
 
 | Issue                  | Cause                 | Fix                                                    |
 | ---------------------- | --------------------- | ------------------------------------------------------ |
-| plugins=0 on server    | Packages not built    | Re-run `gravity deploy packages`                       |
+| nodes=0 on server      | Packages not built    | Re-run `gravity deploy packages`                       |
 | Build FAILED           | Missing dependency    | SSH in, run `cd /opt/gravity && npm install` manually  |
 | rsync permission error | SSH key not set up    | Check `DEPLOY_HOST` and `DEPLOY_USER` in `.env.production` |
-| node-service unhealthy | Bad package code      | Check `docker compose logs node-service` on server     |
+| unoverse unhealthy     | Bad package code      | Check `docker compose logs unoverse` on server         |
 
 ## Related
 

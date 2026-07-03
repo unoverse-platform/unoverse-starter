@@ -41,7 +41,7 @@
 #         gravity_services:
 #           - server
 #           - workflow
-#           - node-service
+#           - unoverse
 #           - mcp-server
 #           - memory
 #           - canvas

@@ -1,5 +1,34 @@
 # OpenAI Realtime Package Updates
 
+## Changes Made (2026-06-10) — Stability pass
+
+### Tool calling
+- `response.create` is now gated on BOTH all parallel tool calls completing AND the model's `response.done` arriving (previously a fast tool could request the next response early → OpenAI rejects, conversation stalls)
+- Tool dispatch is counted synchronously per `function_call_arguments.done` event (previously delayed by an awaited state publish, opening a race)
+- MCP tool calls have a timeout (`REALTIME_TOOL_TIMEOUT_MS`, default 30s) — a hung tool returns an error to the model instead of silencing the call forever
+- `executeToolCall` is fully guarded; a failing tool always submits an error output for its `call_id` and always decrements the pending count
+
+### Session lifecycle
+- try/finally around the live session: any failure after connect closes the OpenAI WS and deregisters (previously orphaned a billed session)
+- Duplicate START_CALL for the same conversation closes the previous WS client instead of orphaning it
+- MCP discovery race no longer leaks an unhandled rejection; discovery timer cleared
+- `WsClient` has a persistent `error` handler (second socket error previously crashed the process)
+
+### Correctness
+- Usage stats accumulate per `response.done` (previously only the final turn's tokens were saved)
+- Executor rethrows on failure so the engine emits NODE_ERROR (previously failures looked like success)
+- Credential selection prefers `openaiCredential`/`openAICredential` by name before the field-signature scan (the platform passes all workflow credentials; xAI creds also have `apiKey`)
+- Barge-in drops buffered assistant audio instead of flushing it (still sends SPEECH_ENDED to unmute the mic)
+- Module-level `getPlatformDependencies()` calls in ResponseProcessor/TextAccumulator made lazy (startup-freeze rule)
+
+### Platform
+- node-service `/execute-stream` now sends SSE keepalive comments every 30s so long silent voice calls don't trip the workflow engine's stream idle watchdog (`NODE_STREAM_IDLE_TIMEOUT_MS`)
+
+### Voice options (doc correction)
+- 10 voices: alloy, ash, ballad, coral, echo, sage, shimmer, verse, marin, cedar
+- Turn detection: `semantic_vad` (default) | `server_vad` | `disabled`
+- `temperature` is not a config field (previous docs mentioned it in error)
+
 ## Changes Made (2026-05-25)
 
 ### 1. Model Identifier ✅

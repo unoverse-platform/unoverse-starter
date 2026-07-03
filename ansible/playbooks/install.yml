@@ -21,7 +21,7 @@
 
   vars:
     gravity_dir: /opt/gravity
-    core_services: "server workflow node-service mcp-server memory canvas umap"
+    core_services: "server workflow unoverse mcp-server memory canvas umap"
 
   pre_tasks:
     - name: "[1/10] Check current system"
@@ -195,9 +195,9 @@
       delay: 2
       ignore_errors: yes
 
-    - name: "Health check - Node Service (port 4102)"
+    - name: "Health check - Unoverse (port 4105)"
       uri:
-        url: "http://localhost:4102/health"
+        url: "http://localhost:4105/health"
         status_code: 200
       register: node_health
       until: node_health.status == 200

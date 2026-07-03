@@ -14,7 +14,7 @@
 #   ./gravity logs      Stream all logs
 #   ./gravity logs <s>  Stream logs for one service
 #   ./gravity update    Pull latest images and restart
-#   ./gravity update nodes  Rebuild packages + restart node-service only
+#   ./gravity update nodes  Rebuild packages + restart unoverse only
 #   ./gravity doctor    Diagnose issues
 #   ./gravity pull      Pull images only
 #   ./gravity dev       Install deps, gen:nodes, start dev environment

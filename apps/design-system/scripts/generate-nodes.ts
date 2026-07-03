@@ -50,7 +50,7 @@ async function main() {
     if (fs.existsSync(printPagesDir)) {
       console.log(chalk.yellow("\n🖨️  PRINT PAGES (Document Templates)"));
       console.log(chalk.gray("   Scanning: " + printPagesDir));
-      const printScanner = new ComponentScanner(printPagesDir);
+      const printScanner = new ComponentScanner(printPagesDir, "printPage");
       printPages = (await printScanner.scan()).map((p) => ({ ...p, isPrintPage: true }));
       console.log(chalk.green("   ✓ Found " + printPages.length + " print pages"));
       printPages.forEach((c) => console.log(chalk.gray("      - " + c.name)));
@@ -60,13 +60,20 @@ async function main() {
     // Scan for templates (bundle only, no workflow nodes)
     console.log(chalk.magenta("\n🎭 TEMPLATES (Layout Containers)"));
     console.log(chalk.gray("   Scanning: " + templatesDir));
-    const templateScanner = new ComponentScanner(templatesDir);
+    const templateScanner = new ComponentScanner(templatesDir, "template");
     const templates = await templateScanner.scan();
     console.log(chalk.green("   ✓ Found " + templates.length + " templates\n"));
 
     if (components.length === 0 && templates.length === 0 && printPages.length === 0) {
       console.log("⚠️  No components, templates, or print pages found.");
       process.exit(0);
+    }
+
+    // Reject names that collide with built-in globals before bundling — they
+    // each become a UMD global of the same name and would break at render.
+    // Throwing here propagates to main()'s catch → process.exit(1).
+    for (const node of [...components, ...printPages, ...templates]) {
+      ComponentScanner.assertSafeComponentName(node.name);
     }
 
     // Generate files for each component (full workflow node)

@@ -105,13 +105,20 @@ EOF
         fail "DOMAIN is not set in .env.production"
         exit 1
       fi
+      # Optional flags from .env.production (both default off):
+      #   CADDY_INCLUDE_UMAP=true → expose umap.<domain> (POC only)
+      #   CADDY_BEHIND_LB=true    → plain :80, the customer LB terminates TLS
+      local include_umap behind_lb
+      include_umap=$(grep '^CADDY_INCLUDE_UMAP=' "$env_prod" | cut -d= -f2- | tr -d '\r\n' | xargs)
+      behind_lb=$(grep '^CADDY_BEHIND_LB=' "$env_prod" | cut -d= -f2- | tr -d '\r\n' | xargs)
       info "Installing Caddy for $domain..."
       echo ""
       ansible-playbook \
         -i "$tmp_inventory" \
         "$ansible_dir/playbooks/install-caddy.yml" \
         -e "domain=$domain" \
-        -e "include_umap=true" \
+        -e "include_umap=${include_umap:-false}" \
+        -e "behind_lb=${behind_lb:-false}" \
         -e "env_file=$env_prod"
       ;;
     umap)

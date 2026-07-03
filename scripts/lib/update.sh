@@ -219,8 +219,8 @@ cmd_update_nodes() {
   ok "Nodes generated"
 
   # Step 4: Restart
-  printf "  ${DIM}●${NC} Restarting node-service..."
-  docker compose -f "$ROOT/docker-compose.yml" restart node-service >/dev/null 2>&1 || true
+  printf "  ${DIM}●${NC} Restarting unoverse..."
+  docker compose -f "$ROOT/docker-compose.yml" restart unoverse >/dev/null 2>&1 || true
   printf "\r\033[2K"
   ok "Node-service restarted"
 

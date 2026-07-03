@@ -10,13 +10,62 @@ export interface ComponentMetadata {
   storyDefaults?: Record<string, any>;
   workflowSize?: { width: number; height: number };
   isPrintPage?: boolean;
+  // AI selection guidance, authored in the story's `meta.parameters.ai` block.
+  // Surfaced into the generated node definition so the Unoverse MCP catalog can
+  // rank this display component by fit (it embeds whenToUse/description).
+  aiMeta?: { description?: string; whenToUse?: string };
 }
+
+// What the scanner is pointed at. Only "component" nodes are AI-selectable
+// chat UI surfaces that need ranking guidance; templates are never emitted by
+// the AI (bundle-only), so they get no AI metadata and no warning.
+export type ScanKind = "component" | "printPage" | "template";
+
+// Component names become the UMD bundle's global var (ReactSSRConverter sets
+// `lib.name = componentName`). If that collides with a browser/JS built-in
+// global, the UMD wrapper clobbers it and the client renders the native global
+// instead of the React component — e.g. a node named `Image` resolved to
+// `window.Image` and threw "Failed to construct 'Image': use the 'new' operator"
+// at render time. Node (ts-node) can't see browser globals, so we curate the
+// realistic PascalCase collisions rather than probing `globalThis`.
+const RESERVED_COMPONENT_NAMES = new Set<string>([
+  // DOM constructors exposed on window
+  "Image", "Audio", "Option", "Text", "Comment", "Range", "Event", "Node",
+  "Element", "Attr", "Document", "Window", "Screen", "Selection", "Touch",
+  "Request", "Response", "Headers", "Notification", "Worker", "History",
+  "Location", "Navigator", "Blob", "File", "FileReader", "FormData", "Path2D",
+  "MediaSource", "WebSocket", "XMLHttpRequest", "URL",
+  // Core JS globals
+  "Object", "Array", "Function", "String", "Number", "Boolean", "Date",
+  "RegExp", "Error", "Map", "Set", "WeakMap", "WeakSet", "Promise", "Proxy",
+  "Symbol", "Math", "JSON", "Reflect", "BigInt",
+  // React identifiers in the bundle
+  "React", "ReactDOM", "Fragment",
+]);
 
 export class ComponentScanner {
   private componentsDir: string;
+  private kind: ScanKind;
 
-  constructor(componentsDir: string) {
+  constructor(componentsDir: string, kind: ScanKind = "component") {
     this.componentsDir = componentsDir;
+    this.kind = kind;
+  }
+
+  /**
+   * Fail loudly when a component/template name would clobber a built-in global
+   * once bundled as a UMD global var. Throws so `gen:nodes` exits non-zero
+   * instead of silently producing a node that breaks at render.
+   */
+  static assertSafeComponentName(name: string): void {
+    if (RESERVED_COMPONENT_NAMES.has(name)) {
+      throw new Error(
+        `Component name "${name}" collides with a built-in global. ` +
+          `It is bundled as a UMD global of the same name, which clobbers the native "${name}" ` +
+          `and makes the client render the global instead of your component (e.g. "Failed to construct '${name}'"). ` +
+          `Rename it to something non-colliding (e.g. "${name}Block", "${name}Node", or a more descriptive name).`,
+      );
+    }
   }
 
   /**
@@ -77,12 +126,24 @@ export class ComponentScanner {
       const argTypes = this.extractArgTypesFromSource(code);
       const storyDefaults = this.extractStoryDefaultsFromSource(code, componentDir);
       const workflowSize = this.extractWorkflowSizeFromSource(code);
+      // Templates are bundle-only (never AI-selected), so they carry no AI meta.
+      const aiMeta = this.kind === "template" ? undefined : this.extractAiMetaFromSource(code);
 
       if (!argTypes || Object.keys(argTypes).length === 0) {
         console.warn(
           `⚠️  [ComponentScanner] SKIPPING "${name}" - no argTypes found in stories file. Add argTypes to include this template in the build.`,
         );
         return null;
+      }
+
+      // Nudge authors toward AI-selection guidance (display components are how
+      // the AI builds chat UIs; without whenToUse they're indistinguishable in
+      // the ranked node catalog). Components only — templates aren't AI-selected.
+      // Warn, don't fail — it's optional metadata.
+      if (this.kind === "component" && !aiMeta?.whenToUse) {
+        console.warn(
+          `⚠️  [ComponentScanner] "${name}" has no parameters.ai.whenToUse — it will rank poorly in the AI node catalog. Add a meta.parameters.ai block.`,
+        );
       }
 
       return {
@@ -92,6 +153,7 @@ export class ComponentScanner {
         argTypes,
         storyDefaults,
         workflowSize,
+        aiMeta,
       };
     } catch (error) {
       console.error(`❌ [DesignSystem] Error extracting metadata for ${name}:`, error);
@@ -474,5 +536,54 @@ export class ComponentScanner {
 
     visit(sourceFile);
     return workflowSize;
+  }
+
+  /**
+   * Extract AI selection guidance from parameters.ai in the meta object.
+   * Shape: parameters: { ai: { description?: string, whenToUse?: string } }
+   */
+  private extractAiMetaFromSource(code: string): { description?: string; whenToUse?: string } | undefined {
+    const sourceFile = ts.createSourceFile("temp.tsx", code, ts.ScriptTarget.Latest, true);
+    let aiMeta: { description?: string; whenToUse?: string } | undefined;
+
+    const visit = (node: ts.Node) => {
+      if (ts.isVariableStatement(node)) {
+        node.declarationList.declarations.forEach((declaration) => {
+          if (
+            ts.isVariableDeclaration(declaration) &&
+            declaration.name.getText() === "meta" &&
+            declaration.initializer &&
+            ts.isObjectLiteralExpression(declaration.initializer)
+          ) {
+            declaration.initializer.properties.forEach((prop) => {
+              if (
+                ts.isPropertyAssignment(prop) &&
+                prop.name.getText() === "parameters" &&
+                ts.isObjectLiteralExpression(prop.initializer)
+              ) {
+                prop.initializer.properties.forEach((paramProp) => {
+                  if (
+                    ts.isPropertyAssignment(paramProp) &&
+                    paramProp.name.getText() === "ai" &&
+                    ts.isObjectLiteralExpression(paramProp.initializer)
+                  ) {
+                    const obj = this.parseObjectLiteral(paramProp.initializer);
+                    const result: { description?: string; whenToUse?: string } = {};
+                    if (typeof obj.description === "string") result.description = obj.description;
+                    if (typeof obj.whenToUse === "string") result.whenToUse = obj.whenToUse;
+                    if (Object.keys(result).length > 0) aiMeta = result;
+                  }
+                });
+              }
+            });
+          }
+        });
+      }
+
+      ts.forEachChild(node, visit);
+    };
+
+    visit(sourceFile);
+    return aiMeta;
   }
 }

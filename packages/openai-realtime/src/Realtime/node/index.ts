@@ -10,6 +10,8 @@ export function createNodeDefinition(): EnhancedNodeDefinition {
     isService: false,
     name: "OpenAI Realtime Voice",
     description: "Real-time voice conversation with gpt-realtime-2 via WebSocket",
+    whenToUse:
+      "Live WebSocket voice conversation with OpenAI gpt-realtime; audio chunks publish to a Redis channel and it can call MCP tools via service edges. Alternatives: XAIGrokVoice (xAI) or AWSNovaSpeech (AWS). For plain text-to-speech use ElevenLabs.",
     category: "AI",
     color: "#10A37F",
     logoUrl: "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
@@ -48,7 +50,7 @@ export function createNodeDefinition(): EnhancedNodeDefinition {
         systemPrompt: {
           type: "string",
           title: "System Prompt",
-          description: "System instructions for the model. Supports template syntax like {{input.fieldName}}.",
+          description: "System instructions for the model. Supports template syntax like {{signal.<sourceNodeId>.<outputHandle>.<field>}}.",
           default: "",
           "ui:field": "template",
         },
@@ -59,10 +61,9 @@ export function createNodeDefinition(): EnhancedNodeDefinition {
           "ui:field": "template",
         },
         initialRequest: {
-          type: "string",
+          type: "object",
           title: "Initial Request",
           description: "Text sent as user message at call start — the model responds immediately",
-          default: "",
           "ui:field": "template",
         },
         voice: {

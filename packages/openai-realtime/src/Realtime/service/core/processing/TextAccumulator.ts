@@ -1,13 +1,17 @@
 import { getPlatformDependencies } from "@gravity-platform/plugin-base";
 
-const { createLogger } = getPlatformDependencies();
+// Module-level platform calls cause startup freezes (docs-starter/nodes/CLAUDE.md
+// rule 5) — resolve the logger lazily instead
+function getLogger() {
+  return getPlatformDependencies().createLogger("RealtimeTextAccumulator");
+}
 
 export class TextAccumulator {
   private transcription = "";
   private assistantResponse = "";
   private allTurns: Array<{ query: string; response: string }> = [];
   private progressLog = "";
-  private readonly logger = createLogger("RealtimeTextAccumulator");
+  private readonly logger = getLogger();
 
   constructor(
     private sessionId: string,

@@ -7,7 +7,7 @@ import { PDFViewerTemplate } from "../util/types";
 
 export function loadDefaultTemplate(): PDFViewerTemplate {
   return {
-    componentUrl: '/components/PDFViewer.js?v=1778133576139',
+    componentUrl: '/components/PDFViewer.js?v=1782360484723',
   };
 }
 

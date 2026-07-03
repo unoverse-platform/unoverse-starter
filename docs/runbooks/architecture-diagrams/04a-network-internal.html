@@ -58,7 +58,7 @@
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div className="bg-white p-3 rounded shadow">
                 <p className="font-bold text-gray-800">App VM &harr; App VM</p>
-                <p className="text-xs text-gray-600 mt-1">Ports: 4100-4103 (HTTP)</p>
+                <p className="text-xs text-gray-600 mt-1">Ports: 4100-4105 (HTTP)</p>
                 <p className="text-xs text-gray-600">Service mesh communication</p>
               </div>
               <div className="bg-white p-3 rounded shadow">
@@ -100,7 +100,7 @@
             </thead>
             <tbody>
               {[
-                ["App VM", "App VM", "4100-4103", "HTTP", "Service mesh"],
+                ["App VM", "App VM", "4100-4105", "HTTP", "Service mesh"],
                 ["App VM", "ML VM", "5001", "HTTP", "UMAP API"],
                 ["App VM", "PostgreSQL", "5432", "TCP/TLS", "Database"],
                 ["App VM", "Redis", "6379", "TCP/TLS", "Cache / pub/sub"],

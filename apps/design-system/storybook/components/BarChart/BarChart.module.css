@@ -1,0 +1,127 @@
+/* BarChart - categorical bars (CSS-driven). Pure CSS Module. */
+@import "../../styles/index.css";
+
+.wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  padding: var(--spacing-5);
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: var(--text-headline-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* ---------- Horizontal ---------- */
+.hChart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.hRow {
+  display: grid;
+  grid-template-columns: minmax(64px, 22%) 1fr auto;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.hLabel {
+  font-size: var(--text-label-lg);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hTrack {
+  position: relative;
+  height: 0.75rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-chart-track);
+  overflow: hidden;
+}
+
+.hBar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-slow);
+}
+
+.hValue {
+  font-size: var(--text-label-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---------- Vertical ---------- */
+.vChart {
+  display: flex;
+  align-items: stretch;
+  gap: var(--spacing-4);
+  height: 220px;
+}
+
+.vCol {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.vValue {
+  font-size: var(--text-label-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.vTrack {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 56px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: linear-gradient(var(--color-chart-track), var(--color-chart-track)) no-repeat;
+  background-size: 100% 1px;
+  background-position: bottom;
+}
+
+.vBar {
+  width: 100%;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  transition: height var(--transition-slow);
+  min-height: 2px;
+}
+
+.vLabel {
+  font-size: var(--text-label-md);
+  color: var(--color-text-secondary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.empty {
+  padding: var(--spacing-12);
+  text-align: center;
+  color: var(--color-text-tertiary);
+  font-size: var(--text-body-sm);
+}

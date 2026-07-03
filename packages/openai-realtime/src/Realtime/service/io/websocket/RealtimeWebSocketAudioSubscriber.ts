@@ -10,6 +10,26 @@ function getAudioWSManager() {
   return getPlatformDependencies().getAudioWebSocketManager?.();
 }
 
+function resample16kTo24k(input: Buffer): Buffer {
+  const srcSamples = input.length / 2;
+  const dstSamples = Math.round((srcSamples * 24000) / 16000);
+  const output = Buffer.alloc(dstSamples * 2);
+  const ratio = srcSamples / dstSamples;
+
+  for (let i = 0; i < dstSamples; i++) {
+    const srcPos = i * ratio;
+    const srcIndex = Math.floor(srcPos);
+    const frac = srcPos - srcIndex;
+
+    const s0 = input.readInt16LE(srcIndex * 2);
+    const s1 = srcIndex + 1 < srcSamples ? input.readInt16LE((srcIndex + 1) * 2) : s0;
+    const sample = Math.round(s0 + frac * (s1 - s0));
+    output.writeInt16LE(Math.max(-32768, Math.min(32767, sample)), i * 2);
+  }
+
+  return output;
+}
+
 interface RealtimeAudioSession {
   wsClient: WsClient;
   chatId: string;
@@ -60,7 +80,8 @@ export class RealtimeWebSocketAudioSubscriber {
       return;
     }
 
-    const base64 = Buffer.from(audioData).toString("base64");
+    const resampled = resample16kTo24k(Buffer.from(audioData));
+    const base64 = resampled.toString("base64");
     session.wsClient.send(AudioAppendBuilder.build(base64));
   }
 

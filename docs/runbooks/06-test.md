@@ -53,7 +53,7 @@ Docker: OK
 Containers:
   gravity-server running Up 2 hours
   gravity-workflow running Up 2 hours
-  gravity-node-service running Up 2 hours
+  gravity-unoverse running Up 2 hours
   gravity-mcp-server running Up 2 hours
   gravity-memory running Up 2 hours
   gravity-canvas running Up 2 hours
@@ -65,7 +65,7 @@ Restarting: NONE
   - Canvas (3001): OK
   - Server (4100): OK
   - Workflow (4101): OK
-  - Node Service (4102): OK
+  - Unoverse (4105): OK
   - MCP Server (4103): OK
   - Memory (4104): OK
 
@@ -78,7 +78,7 @@ Database: REACHABLE
 ── Health Endpoints ──
   - Server: OK
   - Workflow: OK
-  - Node Service: OK
+  - Unoverse: OK
   - MCP Server: OK
   - Memory: OK
 
@@ -91,7 +91,7 @@ Database: REACHABLE
   - POST /api/workflows: HTTP 201
 
 ── Plugins & Packages ──
-Node-service: plugins=16 nodes=97
+Unoverse: nodes=97
 Packages: design-system openai flow skills ...
 packages_mounted=16
 
@@ -118,10 +118,12 @@ Domain: yourdomain.com
 | ------------ | ------------------------------ | -------- |
 | Server       | `http://localhost:4100/health` | 200 OK   |
 | Workflow     | `http://localhost:4101/health` | 200 OK   |
-| Node Service | `http://localhost:4102/health` | 200 OK   |
+| Unoverse     | `http://localhost:4105/health` | 200 OK   |
 | MCP Server   | `http://localhost:4103/health` | 200 OK   |
 | Memory       | `http://localhost:4104/health` | 200 OK   |
 | UMAP         | `http://localhost:5001/health` | 200 OK   |
+
+> Unoverse serves `/health` on its public port `:4105` (host-reachable); it has no `/ready` endpoint. Its internal runtime port `:4106` is never published, so there is nothing to health-check from the host.
 
 ## Troubleshooting
 
@@ -160,7 +162,7 @@ echo ""
 
 # 1. Services running
 echo "1. Services"
-for svc in server workflow node-service canvas umap mcp-server memory; do
+for svc in server workflow unoverse canvas umap mcp-server memory; do
   status=$(docker compose ps --format '{{.Status}}' $svc 2>/dev/null | head -1)
   if echo "$status" | grep -q "Up"; then
     echo "   ✓ $svc — $status"
@@ -172,7 +174,7 @@ echo ""
 
 # 2. Health endpoints
 echo "2. Health Endpoints"
-for url in http://localhost:4100/health http://localhost:4101/health http://localhost:4102/health http://localhost:4104/health http://localhost:5001/health; do
+for url in http://localhost:4100/health http://localhost:4101/health http://localhost:4105/health http://localhost:4104/health http://localhost:5001/health; do
   code=$(curl -s -o /dev/null -w '%{http_code}' "$url" 2>/dev/null)
   name=$(echo "$url" | grep -oE '[0-9]+' | head -1)
   if [ "$code" = "200" ]; then
@@ -201,13 +203,13 @@ done
 echo "   ✓ $built/$total packages built"
 echo ""
 
-# 4. Node-service loaded plugins
-echo "4. Node Service Plugins"
-nodes_json=$(curl -s http://localhost:4102/nodes 2>/dev/null)
-node_count=$(echo "$nodes_json" | grep -o '"type"' | wc -l | tr -d ' ')
+# 4. Unoverse node catalog
+# The internal :4106 runtime is Docker-network-only and :4105 /plugins is
+# JWT-gated, so count nodes from INSIDE the container.
+echo "4. Unoverse Nodes"
+node_count=$(docker compose exec -T unoverse node -e \
+  "fetch('http://127.0.0.1:4106/nodes').then(r=>r.json()).then(d=>console.log((d.nodes||[]).length)).catch(()=>console.log(0))" 2>/dev/null | tr -d ' \r')
 echo "   Nodes registered: $node_count"
-plugins_json=$(curl -s http://localhost:4102/plugins 2>/dev/null)
-echo "   Plugins: $(echo "$plugins_json" | grep -o '"name"' | wc -l | tr -d ' ') loaded"
 echo ""
 
 # 5. Component bundles served
@@ -242,7 +244,7 @@ echo "=== Done ==="
 1. Services
    ✓ server — Up 2 minutes
    ✓ workflow — Up 2 minutes
-   ✓ node-service — Up 2 minutes
+   ✓ unoverse — Up 2 minutes
    ✓ canvas — Up 2 minutes
    ✓ umap — Up 2 minutes
    ✓ mcp-server — Up 2 minutes
@@ -251,16 +253,15 @@ echo "=== Done ==="
 2. Health Endpoints
    ✓ :4100 — 200 OK
    ✓ :4101 — 200 OK
-   ✓ :4102 — 200 OK
+   ✓ :4105 — 200 OK
    ✓ :4104 — 200 OK
    ✓ :5001 — 200 OK
 
 3. Packages (dist/index.js)
    ✓ 12/12 packages built
 
-4. Node Service Plugins
+4. Unoverse Nodes
    Nodes registered: 45
-   Plugins: 12 loaded
 
 5. Component Bundles (server → Canvas)
    ✓ /components/AIResponse.js — 200
@@ -280,7 +281,7 @@ echo "=== Done ==="
 | Services not running   | Container crashed                  | `docker compose logs <service>` then `gravity update`     |
 | Health endpoint failed | Missing `.env` vars                | Check `.env` has `REDIS_HOST`, `DATABASE_URL`, auth vars  |
 | Packages not built     | No `dist/` directory               | `gravity update` (builds all packages)                    |
-| Plugins: 0 loaded      | node-service can't import packages | Check image version — needs v1.8.6+. Run `gravity update` |
+| Nodes registered: 0    | unoverse didn't load packages      | Check `docker compose logs unoverse`, then re-run `gravity deploy packages` (or `gravity update`) |
 | Component bundles 404  | Server can't find design-system    | Verify `DESIGN_SYSTEM_PATH` in docker-compose.yml         |
 | Canvas 404             | Container not started              | `docker compose up -d canvas`                             |
 

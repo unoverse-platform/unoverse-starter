@@ -204,6 +204,19 @@ advancedOptions: {
 }
 ```
 
+#### Match One of Several Values (array)
+```typescript
+email: {
+  type: "string",
+  title: "Email",
+  "ui:dependencies": {
+    type: ["combined", "person"]  // Show when type is "combined" OR "person"
+  }
+}
+```
+- A **scalar** dependency value is a strict-equality match (`config[field] === value`).
+- An **array** dependency value is a membership match (`value.includes(config[field])`) — use it for "show when the parent is any one of these".
+
 ## 📚 Real Examples from Working Nodes
 
 ### AWS Bedrock Claude
@@ -400,7 +413,9 @@ required: ["fieldName"]  // Makes field mandatory in UI
 ### 3. Dependencies
 ```typescript
 "ui:dependencies": {
-  parentField: expectedValue  // Only show when parent field has expected value
+  parentField: expectedValue        // Show when parent field === expectedValue
+  // or
+  parentField: ["valueA", "valueB"] // Show when parent field is one of these
 }
 ```
 

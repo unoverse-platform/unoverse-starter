@@ -7,7 +7,7 @@ import { MiroIssueTriageTemplate } from "../util/types";
 
 export function loadDefaultTemplate(): MiroIssueTriageTemplate {
   return {
-    componentUrl: '/components/MiroIssueTriage.js?v=1778133576119',
+    componentUrl: '/components/MiroIssueTriage.js?v=1782360484707',
   };
 }
 

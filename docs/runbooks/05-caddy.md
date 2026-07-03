@@ -32,19 +32,22 @@ Caddy provides:
 
 Point these A records to your VM IP (or Load Balancer IP):
 
-| Hostname              | Value     |
-| --------------------- | --------- | -------- |
-| `yourdomain.com`      | `<VM_IP>` |
-| `api.yourdomain.com`  | `<VM_IP>` |
-| `mcp.yourdomain.com`  | `<VM_IP>` |
-| `umap.yourdomain.com` | `<VM_IP>` | POC only |
+| Hostname                  | Value     |
+| ------------------------- | --------- | -------------------------------------- |
+| `yourdomain.com`          | `<VM_IP>` |
+| `api.yourdomain.com`      | `<VM_IP>` |
+| `mcp.yourdomain.com`      | `<VM_IP>` |
+| `unoverse.yourdomain.com` | `<VM_IP>` |
+| `umap.yourdomain.com`     | `<VM_IP>` | Only if `CADDY_INCLUDE_UMAP=true` |
+
+> Do **not** create a `memory.yourdomain.com` record — the memory dashboard is never exposed (see below).
 
 ### 2. Install Caddy
 
 ```bash
 cd ansible
 
-# Standard (Canvas, API, MCP)
+# Standard (Canvas, API, MCP, Unoverse)
 ansible-playbook -i inventory/production.yml playbooks/install-caddy.yml \
   -e "domain=yourdomain.com"
 
@@ -54,13 +57,16 @@ ansible-playbook -i inventory/production.yml playbooks/install-caddy.yml \
   -e "domain=yourdomain.com" -e "include_umap=true"
 ```
 
+> **`gravity deploy caddy`** reads the optional `CADDY_INCLUDE_UMAP` and `CADDY_BEHIND_LB` flags from `.env.production` (both default `false`) and passes them through — it no longer hardcodes `include_umap=true`. Set `CADDY_INCLUDE_UMAP=true` there if you need the umap route.
+
 ### 3. Verify
 
 ```bash
 curl https://yourdomain.com
 curl https://api.yourdomain.com/health
 curl https://mcp.yourdomain.com/health
-curl https://umap.yourdomain.com/health  # POC only
+curl https://unoverse.yourdomain.com/health
+curl https://umap.yourdomain.com/health  # only if CADDY_INCLUDE_UMAP=true
 ```
 
 ## With Load Balancer (HTTPS Passthrough)
@@ -77,12 +83,15 @@ User → LB (HTTPS Passthrough) → VM → Caddy (TLS) → Services
 
 ## Configured Routes
 
-| Subdomain         | Service      | Port | Visibility        |
-| ----------------- | ------------ | ---- | ----------------- |
-| `domain.com`      | Canvas (UI)  | 3001 | Public (always)   |
-| `api.domain.com`  | API Server   | 4100 | Public (always)   |
-| `mcp.domain.com`  | MCP Server   | 4103 | Public (always)   |
-| `umap.domain.com` | UMAP Service | 5001 | Public (POC only) |
+| Subdomain             | Service      | Port | Visibility                              |
+| --------------------- | ------------ | ---- | --------------------------------------- |
+| `domain.com`          | Canvas (UI)  | 3001 | Public (always)                          |
+| `api.domain.com`      | API Server   | 4100 | Public (always)                          |
+| `mcp.domain.com`      | MCP Server   | 4103 | Public (always)                          |
+| `unoverse.domain.com` | Unoverse     | 4105 | Public (always, JWT-gated in-app)        |
+| `umap.domain.com`     | UMAP Service | 5001 | Public only if `CADDY_INCLUDE_UMAP=true` |
+
+> Only Unoverse's public port (4105) is proxied. The internal node runtime (`:4106`) is Docker-network-only and is never routed through Caddy.
 
 > **⚠️ Memory dashboard (port 4104) is NEVER exposed via Caddy.**
 > It is an internal admin tool — enterprise clients access it via SSH tunnel only:
@@ -92,7 +101,7 @@ User → LB (HTTPS Passthrough) → VM → Caddy (TLS) → Services
 > # Then open: http://localhost:4104/dashboard
 > ```
 >
-> Do NOT add a `memory.domain.com` Caddy route.
+> Do NOT add a `memory.domain.com` Caddy route. The Caddyfile template ships with no memory route (the `/mem-api/*` rewrite on the root domain remains); keep it that way.
 
 ## Expected Output
 
@@ -107,7 +116,8 @@ Configured routes:
   - https://yourdomain.com -> Canvas (port 3001)
   - https://api.yourdomain.com -> API Server (port 4100)
   - https://mcp.yourdomain.com -> MCP Server (port 4103)
-  - https://umap.yourdomain.com -> UMAP Service (port 5001)  # POC only
+  - https://unoverse.yourdomain.com -> Unoverse (port 4105)
+  - https://umap.yourdomain.com -> UMAP Service (port 5001)  # only if CADDY_INCLUDE_UMAP=true
 ```
 
 ## Troubleshooting

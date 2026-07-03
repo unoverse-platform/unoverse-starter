@@ -7,7 +7,7 @@ import { MarkdownRendererTemplate } from "../util/types";
 
 export function loadDefaultTemplate(): MarkdownRendererTemplate {
   return {
-    componentUrl: '/components/MarkdownRenderer.js?v=1778133576079',
+    componentUrl: '/components/MarkdownRenderer.js?v=1782360484639',
   };
 }
 

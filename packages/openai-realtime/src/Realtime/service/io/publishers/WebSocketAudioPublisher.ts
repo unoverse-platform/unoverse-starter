@@ -109,6 +109,16 @@ export class WebSocketAudioPublisher {
     });
   }
 
+  /**
+   * Drop any buffered audio without sending it — used on user barge-in so the
+   * client doesn't hear a trailing fragment of the interrupted response
+   */
+  discardBuffer(conversationId: string): void {
+    const buffer = this.chunkBuffers.get(conversationId);
+    if (buffer?.timer) clearTimeout(buffer.timer);
+    this.chunkBuffers.delete(conversationId);
+  }
+
   async cleanup(conversationId: string): Promise<void> {
     await this.flushBuffer(conversationId);
     const buffer = this.chunkBuffers.get(conversationId);

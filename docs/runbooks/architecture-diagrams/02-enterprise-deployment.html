@@ -87,7 +87,7 @@
                     <p className="text-xs">F5 / HAProxy / AWS ALB | HTTPS:443</p>
                   </div>
                 </div>
-                <div className="mt-2 grid grid-cols-3 gap-1 text-xs">
+                <div className="mt-2 grid grid-cols-4 gap-1 text-xs">
                   <div className="bg-blue-800 p-1.5 rounded">
                     <p className="font-bold">domain.com</p>
                     <p className="text-blue-200">Canvas :3001</p>
@@ -99,6 +99,10 @@
                   <div className="bg-blue-800 p-1.5 rounded">
                     <p className="font-bold">mcp.domain.com</p>
                     <p className="text-blue-200">MCP :4103</p>
+                  </div>
+                  <div className="bg-blue-800 p-1.5 rounded">
+                    <p className="font-bold">unoverse.domain.com</p>
+                    <p className="text-blue-200">Unoverse :4105</p>
                   </div>
                 </div>
               </div>
@@ -120,7 +124,7 @@
                     {[
                       ["server:4100", "API Gateway, WebSocket hub (2GB / 1 CPU)"],
                       ["workflow:4101", "Agent Orchestration engine (8GB / 4 CPU)"],
-                      ["node-service:4102", "Plugin execution, sandboxed (4GB / 2 CPU)"],
+                      ["unoverse:4105", "Node plane; runtime :4106 internal (4GB / 2 CPU)"],
                       ["mcp-server:4103", "MCP integration (1GB / 0.5 CPU)"],
                     ].map(([name, desc]) => (
                       <div

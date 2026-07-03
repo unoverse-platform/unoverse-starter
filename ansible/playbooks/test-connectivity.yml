@@ -40,7 +40,7 @@
         - { name: "Canvas", port: 3001 }
         - { name: "Server", port: 4100 }
         - { name: "Workflow", port: 4101 }
-        - { name: "Node Service", port: 4102 }
+        - { name: "Unoverse", port: 4105 }
         - { name: "MCP Server", port: 4103 }
         - { name: "Memory", port: 4104 }
         - { name: "UMAP", port: 5001 }
@@ -84,7 +84,7 @@
       loop:
         - { name: "Server", port: 4100 }
         - { name: "Workflow", port: 4101 }
-        - { name: "Node Service", port: 4102 }
+        - { name: "Unoverse", port: 4105 }
         - { name: "MCP Server", port: 4103 }
         - { name: "Memory", port: 4104 }
         - { name: "UMAP", port: 5001 }
@@ -127,15 +127,17 @@
       register: api_write_check
       ignore_errors: yes
 
-    - name: "[10/13] Check node-service plugins loaded"
+    - name: "[10/13] Check unoverse node catalog loaded"
       shell: |
-        RESPONSE=$(curl -s --max-time 10 http://localhost:4102/plugins 2>/dev/null)
-        PLUGIN_COUNT=$(echo "$RESPONSE" | grep -o '"name"' | wc -l | tr -d ' ')
-        NODE_RESPONSE=$(curl -s --max-time 10 http://localhost:4102/nodes 2>/dev/null)
-        NODE_COUNT=$(echo "$NODE_RESPONSE" | grep -o '"type"' | wc -l | tr -d ' ')
-        echo "plugins=${PLUGIN_COUNT} nodes=${NODE_COUNT}"
-        if [ "$PLUGIN_COUNT" -eq 0 ] 2>/dev/null; then
-          echo "WARNING: No plugins loaded — run deploy.sh rebuild or gravity update"
+        cd /opt/gravity
+        # The internal :4106 runtime is Docker-network-only (never published), and the
+        # public :4105 routes are JWT-gated — so read the catalog from INSIDE the
+        # container. node:20-slim has no curl; use node fetch.
+        NODE_COUNT=$(docker compose exec -T unoverse node -e \
+          "fetch('http://127.0.0.1:4106/nodes').then(r=>r.json()).then(d=>console.log((d.nodes||[]).length)).catch(()=>console.log(0))" 2>/dev/null | tr -d ' \r')
+        echo "nodes=${NODE_COUNT}"
+        if [ "${NODE_COUNT:-0}" -eq 0 ] 2>/dev/null; then
+          echo "WARNING: No nodes loaded — run deploy.sh rebuild or gravity update"
           exit 1
         fi
       register: plugin_check
@@ -144,8 +146,8 @@
     - name: "[11/13] Check packages directory mounted"
       shell: |
         cd /opt/gravity
-        if docker compose exec -T node-service ls /app/packages 2>/dev/null | head -5; then
-          PKG_COUNT=$(docker compose exec -T node-service ls /app/packages 2>/dev/null | wc -l | tr -d ' ')
+        if docker compose exec -T unoverse ls /app/host_packages 2>/dev/null | head -5; then
+          PKG_COUNT=$(docker compose exec -T unoverse ls /app/host_packages 2>/dev/null | wc -l | tr -d ' ')
           echo "packages_mounted=${PKG_COUNT}"
           [ "$PKG_COUNT" -gt 0 ]
         else
@@ -193,6 +195,7 @@
         - { name: "Canvas", sub: "", path: "/" }
         - { name: "API Server", sub: "api.", path: "/health" }
         - { name: "MCP Server", sub: "mcp.", path: "/health" }
+        - { name: "Unoverse", sub: "unoverse.", path: "/health" }
       register: domain_checks
       ignore_errors: yes
       when: domain_value.stdout | default('') | length > 0 and domain_value.stdout != 'example.com'
@@ -244,7 +247,7 @@
             - POST /api/workflows: {{ api_write_check.stdout | default('???') if not api_write_check.failed else 'FAILED (' + api_write_check.stdout | default('???') + ')' }}
 
           ── Plugins & Packages ──
-          Node-service: {{ plugin_check.stdout_lines[0] | default('(skipped)') }}
+          Unoverse: {{ plugin_check.stdout_lines[0] | default('(skipped)') }}
           {{ plugin_check.stdout_lines[1] | default('') }}
           Packages: {{ packages_check.stdout_lines[0] | default('(skipped)') }}
           {{ packages_check.stdout_lines[1] | default('') }}

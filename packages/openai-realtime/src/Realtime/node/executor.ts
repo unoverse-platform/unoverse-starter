@@ -64,11 +64,21 @@ export default class RealtimeVoiceExecutor extends CallbackNode<OpenAIRealtimeCo
       const { RealtimeVoiceService } = await import("../service");
       const service = new RealtimeVoiceService();
 
+      const initialRequest = typeof config.initialRequest === "string"
+        ? config.initialRequest
+        : config.initialRequest?.toString?.() || "";
+
+      this.logger.info("Config resolved", {
+        hasInitialRequest: !!initialRequest,
+        initialRequestType: typeof config.initialRequest,
+        initialRequestValue: initialRequest?.slice(0, 50),
+      });
+
       const stats = await service.generateVoiceStream(
         {
           systemPrompt: config.systemPrompt,
           conversationHistory: config.conversationHistory,
-          initialRequest: config.initialRequest,
+          initialRequest,
           voice: config.voice,
           turnDetection: config.turnDetection || "semantic_vad",
           maxResponseOutputTokens: config.maxResponseOutputTokens,
@@ -87,7 +97,9 @@ export default class RealtimeVoiceExecutor extends CallbackNode<OpenAIRealtimeCo
         error: err.message,
         stack: err.stack?.split("\n").slice(0, 3).join(" | ")
       });
-      return { ...state, isComplete: true };
+      // Rethrow so the engine emits NODE_ERROR — swallowing here makes a failed
+      // call indistinguishable from a completed one downstream
+      throw err;
     }
   }
 }

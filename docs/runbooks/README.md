@@ -11,7 +11,7 @@ Modular runbooks for deploying and managing Gravity Platform VMs.
 | VM Role    | Cores | RAM   | Storage    | Count             | Services                                                   |
 | ---------- | ----- | ----- | ---------- | ----------------- | ---------------------------------------------------------- |
 | **POC**    | 4     | 8 GB  | 100 GB SSD | 1                 | All services                                               |
-| **App VM** | 8     | 32 GB | 200 GB SSD | 2 (Active/Active) | server, workflow, node-service, mcp-server, memory, canvas |
+| **App VM** | 8     | 32 GB | 200 GB SSD | 2 (Active/Active) | server, workflow, unoverse, mcp-server, memory, canvas |
 | **ML VM**  | 4     | 16 GB | 100 GB SSD | 1 (Dedicated)     | umap-service                                               |
 
 ### External Dependencies

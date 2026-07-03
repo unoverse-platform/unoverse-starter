@@ -16,6 +16,16 @@ export function generateNodeIndex(metadata: ComponentMetadata): string {
   const templateType = metadata.isPrintPage ? "printComponent" : "uiComponent";
   const category = metadata.isPrintPage ? "Print" : "Design System";
 
+  // AI selection guidance. The Unoverse MCP catalog embeds description + whenToUse
+  // to rank nodes by fit; without these a display component is indistinguishable
+  // from its siblings. Author them in the story's `meta.parameters.ai` block.
+  const description =
+    metadata.aiMeta?.description ||
+    `${metadata.name} ${metadata.isPrintPage ? "print document" : "UI component"} from design system`;
+  const whenToUseLine = metadata.aiMeta?.whenToUse
+    ? `    whenToUse: ${JSON.stringify(metadata.aiMeta.whenToUse)},\n`
+    : "";
+
   return `/**
  * ${metadata.name} Node Definition
  * Auto-generated from Storybook component
@@ -32,8 +42,8 @@ export function createNodeDefinition(): EnhancedNodeDefinition {
     packageVersion: "1.0.0",
     type: NODE_TYPE,
     name: "${metadata.name}",
-    description: "${metadata.name} ${metadata.isPrintPage ? "print document" : "UI component"} from design system",
-    category: "${category}",
+    description: ${JSON.stringify(description)},
+${whenToUseLine}    category: "${category}",
     color: "${metadata.isPrintPage ? "#8b5cf6" : "#10b981"}",
     template: "${templateType}",
     componentTemplate: loadDefaultTemplate(),

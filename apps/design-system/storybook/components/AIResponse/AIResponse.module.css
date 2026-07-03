@@ -3,6 +3,8 @@
 
 .container {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .container > * + * {
@@ -17,10 +19,21 @@
   color: var(--color-text-tertiary);
   font-style: italic;
   padding-bottom: var(--spacing-1);
+  max-width: 100%;
+  min-width: 0;
 }
 
 .progress > :last-child {
   margin-top: 0;
+}
+
+/* Reasoning markdown is a flex child — without min-width:0 it refuses to shrink
+   below its content and the long trace overflows the node. Cap + wrap it. */
+.progress > * {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .dotsContainer {
@@ -60,9 +73,96 @@
   }
 }
 
-/* Text content inherits prose styles from global prose.css via the 'prose' class */
+/* Text content inherits prose styles from global prose.css via the 'prose' class.
+   Prose is kept readable at ~620px, but the cap is applied to the text-level
+   children — NOT the container — so a wide table can break out and use the full
+   node width instead of being squeezed into a narrow column. */
 .textContent {
-  max-width: 620px !important;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.textContent > :not(.tableWrapper) {
+  max-width: 620px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+/* --- Self-contained table rendering ---------------------------------------
+   Tables must not depend on global prose styles. Without this, a wide table
+   inside the capped .textContent width gets squeezed until each character
+   wraps onto its own line. The wrapper fills the full node width and scrolls
+   horizontally only when the table is genuinely wider than that. */
+.tableWrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: var(--spacing-3) 0;
+  border: 1px solid var(--color-border, var(--color-gray-200, #e5e7eb));
+  border-radius: var(--radius-lg, 0.5rem);
+}
+
+.tableWrapper table {
+  width: 100%;
+  border-collapse: collapse;
+  /* auto layout lets columns size to their content rather than splitting the
+     width into too-narrow columns */
+  table-layout: auto;
+  /* denser type so more columns fit before horizontal scroll kicks in */
+  font-size: var(--text-body-xs, 0.8125rem);
+  line-height: 1.4;
+}
+
+.tableWrapper th,
+.tableWrapper td {
+  /* tighter padding = more room for content across many columns */
+  padding: var(--spacing-1, 0.25rem) var(--spacing-2, 0.5rem);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--color-border, var(--color-gray-200, #e5e7eb));
+  /* keep words intact; break only between words, never per character */
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  /* floor so a column never collapses thin enough to wrap mid-word */
+  min-width: 7ch;
+}
+
+.tableWrapper th {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background-color: var(--color-gray-50, #f9fafb);
+}
+
+.tableWrapper tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Markdown images ------------------------------------------------------
+   Responsive, rounded, never overflowing the text column. Broken external
+   URLs fall back to a neutral caption chip (see MarkdownImage override). */
+.markdownImage {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: var(--spacing-3) 0;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.imageFallback {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin: var(--spacing-2) 0;
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--text-body-sm);
+  color: var(--color-text-tertiary);
+  background-color: var(--color-gray-50);
+  border: 1px dashed var(--color-border-default);
+  border-radius: var(--radius-md);
 }
 
 .cursor {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Markdown from "markdown-to-jsx";
 import styles from "./AIResponse.module.css";
+import { normalizeMarkdownTables } from "./tableNormalizer";
 
 // Custom link component that opens in new tab
 const ExternalLink = ({ children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
@@ -9,9 +10,41 @@ const ExternalLink = ({ children, ...props }: React.AnchorHTMLAttributes<HTMLAnc
   </a>
 );
 
+// Wrap tables in a horizontally-scrollable container so wide tables never get
+// crushed (which forces character-by-character wrapping) inside the capped
+// .textContent width. The wrapper scrolls instead of squeezing.
+const ScrollableTable = ({ children, ...props }: React.TableHTMLAttributes<HTMLTableElement>) => (
+  <div className={styles.tableWrapper}>
+    <table {...props}>{children}</table>
+  </div>
+);
+
+// Render markdown images responsively. AI-generated documents frequently cite
+// external image URLs that 404 — on error we degrade to the alt text instead of
+// a broken-image icon. lazy/async keeps long documents cheap to render.
+const MarkdownImage = ({ src, alt, title }: React.ImgHTMLAttributes<HTMLImageElement>) => {
+  const [broken, setBroken] = useState(false);
+  if (!src || broken) {
+    return <span className={styles.imageFallback}>{alt || "Image unavailable"}</span>;
+  }
+  return (
+    <img
+      className={styles.markdownImage}
+      src={src}
+      alt={alt || ""}
+      title={title}
+      loading="lazy"
+      decoding="async"
+      onError={() => setBroken(true)}
+    />
+  );
+};
+
 const markdownOptions = {
   overrides: {
     a: { component: ExternalLink },
+    table: { component: ScrollableTable },
+    img: { component: MarkdownImage },
   },
 };
 
@@ -86,14 +119,14 @@ export default function AIResponse(props: AIResponseProps) {
               <span className={styles.dot} />
             </span>
           )}
-          <Markdown options={markdownOptions}>{progressText}</Markdown>
+          <Markdown options={markdownOptions}>{normalizeMarkdownTables(progressText)}</Markdown>
         </div>
       )}
 
       {/* Text - show directly, aiContext protects against shorter text overwrites */}
       {text && (
         <div className={`${styles.textContent} prose`}>
-          <Markdown options={markdownOptions}>{text}</Markdown>
+          <Markdown options={markdownOptions}>{normalizeMarkdownTables(text)}</Markdown>
           {/* Animated blinking cursor inline with text */}
           {isCurrentlyStreaming && <span className={styles.cursor} />}
         </div>

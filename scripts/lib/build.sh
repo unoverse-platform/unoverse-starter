@@ -21,7 +21,7 @@ cmd_build() {
   fi
 
   echo "  Restarting services..."
-  docker compose -f "$ROOT/docker-compose.yml" restart node-service workflow
+  docker compose -f "$ROOT/docker-compose.yml" restart unoverse workflow
   ok "Services restarted — changes are live"
   echo ""
 }
@@ -34,7 +34,7 @@ cmd_gendesign() {
   ok "Node generation complete"
 
   echo "  Restarting services..."
-  docker compose -f "$ROOT/docker-compose.yml" restart node-service workflow
+  docker compose -f "$ROOT/docker-compose.yml" restart unoverse workflow
   ok "Services restarted — changes are live"
   echo ""
 }

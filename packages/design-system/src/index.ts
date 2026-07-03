@@ -13,47 +13,47 @@ import * as path from "path";
 import { AIResponseNode } from "./AIResponse/node";
 import { AccountTransferWidgetNode } from "./AccountTransferWidget/node";
 import { AudioPlayerNode } from "./AudioPlayer/node";
+import { BarChartNode } from "./BarChart/node";
 import { BookingWidgetNode } from "./BookingWidget/node";
 import { CardNode } from "./Card/node";
 import { Card2Node } from "./Card2/node";
 import { CardCarouselNode } from "./CardCarousel/node";
 import { CardFinderNode } from "./CardFinder/node";
 import { ChatInputNode } from "./ChatInput/node";
+import { ImageBlockNode } from "./ImageBlock/node";
 import { ListPickerNode } from "./ListPicker/node";
 import { MarkdownRendererNode } from "./MarkdownRenderer/node";
+import { MetricGridNode } from "./MetricGrid/node";
 import { MiroIssueTriageNode } from "./MiroIssueTriage/node";
 import { PDFViewerNode } from "./PDFViewer/node";
+import { ProgressRingNode } from "./ProgressRing/node";
+import { StatCardNode } from "./StatCard/node";
+import { TrendChartNode } from "./TrendChart/node";
 
 // Print page nodes
-import { AutopsyReportNode } from "./AutopsyReport/node";
-import { ForensicsReportNode } from "./ForensicsReport/node";
-import { NewspaperPageNode } from "./NewspaperPage/node";
-import { PoliceReportNode } from "./PoliceReport/node";
-import { ProfileReportNode } from "./ProfileReport/node";
-import { StatementReportNode } from "./StatementReport/node";
 
 // All design system nodes
 const nodes = [
   AIResponseNode,
   AccountTransferWidgetNode,
   AudioPlayerNode,
+  BarChartNode,
   BookingWidgetNode,
   CardNode,
   Card2Node,
   CardCarouselNode,
   CardFinderNode,
   ChatInputNode,
+  ImageBlockNode,
   ListPickerNode,
   MarkdownRendererNode,
+  MetricGridNode,
   MiroIssueTriageNode,
   PDFViewerNode,
+  ProgressRingNode,
+  StatCardNode,
+  TrendChartNode,
   // Print pages
-  AutopsyReportNode,
-  ForensicsReportNode,
-  NewspaperPageNode,
-  PoliceReportNode,
-  ProfileReportNode,
-  StatementReportNode,
 ];
 
 const plugin = createPlugin({

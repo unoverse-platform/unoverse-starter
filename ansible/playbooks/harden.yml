@@ -22,8 +22,11 @@
     internal_ports:
       - { port: 4100, proto: tcp } # server
       - { port: 4101, proto: tcp } # workflow
-      - { port: 4102, proto: tcp } # node-service
       - { port: 4103, proto: tcp } # mcp-server
+      - { port: 4104, proto: tcp } # memory
+      - { port: 4105, proto: tcp } # unoverse (public MCP/plugins, JWT-gated in-app)
+      # 4106 (unoverse internal node runtime) is NOT listed: compose never publishes
+      # it to the host, so there is nothing to firewall — Docker-network-only.
       - { port: 5001, proto: tcp } # umap
       - { port: 3001, proto: tcp } # canvas
       - { port: 3007, proto: tcp } # sab

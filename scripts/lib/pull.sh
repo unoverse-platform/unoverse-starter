@@ -15,7 +15,7 @@ cmd_pull() {
     "registry.digitalocean.com/gravity-repo/gravity-workflow:latest"
     "registry.digitalocean.com/gravity-repo/gravity-canvas:latest"
     "registry.digitalocean.com/gravity-repo/gravity-umap:latest"
-    "registry.digitalocean.com/gravity-repo/gravity-node-service:latest"
+    "registry.digitalocean.com/gravity-repo/gravity-unoverse:latest"
     "registry.digitalocean.com/gravity-repo/gravity-mcp-server:latest"
     "registry.digitalocean.com/gravity-repo/gravity-memory:latest"
   )

@@ -20,10 +20,12 @@
 6. **[Service Connectors](./07-service-connectors.md)** - Inter-node communication
 7. **[MCP Services](./08-mcp-services.md)** - AI tool discovery and integration
 8. **[Signal Routing](./09-signal-routing.md)** - Workflow execution flow
+9. **[Node Discoverability](./14-node-discoverability.md)** - ⭐ **Critical** - writing `name`/`description`/`whenToUse` so the AI workflow builder actually selects your node (how `getNodeCatalog` ranks it; outcome-first rule)
 
 ### Reference
 
 9. **[Troubleshooting](./05-troubleshooting.md)** - Common issues and solutions
+10. **[Migrating Integrations (.ssi)](./12-migrating-integrations.md)** - Convert external connector bundles (IBM `.ssi`, etc.) into marketplace nodes
 
 ---
 

@@ -142,6 +142,8 @@ function createNodeDefinition(): EnhancedNodeDefinition {
     ],
     capabilities: {
       isTrigger: false,
+      // cacheable: true,  // opt in ONLY for idempotent reads (search/scrape/fetch) so
+      //                   // the engine can memoize the output. See CLAUDE.md § Node capabilities.
     },
   };
 }

@@ -5,7 +5,7 @@
 
 import { createMockClients } from "../core";
 import AIResponse from "../../components/AIResponse/AIResponse";
-import Card from "../../components/Card/Card";
+import Card from "../../tempStorage/Card/Card";
 import KenBurnsImage from "../../atoms/Image/KenBurnsImage";
 import { AIResponseDefaults } from "../../components/AIResponse/defaults";
 import { CardDefaults } from "../../components/Card/defaults";

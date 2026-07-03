@@ -1,0 +1,140 @@
+/* StatCard - single KPI tile. Pure CSS Module. */
+@import "../../styles/index.css";
+
+.card {
+  --statcard-accent: var(--color-chart-1);
+
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-5);
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover-md);
+  transform: translateY(var(--hover-lift-sm));
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-2);
+}
+
+.label {
+  font-size: var(--text-label-md);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-label);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-body-md);
+  color: var(--statcard-accent);
+  background-color: color-mix(in srgb, var(--statcard-accent) 12%, transparent);
+}
+
+.valueRow {
+  display: flex;
+  align-items: baseline;
+}
+
+.value {
+  font-family: var(--font-heading);
+  font-size: var(--text-display-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-display);
+  letter-spacing: var(--letter-spacing-display);
+  color: var(--color-text-primary);
+}
+
+.affix {
+  font-size: var(--text-headline-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  margin: 0 0.0625em;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-3);
+  min-height: 1.25rem;
+}
+
+.delta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  font-size: var(--text-label-lg);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
+.arrow {
+  font-size: var(--text-label-sm);
+  line-height: 1;
+}
+
+.deltaValue {
+  font-variant-numeric: tabular-nums;
+}
+
+.deltaLabel {
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-tertiary);
+  font-size: var(--text-label-md);
+}
+
+.positive {
+  color: var(--color-success-600);
+}
+
+.negative {
+  color: var(--color-error-600);
+}
+
+.neutral {
+  color: var(--color-text-tertiary);
+}
+
+.caption {
+  font-size: var(--text-label-md);
+  color: var(--color-text-tertiary);
+}
+
+.spark {
+  width: 7.5rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.sparkLine {
+  fill: none;
+  stroke: var(--statcard-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.sparkArea {
+  fill: color-mix(in srgb, var(--statcard-accent) 14%, transparent);
+  stroke: none;
+}

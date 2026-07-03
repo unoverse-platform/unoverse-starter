@@ -16,10 +16,15 @@ export class UsageStatsCollector {
     this.stats.chunk_count++;
   }
 
-  setUsage(inputTokens: number, outputTokens: number): void {
-    this.stats.inputTokens = inputTokens;
-    this.stats.outputTokens = outputTokens;
-    this.stats.total_tokens = inputTokens + outputTokens;
+  /**
+   * Accumulate per-response usage. OpenAI bills each response with its own
+   * input tokens (including context), so summing across the session's turns is
+   * the accurate total — overwriting would record only the final turn.
+   */
+  addUsage(inputTokens: number, outputTokens: number): void {
+    this.stats.inputTokens += inputTokens;
+    this.stats.outputTokens += outputTokens;
+    this.stats.total_tokens = this.stats.inputTokens + this.stats.outputTokens;
     this.stats.estimated = false;
   }
 

@@ -132,7 +132,8 @@ function createNodeDefinition(): EnhancedNodeDefinition {
     type: "MyNode",
     name: "My Node",
     description: "Does something useful",
-    category: "AI", // AI | Flow | Output | Storage | Ingest
+    whenToUse: "AI selection guidance: when to pick this node, as a PROPERTY of its job — outcome-first, 1-2 sentences, naming no sibling (self-disqualify by property; name another node only for an absolute structural must). Surfaced in the Unoverse MCP catalog; see doc 14.",
+    category: "AI", // descriptive taxonomy — match the JOB: AI | Voice | Go To Market | Search | Web Scraping | Media & Design | Documents | Knowledge & Vectors | Storage & Data | Communication | Flow | Output
     inputs: [
       { name: "input", type: NodeInputType.STRING, required: true /* signal: "EXECUTE" default */ },
     ],
@@ -148,6 +149,86 @@ function createNodeDefinition(): EnhancedNodeDefinition {
 }
 export const MyNodeNode = { definition: createNodeDefinition(), executor: MyNodeExecutor };
 ```
+
+## Node capabilities
+
+`capabilities` declares engine-level behavior of the node type. All optional:
+
+| Capability | Meaning |
+| --- | --- |
+| `isTrigger` | Node can start a workflow (no upstream required). |
+| `cacheable` | Output is safe to **memoize** — see below. |
+
+### `cacheable` — output memoization (opt-in)
+
+When `cacheable: true`, the engine may serve a node's persisted output from a prior run instead of re-executing it, whenever the node's **fingerprint** matches. The fingerprint is a hash of `node type + version + RESOLVED config + credential ref + scope{userId, conversationId}`. Because it hashes the *resolved* config (templates already substituted), **any upstream change, config edit, credential swap, or loop/variable change busts the cache automatically and recursively.** A TTL bounds staleness.
+
+The win: across a build's many `runTest` cycles, the same search query or the same scrape of the same URL no longer re-runs from scratch (seconds + API spend each) when only a downstream field changed.
+
+```typescript
+capabilities: {
+  isTrigger: false,
+  // Idempotent read — same fingerprint yields the same result, so a prior
+  // output is safe to reuse instead of re-running. See § when to set it.
+  cacheable: true,
+},
+```
+
+**When to set `cacheable: true`:** ONLY for idempotent, side-effect-free **reads** — web search, scrape, fetch-by-id, a pure transform. Same inputs ⇒ same output, and re-running changes nothing in the outside world.
+
+**NEVER set it for:**
+- **Effectful** nodes (send email, write DB row, post to Slack, charge a card) — reusing a prior output would silently skip the side effect.
+- **Non-deterministic** nodes (LLM completions, anything time/random-dependent) — re-running is the *correct* behavior; the answer is meant to vary.
+
+**Safety / gating** (the author opt-in is necessary but not sufficient — all must hold for a reuse to happen):
+- Memoization is **OFF by default** engine-wide (`XSTATE_CONFIG.NODE_MEMOIZATION`, requires migration 008). Your `cacheable` flag only makes the node *eligible*.
+- Only the **node author** reliably knows a node is an idempotent read, so the capability is the real gate — default off. `WORKFLOW_MEMOIZABLE_NODE_TYPES="TypeA,TypeB"` is a transitional env override for nodes whose definition can't be edited yet.
+- Memoization can never *fail* an execution — every step is wrapped; on any error the node just executes normally.
+
+Canonical examples: `SearchWeb` / `SearchNews` / `SearchVideos` / `SearchPlaces` (`@gravity-platform/search`), `HyperbrowserScrape` (`@gravity-platform/crawl`). Design rationale: `docs/unoverseCopilot/EXECUTION_EFFICIENCY.md` §3.2.
+
+## Writing `whenToUse` (node discoverability)
+
+`whenToUse` is AI selection guidance, surfaced to the workflow-building agent (UNO) through the Unoverse MCP catalog (`getNodeCatalog`). It is **not** a footnote — the catalog *embeds* `name. whenToUse [category]` and ranks it by semantic similarity to the step's `task`, returning only the top N. So `whenToUse` decides whether a node **surfaces at all**, not just which sibling wins. A node with weak meta is invisible to the agent no matter how well it works. **This is critical — the full guide is `14-node-discoverability.md`; read it before writing the field.** Every code node must have `whenToUse` (design-system display components are exempt).
+
+**The essentials (see doc 14 for the full reasoning and worked examples):**
+
+1. 1–2 sentences. Write the one-line `task` a planner would type for this node's job first, then make sure its key nouns/verbs appear in your **opening words**.
+2. **Outcome first, mechanism last.** Lead with the job-to-be-done in task-query vocabulary; never open with plumbing ("Hybrid MCP node…", "Attach via a service edge…") — it sinks the ranking.
+3. **Disqualify yourself by *property*, don't name the rival** (governing law: `docs/unoverseCopilot/LOGIC_PLACEMENT.md` Rule 3). Know the incumbent you'd lose to (often a different-category default — e.g. a one-shot dump into MarkdownRenderer) to sharpen the *property* that beats it — but write the **property**, not the name; the ranking surfaces the alternative. Name a node only for an **absolute structural must** (a companion/wiring dependency).
+4. Service-provider / MCP nodes (`isService: true`): still **include** the wiring fact (attach **via a service edge** to a consumer; not part of the data flow) — but put it **last**, after the outcome and the property.
+5. Base every claim on the code, not on what the node sounds like it does.
+
+**Good:**
+
+```typescript
+// OpenAI — self-disqualify by property, names no sibling
+whenToUse: "Single prompt → single completion — no streaming, no tools. The one-shot choice; reach elsewhere when a step needs token streaming or iterative tool use.",
+
+// AirtableExists — the property (existence test), not the rivals
+whenToUse: "Pick for a cheap existence test before an insert — branch on signal.exists, no row fetched.",
+
+// SmartDocument (provider) — outcome first, self-disqualify by PROPERTY, companion + wiring last
+whenToUse: "Pick whenever an agent must author or revise a long document — report, plan, spec, article, brief. Writes and revises section by section; a one-shot generation can't be revised and blows the context window. Attach via a service edge to an agent node, and route its markdown to a MarkdownRenderer to display.",
+```
+
+**Bad:**
+
+```typescript
+whenToUse: "Hybrid MCP node: attach via a service edge to an agent…",     // plumbing first — buries the node in the ranking
+whenToUse: "Use this node when you want to call the OpenAI API.",        // restates the description — zero selection signal
+whenToUse: "A powerful and flexible node for all your search needs.",    // marketing, zero selection signal
+whenToUse: "Calls GET /v2/companies/enrich with retry and backoff.",     // implementation detail, not selection
+```
+
+## Template field modes (UNIVERSAL — same on every node)
+
+A config field marked `"ui:field": "template"` resolves at runtime against the node's input context. Which syntax to use is decided by the field's **`type`** — this is universal, never per-node, so it is documented here once rather than on each node:
+
+- **STRING** field → **Handlebars**: `"{{signal.<sourceId>.<outputHandle>.<field>}}"`, e.g. `"Summarize this: {{signal.inputtrigger1.output.message}}"`. There is NO `{{input.*}}` root — wrong paths resolve to empty silently. Array elements and object keys are **dot segments**, never brackets: `records.0.Name`, not `records[0].Name` — bracket indexing is not a valid Handlebars path and resolves to empty.
+- **OBJECT / ARRAY** field → **JavaScript `return` string** with direct property access (NOT `{{}}`): the resolver runs any template string that starts with `return ` as JS. One value: `"return signal.s3files1.files"`. Built object: `"return { topic: signal.inputtrigger1.output.message, image: signal.geminiimagegen1.images[0].data }"`. A bare nested object `{ topic: "{{...}}" }` is invalid and never resolves.
+
+The naming convention `signal.<sourceId>.<outputHandle>.<field>` is the same everywhere: your node's input connector, the upstream node id, its output connector, the field. The real available references for a given node come from its actual edges, not from any per-node example.
 
 ## configSchema quick reference
 
@@ -268,18 +349,19 @@ Every package must include a rich `gravity` field in `package.json` for the mark
 
 1. Pick PromiseNode vs CallbackNode (§ Decide the node type).
 2. Scaffold the package structure.
-3. Write the node definition with `configSchema`, `credentials`, `serviceConnectors`.
+3. Write the node definition with `configSchema`, `credentials`, `serviceConnectors`, and `whenToUse` (AI selection guidance — see § Writing whenToUse). Template field syntax is universal (§ Template field modes), not per-node.
 4. Implement the executor; keep it thin — delegate to the service.
 5. Implement the service; fetch credentials via `api.getNodeCredentials()`.
 6. Register in `src/index.ts`.
 7. **Populate `gravity` field in package.json** with marketplace metadata (displayName, category, features, nodes as objects, credentials).
-8. `npm run build`, then test via the debug resolver:
+8. **Write a per-node integration test** in `src/MyNode/test/MyNode.test.ts` — real API, credential passed in from a gitignored `.env`, skipped without the key. See `13-testing-nodes.md`.
+9. `npm run build`, then `npm test` (or a quick check via the debug resolver):
    ```bash
    curl -X POST http://localhost:4000/api/debug/execute-node \
      -H "Content-Type: application/json" \
      -d '{"nodeType":"MyNode","config":{...},"inputs":{...}}'
    ```
-9. Publish.
+10. Publish.
 
 ## Common error → fix table
 
@@ -299,7 +381,7 @@ Study these published packages when a pattern is unclear:
 
 - **PromiseNode:** `@gravityai-dev/aws-bedrock`, `@gravityai-dev/openai`, `@gravityai-dev/aws-s3`
 - **CallbackNode:** `@gravityai-dev/ingest` (ApifyResults), `@gravityai-dev/flow` (Loop), `@gravityai-dev/openai` (OpenAIStream)
-- **MCP provider:** PostgresFetch (vector search), MCPgetNeeds (workflow-triggering MCP)
+- **MCP provider:** SpatialSearch (hybrid workflow + MCP search tools), MCPgetNeeds (workflow-triggering MCP)
 - **MCP consumer:** Nova
 
 ## Further reading
@@ -315,3 +397,6 @@ Study these published packages when a pattern is unclear:
 - `09-signal-routing.md` — route table, connector dependencies, signal types
 - `10-package-marketplace.md` — marketplace schema, categories, features format
 - `11-agent-skills.md` — MCP `instructions` field for nodes with complex tool protocols
+- `12-migrating-integrations.md` — collapsing an external `.ssi` connector bundle into a marketplace node
+- `13-testing-nodes.md` — per-node integration tests (real API, gitignored `.env`, skip without key)
+- `14-node-discoverability.md` — **writing meta the AI will actually pick** — how `getNodeCatalog` ranks `whenToUse`, outcome-first rule, naming the incumbent, service-node tension

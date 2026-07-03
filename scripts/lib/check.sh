@@ -8,7 +8,7 @@ cmd_check() {
   local pass=0 total=0
 
   # 1. Services
-  for svc in server workflow node-service canvas umap mcp-server memory; do
+  for svc in server workflow unoverse canvas umap mcp-server memory; do
     total=$((total + 1))
     local status
     status=$(docker compose -f "$ROOT/docker-compose.yml" ps --format '{{.Status}}' "$svc" 2>/dev/null | head -1)
@@ -26,7 +26,7 @@ cmd_check() {
   echo ""
 
   # 2. Health endpoints
-  for endpoint in 4100:server 4101:workflow 4102:node-service 5001:umap 4104:memory; do
+  for endpoint in 4100:server 4101:workflow 4105:unoverse 5001:umap 4104:memory; do
     local port="${endpoint%%:*}" name="${endpoint##*:}"
     total=$((total + 1))
     local code
@@ -62,15 +62,17 @@ cmd_check() {
     fail "$built/$pkg_total packages built"
   fi
 
-  # 4. Node-service plugins
+  # 4. Unoverse node catalog
   total=$((total + 1))
   local plugin_count
-  plugin_count=$(curl -s http://localhost:4102/plugins 2>/dev/null | grep -o '"name"' | wc -l | tr -d ' ')
+  # Catalog lives on unoverse; :4106 is Docker-internal and :4105 /plugins is JWT-gated,
+  # so count nodes from inside the container (node:20-slim has no curl → use node fetch).
+  plugin_count=$(docker compose -f "$ROOT/docker-compose.yml" exec -T unoverse node -e "fetch('http://127.0.0.1:4106/nodes').then(r=>r.json()).then(d=>console.log((d.nodes||[]).length)).catch(()=>console.log(0))" 2>/dev/null | tr -d ' \r')
   if [ "$plugin_count" -gt "0" ]; then
-    ok "$plugin_count plugins loaded"
+    ok "$plugin_count nodes loaded"
     pass=$((pass + 1))
   else
-    fail "0 plugins loaded ${DIM}— check node-service logs${NC}"
+    fail "0 nodes loaded ${DIM}— check unoverse logs${NC}"
   fi
 
   # 5. Component bundles

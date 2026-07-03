@@ -6,12 +6,10 @@ import { UsageStatsCollector } from "./UsageStatsCollector";
 import { WebSocketAudioPublisher } from "../../io/publishers/WebSocketAudioPublisher";
 import type { WsClient } from "../streaming/WsClient";
 
-const { createLogger } = getPlatformDependencies();
-
-interface PendingToolCall {
-  toolName: string;
-  toolInput: any;
-  callId: string;
+// Module-level platform calls cause startup freezes (docs-starter/nodes/CLAUDE.md
+// rule 5) — resolve the logger lazily instead
+function getLogger() {
+  return getPlatformDependencies().createLogger("RealtimeResponseProcessor");
 }
 
 export class RealtimeResponseProcessor {
@@ -19,12 +17,16 @@ export class RealtimeResponseProcessor {
   private textAccumulator: TextAccumulator;
   private usageStatsCollector = new UsageStatsCollector();
   private audioStarted = false;
-  private readonly logger = createLogger("RealtimeResponseProcessor");
+  private readonly logger = getLogger();
 
-  private pendingToolCalls: PendingToolCall[] = [];
   private hasToolCallsInCurrentResponse = false;
 
-  onToolUse?: (toolUse: { toolName: string; toolInput: any; callId: string }) => Promise<void>;
+  /** Called synchronously per function-call event — must not be awaited so the
+   *  orchestrator's pending count is accurate before any tool can complete */
+  onToolUse?: (toolUse: { toolName: string; toolInput: any; callId: string }) => void;
+
+  /** Called when a response that dispatched tool calls reaches response.done */
+  onToolResponseDone?: () => void;
 
   emitProgress(text: string): void {
     this.textAccumulator.emitProgress(text);
@@ -101,7 +103,8 @@ export class RealtimeResponseProcessor {
       case "input_audio_buffer.speech_started":
         this.logger.debug("VAD: speech started", { sessionId: this.sessionId });
         if (this.audioStarted) {
-          await this.audioHandler.handleAudioEnd();
+          // Barge-in: drop buffered assistant audio rather than flushing it
+          await this.audioHandler.handleInterruption();
           this.audioStarted = false;
         }
         this.textAccumulator.resetTurn();
@@ -121,6 +124,18 @@ export class RealtimeResponseProcessor {
         this.handleResponseDone(event);
         break;
 
+      case "response.function_call_arguments.delta":
+      case "response.output_item.added":
+      case "response.output_item.done":
+      case "response.content_part.added":
+      case "response.content_part.done":
+      case "response.created":
+      case "conversation.item.created":
+      case "conversation.item.done":
+      case "conversation.item.added":
+      case "rate_limits.updated":
+        break;
+
       case "error":
         this.logger.error("Realtime API error", { error: event.error, sessionId: this.sessionId });
         break;
@@ -135,9 +150,10 @@ export class RealtimeResponseProcessor {
     this.finalizeUsageStats(event);
 
     if (this.hasToolCallsInCurrentResponse) {
-      // Tool calls were dispatched — the orchestrator handles response.create
-      // after all tool outputs are submitted
+      // Tool calls were dispatched — the orchestrator sends response.create once
+      // all tool outputs are submitted AND this response has settled
       this.hasToolCallsInCurrentResponse = false;
+      this.onToolResponseDone?.();
       return;
     }
 
@@ -174,6 +190,13 @@ export class RealtimeResponseProcessor {
 
     this.hasToolCallsInCurrentResponse = true;
 
+    // Dispatch FIRST, synchronously — awaiting the state publish before counting
+    // opens a race where a fast parallel tool hits zero pending and requests the
+    // next response early
+    if (this.onToolUse) {
+      this.onToolUse({ toolName, toolInput, callId });
+    }
+
     const conversationId = this.metadata.conversationId || this.sessionId;
     const publisher = new WebSocketAudioPublisher();
     await publisher.publishState({
@@ -183,16 +206,12 @@ export class RealtimeResponseProcessor {
       message: `Using tool: ${toolName}`,
       additionalMetadata: { toolName, callId, toolInput },
     });
-
-    if (this.onToolUse) {
-      this.onToolUse({ toolName, toolInput, callId });
-    }
   }
 
   private finalizeUsageStats(event: any): void {
     const usage = event.response?.usage;
     if (usage) {
-      this.usageStatsCollector.setUsage(usage.input_tokens ?? 0, usage.output_tokens ?? 0);
+      this.usageStatsCollector.addUsage(usage.input_tokens ?? 0, usage.output_tokens ?? 0);
     }
     this.usageStatsCollector.setTextResults(
       this.textAccumulator.getTranscription(),

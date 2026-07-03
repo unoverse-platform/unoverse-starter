@@ -41,11 +41,16 @@ Real-time voice conversation with OpenAI's gpt-realtime-2 model via WebSocket st
 | systemPrompt | string | No | "" | System instructions (supports templates) |
 | conversationHistory | object | No | - | JSON array of prior messages |
 | initialRequest | string | No | "" | Text sent at call start |
-| voice | enum | Yes | "alloy" | Voice: alloy, ash, ballad, coral, echo, sage, shimmer, verse |
-| turnDetection | enum | Yes | "server_vad" | server_vad or disabled |
-| temperature | number | No | 0.8 | Sampling temperature (0.0-1.0) |
+| voice | enum | Yes | "alloy" | Voice: alloy, ash, ballad, coral, echo, sage, shimmer, verse, marin, cedar |
+| turnDetection | enum | Yes | "semantic_vad" | semantic_vad, server_vad, or disabled |
 | maxResponseOutputTokens | number | No | 4096 | Max tokens per response |
 | redisChannel | enum | Yes | AI_RESULT_CHANNEL | Redis channel for audio |
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| REALTIME_TOOL_TIMEOUT_MS | 30000 | Max time for an MCP tool call before it returns an error to the model |
 
 ### Credentials
 

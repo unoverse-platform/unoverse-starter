@@ -29,16 +29,19 @@ private buildCredentialContext(context: NodeExecutionContext) {
 
 ### 2. Service Level
 
+> **🛑 Select your credential BY NAME first.** `context.credentials` contains **every credential in the workflow**, keyed by credential type name (see [Credential Context Structure](#-credential-context-structure)). Many credential types expose the same field — `openAICredential`, `apolloCredential`, `hunterCredential`, `searchapiCredential` all have an `apiKey`. A blind "first object with `.apiKey`" scan therefore grabs **whichever happens to be first in the bag**, not yours. A node works in isolation, then silently authenticates with the wrong service the moment another `apiKey` credential is added to the workflow (symptom: a `401`/`No user found` from the API even though the correct credential is selected in the UI).
+>
+> Always read `available.<yourCredentialName>` first; fall back to the field-signature scan only for single-credential convenience.
+
 ```typescript
-// ✅ CORRECT: Read directly from credentialContext.credentials
+// ✅ CORRECT: Select THIS node's credential by its declared name, then fall back to a scan
 export async function myService(config: any, credentialContext: any, api?: any) {
   const available = credentialContext.credentials || {};
 
-  // Find your credential by a known field signature
-  let creds: any;
-  for (const val of Object.values(available)) {
-    if ((val as any)?.apiKey) { creds = val; break; }
-  }
+  // Name-first: matches the credential this node declares (`credentials: [{ name: "myCredential" }]`).
+  // The fallback scan only disambiguates correctly when one credential is present.
+  const creds: any =
+    available.myCredential ?? Object.values(available).find((v) => (v as any)?.apiKey);
 
   if (!creds?.apiKey) {
     throw new Error("myCredential missing apiKey");
@@ -47,6 +50,9 @@ export async function myService(config: any, credentialContext: any, api?: any) 
   // Use the credential
   return await externalAPI.call(creds.apiKey, config.data);
 }
+
+// ❌ WRONG: bare field-signature scan — grabs the first apiKey in the bag, not necessarily yours
+// for (const val of Object.values(available)) { if (val?.apiKey) { creds = val; break; } }
 
 // ❌ WRONG: api.getNodeCredentials() does not reliably return credentials
 // const creds = await api.getNodeCredentials(credentialContext, "myCredential");
@@ -59,13 +65,11 @@ export async function myService(config: any, credentialContext: any, api?: any) 
 export async function initializeOpenAIClient(context: any, logger: any, api?: any) {
   const availableCredentials = context.credentials || {};
 
-  let credentials: OpenAICredentials | undefined;
-  for (const [name, cred] of Object.entries(availableCredentials)) {
-    if ((cred as any)?.apiKey) {
-      credentials = cred as OpenAICredentials;
-      break;
-    }
-  }
+  // Name-first: this node declares `openAICredential`. Falling back to a scan is only safe
+  // when no other apiKey credential (Apollo, Hunter, SearchAPI, …) is in the workflow.
+  const credentials: OpenAICredentials | undefined =
+    availableCredentials.openAICredential ??
+    (Object.values(availableCredentials).find((c) => (c as any)?.apiKey) as OpenAICredentials | undefined);
 
   if (!credentials?.apiKey) {
     throw new Error("OpenAI API key not found in credentials");
@@ -84,7 +88,9 @@ interface CredentialContext {
   nodeId: string;
   nodeType: string;
   config: any;
-  credentials: Record<string, any>; // Platform-resolved credential values, keyed by credential name
+  credentials: Record<string, any>; // ALL workflow credentials, keyed by credential type name
+                                     // (e.g. { openAICredential: {...}, hunterCredential: {...} }).
+                                     // Select yours by name — NOT by scanning for the first apiKey.
 }
 ```
 
@@ -133,10 +139,9 @@ export const MyCredential = {
 export async function myService(config: any, credentialContext: any, api?: any) {
   const available = credentialContext.credentials || {};
 
-  let creds: any;
-  for (const val of Object.values(available)) {
-    if ((val as any)?.apiKey) { creds = val; break; }
-  }
+  // Name-first (the name from `credentials: [{ name: "myCredential" }]`), scan as fallback.
+  const creds: any =
+    available.myCredential ?? Object.values(available).find((v) => (v as any)?.apiKey);
 
   if (!creds?.apiKey) throw new Error("API key not found in credentials");
 
@@ -155,6 +160,7 @@ export async function myService(config: any, credentialContext: any, api?: any) 
 | `"Credentials are required"` | Missing `credentials: [...]` on node definition | Add credential declaration |
 | `"Credential not found"` | Config missing credential ID | Populate credential ID in node config UI |
 | Empty/undefined credential values | Using `api.getNodeCredentials()` | Read from `credentialContext.credentials` directly |
+| `401` / `No user found` **despite** the right credential selected in the UI | Service scans for the first `.apiKey` and grabs another node's credential (the bag holds every workflow credential) | Select by name: `available.<yourCredentialName> ?? <scan>` |
 
 ## 🔗 Study Real Implementations
 
