@@ -1,0 +1,30 @@
+{
+  "type": "Box",
+  "style": { "direction": "column", "gap": "4", "width": "full" },
+  "children": [
+    {
+      "type": "Ref",
+      "ref": "section-header",
+      "props": { "title": "subjectTitle", "subtitle": "subjectSubtitle" }
+    },
+    {
+      "type": "Each",
+      "bind": { "items": "subjectOptions" },
+      "style": { "direction": "row", "wrap": "wrap", "gap": "2", "width": "full" },
+      "template": {
+        "type": "Ref",
+        "ref": "choice-tile",
+        "action": {
+          "type": "setValue",
+          "values": [
+            { "key": "subject", "value": "{{value}}" },
+            { "key": "step", "value": "route" },
+            { "key": "phase", "value": "direction" },
+            { "key": "progressPct", "value": "66%" },
+            { "key": "questionLabel", "value": "Question 4 of 6" }
+          ]
+        }
+      }
+    }
+  ]
+}

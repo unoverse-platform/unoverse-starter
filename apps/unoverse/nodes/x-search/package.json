@@ -1,0 +1,51 @@
+{
+  "name": "@gravity-platform/x-search",
+  "version": "1.1.5",
+  "description": "X (Twitter) search node for Gravity workflow system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gravity": {
+    "displayName": "X (Twitter)",
+    "category": "search",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1777865512/gravity/icons/X_logo.jpg",
+    "nodes": [
+      {
+        "name": "X Search",
+        "type": "PromiseNode",
+        "description": "Search X/Twitter posts by keyword, user, or hashtag",
+        "category": "Search",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Keyword & hashtag search",
+      "User timeline access",
+      "Structured post data",
+      "Engagement metrics"
+    ],
+    "credentials": [
+      {
+        "name": "X API Bearer Token",
+        "type": "xBearerToken",
+        "required": true,
+        "description": "Bearer token from developer.x.com"
+      }
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

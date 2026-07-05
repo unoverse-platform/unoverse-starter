@@ -1,0 +1,50 @@
+{
+  "name": "@gravity-platform/pdf-render",
+  "version": "1.0.8",
+  "description": "PDF rendering node for Gravity workflow system - converts design system components to PDF",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "workflow",
+    "pdf",
+    "render",
+    "puppeteer"
+  ],
+  "author": "Gravity AI",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer-core": "^24.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  },
+  "gravity": {
+    "displayName": "PDF Render",
+    "category": "media",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1771073087/gravity/icons/pdf.png",
+    "nodes": [
+      {
+        "name": "PDF Render",
+        "type": "PromiseNode",
+        "description": "Convert HTML/design system components to PDF documents",
+        "category": "Documents",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "HTML-to-PDF rendering",
+      "Design system components",
+      "Custom page layouts",
+      "Puppeteer-powered"
+    ]
+  }
+}

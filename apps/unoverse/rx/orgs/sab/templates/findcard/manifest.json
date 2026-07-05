@@ -1,0 +1,22 @@
+{
+  "name": "Find Card",
+  "description": "Route users to a guided credit card eligibility and best-fit assessment. Determines which card fits the user's profile and whether applying now is sensible. Use when the user wants to find or apply for a credit card.",
+  "category": "Cards",
+  "version": "1.0.0",
+  "mode": "focus",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "message": { "type": "string", "description": "The user's request" }
+    }
+  },
+  "binding": {
+    "workflow": "wf-r4jzo7",
+    "trigger": "inputtrigger7"
+  },
+  "autoTrigger": true,
+  "expose": {
+    "openaiApps": false
+  },
+  "previewComponents": ["CardFinder"]
+}

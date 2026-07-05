@@ -1,0 +1,84 @@
+{
+  "name": "@gravity-platform/search",
+  "version": "1.0.1",
+  "description": "SearchAPI.io search nodes (web, news, videos, places) for Gravity workflow system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "search",
+    "searchapi",
+    "google",
+    "news",
+    "youtube",
+    "maps"
+  ],
+  "author": "Gravity Team",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gravity": {
+    "displayName": "Search",
+    "category": "search",
+    "logoUrl": "https://cdn-icons-png.flaticon.com/512/3128/3128287.png",
+    "nodes": [
+      {
+        "name": "Search Web",
+        "type": "PromiseNode",
+        "description": "Google web + image search by keyword query",
+        "category": "Search",
+        "mcp": false
+      },
+      {
+        "name": "Search News",
+        "type": "PromiseNode",
+        "description": "Recent news articles on a topic via Google News",
+        "category": "Search",
+        "mcp": false
+      },
+      {
+        "name": "Search Videos",
+        "type": "PromiseNode",
+        "description": "YouTube video search results by keyword",
+        "category": "Search",
+        "mcp": false
+      },
+      {
+        "name": "Search Places",
+        "type": "PromiseNode",
+        "description": "Local businesses and places with ratings via Google Maps",
+        "category": "Search",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Web & image search (Google)",
+      "News articles (Google News)",
+      "YouTube video search",
+      "Local places & reviews (Google Maps)",
+      "One SearchAPI.io key for all engines"
+    ],
+    "credentials": [
+      {
+        "name": "SearchAPI Key",
+        "type": "searchapiCredential",
+        "required": true,
+        "description": "API key from searchapi.io"
+      }
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "name": "@gravity-platform/postgres-toolkit",
+  "version": "1.0.7",
+  "description": "PostgreSQL batch INSERT node for GravityWorkflow — INSERT-only with table protection and optional vector embeddings",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "gravity",
+    "workflow",
+    "postgres",
+    "database",
+    "insert",
+    "batch"
+  ],
+  "author": "GravityAI",
+  "license": "MIT",
+  "dependencies": {
+    "pg": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  },
+  "gravity": {
+    "displayName": "PostgreSQL",
+    "category": "storage",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+    "nodes": [
+      {
+        "name": "Postgres Fetch",
+        "type": "PromiseNode",
+        "description": "Query PostgreSQL tables with parameterized SQL and vector search",
+        "category": "Storage & Data",
+        "mcp": false
+      },
+      {
+        "name": "Postgres Insert",
+        "type": "PromiseNode",
+        "description": "Batch INSERT rows with table protection and optional embeddings",
+        "category": "Storage & Data",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Parameterized SQL queries",
+      "Batch INSERT operations",
+      "Vector embedding storage",
+      "Table protection (INSERT-only)"
+    ],
+    "credentials": [
+      {
+        "name": "PostgreSQL Connection",
+        "type": "postgresConnection",
+        "required": true,
+        "description": "Connection string or host/port/database/user/password"
+      }
+    ]
+  }
+}

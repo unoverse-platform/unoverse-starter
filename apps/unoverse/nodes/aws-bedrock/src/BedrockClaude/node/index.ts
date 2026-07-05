@@ -1,0 +1,217 @@
+/**
+ * Bedrock Claude Node Definition
+ * Provides AI text generation capabilities using AWS Bedrock Claude models
+ */
+
+import { NodeInputType, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import BedrockClaudeExecutor from "./executor";
+
+export function createNodeDefinition(): EnhancedNodeDefinition {
+  return {
+    packageVersion: "1.1.0",
+    type: "BedrockClaude",
+    isService: false,
+    name: "Bedrock Claude",
+    description: "AWS Bedrock Claude models with optional tool support",
+    whenToUse:
+      "Generate, summarize, rewrite, or analyze text (and optionally an image or document) with a single prompt → single Claude response, plus tool-schema structured output. Use it when the workflow must run CLAUDE on AWS credentials; it is single-shot, not a multi-turn tool-calling agent loop.",
+    category: "AI",
+    color: "#10a37f",
+    logoUrl: "https://res.cloudinary.com/sonik/image/upload/v1749137717/gravity/icons/vdyfnijyuyk8ajqtp3nu.webp",
+
+    inputs: [
+      {
+        name: "signal",
+        type: NodeInputType.OBJECT,
+        description: "Input to prompt",
+      },
+    ],
+
+    outputs: [
+      {
+        name: "output",
+        type: NodeInputType.OBJECT,
+        description: "Response object",
+      },
+      {
+        name: "usage",
+        type: NodeInputType.OBJECT,
+        description: "Token burn",
+      },
+      {
+        name: "toolUse",
+        type: NodeInputType.OBJECT,
+        description: "Selected Tool",
+      },
+    ],
+
+    configSchema: {
+      type: "object",
+      properties: {
+        model: {
+          type: "string",
+          title: "Model",
+          description: "Select the Claude model to use",
+          enum: [
+            "us.anthropic.claude-sonnet-4-6",
+            "us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "us.anthropic.claude-haiku-4-5-20251001-v1:0",
+          ],
+          enumNames: ["Claude Sonnet 4.6", "Claude Sonnet 4.5", "Claude 4.5 Haiku"],
+          default: "us.anthropic.claude-sonnet-4-6",
+        },
+        maxTokens: {
+          type: "number",
+          title: "Max Tokens",
+          description: "Maximum number of tokens to generate",
+          default: 4096,
+          minimum: 1,
+          maximum: 64000,
+        },
+        temperature: {
+          type: "number",
+          title: "Temperature",
+          description: "Controls randomness (0-1)",
+          default: 0.7,
+          minimum: 0,
+          maximum: 1,
+          step: 0.1,
+        },
+        systemPrompt: {
+          type: "string",
+          title: "System Prompt",
+          description:
+            "System message prompt. Supports template syntax like {{signal.<sourceNodeId>.<outputHandle>.<field>}} to reference input data.",
+          default: "",
+          "ui:field": "template",
+          "ui:ai": {
+            editable: true,
+          },
+        },
+        prompt: {
+          type: "string",
+          title: "Prompt",
+          description:
+            "User message/prompt. Supports template syntax like {{signal.<sourceNodeId>.<outputHandle>.<field>}} to reference input data.",
+          default: "",
+          "ui:field": "template",
+          "ui:ai": {
+            editable: true,
+          },
+        },
+        includeImageUrl: {
+          type: "boolean",
+          title: "Include Image URL",
+          description: "Enable image analysis by providing an image URL",
+          default: false,
+          "ui:widget": "toggle",
+        },
+        imageUrl: {
+          type: "string",
+          title: "Image URL",
+          description: "URL of the image to analyze. Supports template syntax like {{signal.inputtrigger1.output.imageUrl}}",
+          default: "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            includeImageUrl: true,
+          },
+        },
+        includeDocumentUrl: {
+          type: "boolean",
+          title: "Include Document",
+          description: "Attach a document (PDF, DOCX, CSV, etc.) for Claude to analyze",
+          default: false,
+          "ui:widget": "toggle",
+        },
+        documentUrl: {
+          type: "string",
+          title: "Document URL",
+          description: "URL of the document to analyze (presigned S3 URL or public URL). Supports template syntax.",
+          default: "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            includeDocumentUrl: true,
+          },
+        },
+        documentName: {
+          type: "string",
+          title: "Document Name",
+          description: "Optional name for the document (auto-detected from URL if empty). Supports template syntax.",
+          default: "",
+          "ui:field": "template",
+          "ui:dependencies": {
+            includeDocumentUrl: true,
+          },
+        },
+        enableTools: {
+          type: "boolean",
+          title: "Enable Tools",
+          description: "Enable tool usage for structured outputs",
+          default: false,
+          "ui:widget": "toggle",
+        },
+        toolChoice: {
+          type: "string",
+          title: "Tool Choice",
+          description: "How Claude should use tools",
+          enum: ["required", "auto"],
+          enumNames: ["Required - Must use tools", "Auto - Optional tool use"],
+          default: "required",
+          "ui:dependencies": {
+            enableTools: true,
+          },
+        },
+        toolSchema: {
+          type: "object",
+          title: "Tool Schema",
+          description: "JSON schema for the tool function",
+          default: "{}",
+          "ui:field": "template",
+          "ui:dependencies": {
+            enableTools: true,
+          },
+          "ui:ai": {
+            editable: true,
+          },
+        },
+      },
+      required: ["model"],
+    },
+
+    credentials: [
+      {
+        name: "awsCredential",
+        required: true,
+        displayName: "AWS Credentials",
+        description: "AWS credentials for Bedrock API access (accessKeyId, secretAccessKey, region)",
+      },
+    ],
+
+    testData: {
+      config: {
+        model: "us.anthropic.claude-sonnet-4-6",
+        maxTokens: 4096,
+        temperature: 0.7,
+        systemPrompt: "You are a concise assistant. Reply in plain prose, no preamble.",
+        prompt: "Summarize the key benefits of AWS Bedrock in two sentences.",
+        includeImageUrl: false,
+        includeDocumentUrl: false,
+        enableTools: false,
+      },
+      inputs: {
+        signal: {
+          text: "AWS Bedrock is a fully managed service offering a choice of high-performing foundation models from leading AI companies through a single API.",
+        },
+      },
+    },
+  };
+}
+
+const definition = createNodeDefinition();
+
+export const BedrockClaudeNode = {
+  definition,
+  executor: BedrockClaudeExecutor,
+};
+
+export { definition };

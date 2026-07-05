@@ -1,0 +1,38 @@
+{
+  "type": "Box",
+  "visibleWhen": { "field": "callState", "eq": "agentSpeaking" },
+  "style": { "direction": "column", "align": "center", "gap": "4", "width": "full" },
+  "children": [
+    {
+      "type": "Box",
+      "style": { "minHeight": "12", "direction": "row", "align": "center", "justify": "center" },
+      "children": [
+        {
+          "type": "Box",
+          "visibleWhen": "isLookingUp",
+          "style": { "direction": "row", "align": "center", "gap": "sm", "padding": ["2", "4"], "radius": "full", "background": "surface.sunken", "border": "subtle" },
+          "children": [
+            {
+              "type": "Each",
+              "bind": { "items": "lookupDots" },
+              "style": { "direction": "row", "align": "center", "gap": "xs" },
+              "template": {
+                "type": "Box",
+                "style": { "width": "1.5", "height": "1.5", "radius": "full", "background": "action.primary", "animation": { "name": "wave", "duration": "1.2s", "easing": "ease-in-out" }, "animationDelay": "{{delay}}" }
+              }
+            },
+            { "type": "Text", "bind": { "value": "lookupLabel" }, "style": { "font": "body.sm", "color": "text.secondary" } }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Box",
+      "style": { "minHeight": "20", "direction": "row", "align": "center", "justify": "center" },
+      "children": [
+        { "$include": "blocks/call-controls" }
+      ]
+    },
+    { "type": "Box", "style": { "minHeight": "14" } }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "name": "@gravity-platform/email",
+  "version": "1.0.9",
+  "description": "Email nodes for GravityWorkflow — send emails via Microsoft 365 and other providers",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "gravity",
+    "workflow",
+    "email",
+    "smtp",
+    "microsoft365",
+    "nodemailer"
+  ],
+  "author": "GravityAI",
+  "license": "MIT",
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  },
+  "devDependencies": {
+    "@types/nodemailer": "^6.4.17",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  },
+  "gravity": {
+    "displayName": "Email",
+    "category": "communication",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/microsoft365.png",
+    "nodes": [
+      {
+        "name": "Send Email",
+        "type": "PromiseNode",
+        "description": "Send emails via Microsoft 365, Gmail, or custom SMTP",
+        "category": "Communication",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Microsoft 365 integration",
+      "SMTP support",
+      "HTML & plain text",
+      "Attachments"
+    ],
+    "credentials": [
+      {
+        "name": "Email Credentials",
+        "type": "emailCredentials",
+        "required": true,
+        "description": "SMTP host, port, username, and password"
+      }
+    ]
+  }
+}

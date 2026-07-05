@@ -43,17 +43,26 @@ npm install
 
 ## Development
 
+Three developer-editable folders are mounted into the running platform — edit
+locally, then `./unoverse build` to pick up changes:
+
+| Folder | What you edit |
+|--------|---------------|
+| `apps/unoverse/nodes/`   | **Node logic** — workflow node packages |
+| `apps/unoverse/rx/`      | **Design** — components, templates, styles (rendered by the SDK) |
+| `apps/unoverse/prompts/` | **Behavior** — agent skills + prompt blocks |
+
 ### Custom Nodes
 
 ```bash
-# Create a new package in packages/my-custom-node/
+# Create a new package in apps/unoverse/nodes/my-custom-node/
 # ... write your node code ...
 
 # Build and restart
 ./unoverse build @gravity-platform/my-custom-node
 ```
 
-See `docs/nodes/` for full node development guide.
+See `docs/nodes/` for the full node development guide.
 
 ## Deployment (Production)
 

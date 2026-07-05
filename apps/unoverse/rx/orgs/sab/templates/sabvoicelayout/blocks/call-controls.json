@@ -1,0 +1,28 @@
+{
+  "type": "Box",
+  "style": { "direction": "row", "align": "center", "justify": "center", "gap": "lg" },
+  "children": [
+    {
+      "type": "Ref",
+      "ref": "call-button",
+      "visibleWhen": { "field": "isMuted", "eq": false },
+      "action": "toggleMute",
+      "props": { "icon": "muteIcon" }
+    },
+    {
+      "type": "Ref",
+      "ref": "call-button",
+      "visibleWhen": { "field": "isMuted", "eq": true },
+      "action": "toggleMute",
+      "props": { "icon": "mutedIcon" },
+      "style": { "background": "action.subtle", "color": "action.primary" }
+    },
+    {
+      "type": "Ref",
+      "ref": "call-button",
+      "action": "endCall",
+      "props": { "icon": "endIcon" },
+      "style": { "background": "status.error", "color": "text.inverse", "shadow": "md" }
+    }
+  ]
+}

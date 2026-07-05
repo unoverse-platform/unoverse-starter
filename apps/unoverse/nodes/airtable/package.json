@@ -1,0 +1,70 @@
+{
+  "name": "@gravity-platform/airtable",
+  "version": "1.0.7",
+  "description": "Airtable nodes for GravityWorkflow — fetch and insert records",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "gravity",
+    "workflow",
+    "airtable",
+    "database",
+    "fetch",
+    "insert"
+  ],
+  "author": "GravityAI",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  },
+  "gravity": {
+    "displayName": "Airtable",
+    "category": "storage",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1775377626/gravity/icons/airtable.png",
+    "nodes": [
+      {
+        "name": "Airtable Exists",
+        "type": "PromiseNode",
+        "description": "Check if a record exists in an Airtable base by field match",
+        "category": "Storage & Data",
+        "mcp": false
+      },
+      {
+        "name": "Airtable Fetch",
+        "type": "PromiseNode",
+        "description": "Query and retrieve records from Airtable with filtering",
+        "category": "Storage & Data",
+        "mcp": false
+      },
+      {
+        "name": "Airtable Insert",
+        "type": "PromiseNode",
+        "description": "Create or update records in an Airtable base",
+        "category": "Storage & Data",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Record lookup & filtering",
+      "Batch insert & upsert",
+      "Existence checks",
+      "Multi-base support"
+    ],
+    "credentials": [
+      {
+        "name": "Airtable API Key",
+        "type": "airtableApiKey",
+        "required": true,
+        "description": "Personal access token from airtable.com/create/tokens"
+      }
+    ]
+  }
+}

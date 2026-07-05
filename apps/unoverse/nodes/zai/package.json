@@ -1,0 +1,97 @@
+{
+  "name": "@gravity-platform/zai",
+  "version": "1.2.2",
+  "description": "Z.AI (GLM) integration for Gravity workflow system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "zai",
+    "z.ai",
+    "glm",
+    "glm-5.2",
+    "workflow",
+    "nodes",
+    "agent"
+  ],
+  "gravity": {
+    "displayName": "Z.AI",
+    "category": "ai",
+    "logoUrl": null,
+    "nodes": [
+      {
+        "name": "GLM Agent",
+        "type": "CallbackNode",
+        "description": "Multi-turn GLM-5.2 agent with MCP tool calling, reasoning, and streaming",
+        "category": "AI",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "GLM-5.2 model (Z.AI)",
+      "Multi-turn conversations",
+      "Streaming responses",
+      "Function/tool calling via MCP",
+      "Reasoning / thinking stream",
+      "Markdown output"
+    ],
+    "credentials": [
+      {
+        "name": "Z.AI API Key",
+        "type": "zaiApiKey",
+        "required": true,
+        "description": "API key from z.ai (https://z.ai)"
+      }
+    ]
+  },
+  "author": "Gravity Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "openai": "^6.15.0"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "**/*.test.ts"
+    ],
+    "setupFiles": [
+      "dotenv/config"
+    ],
+    "testTimeout": 60000
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "dotenv": "^16.4.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

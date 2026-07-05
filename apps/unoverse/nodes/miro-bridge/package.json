@@ -1,0 +1,45 @@
+{
+  "name": "@gravity-platform/miro-bridge",
+  "version": "0.2.4",
+  "description": "MiroBridge node: LLM-driven Miro board manipulation via MCP tools. Dispatches commands to the MiroBridge browser component running in the Miro iframe; results return via USER_ACTION sendUserAction.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "gravity": {
+    "displayName": "Miro Bridge",
+    "category": "productivity",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1750052178/gravity/icons/6359572-200.png",
+    "nodes": [
+      {
+        "name": "Miro Bridge",
+        "type": "CallbackNode",
+        "description": "LLM-driven Miro board manipulation via MCP tool commands",
+        "category": "Media & Design",
+        "mcp": true
+      }
+    ],
+    "features": [
+      "AI-driven board editing",
+      "MCP tool interface",
+      "Create/move/style items",
+      "Real-time Miro sync"
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

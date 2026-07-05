@@ -1,0 +1,18 @@
+{
+  "unoverse": "1.0",
+  "kind": "template",
+  "name": "BankTransfer",
+  "category": "Layout",
+  "description": "Bank Transfer app shell. Blank/vanilla — renders whatever component(s) the bound workflow streams in (a single catch-all ComponentSlot).",
+  "root": {
+    "type": "Box",
+    "style": { "direction": "column", "width": "full", "height": "full" },
+    "children": [
+      {
+        "type": "ComponentSlot",
+        "select": { "from": "all" },
+        "fallback": { "type": "Skeleton", "variant": "card" }
+      }
+    ]
+  }
+}

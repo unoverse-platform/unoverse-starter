@@ -157,7 +157,7 @@ All checks should pass:
 ### Custom Nodes
 
 ```bash
-# Edit your node code in packages/my-custom-node/
+# Edit your node code in apps/unoverse/nodes/my-custom-node/
 unoverse build @gravity-platform/my-custom-node
 ```
 
@@ -185,9 +185,9 @@ npm run storybook -w @gravity-platform/design-system-dev
 cd ~/gravity
 unoverse dev
 
-# Make changes to packages/ or apps/design-system/
-unoverse build               # Build all + gen:nodes + restart
-unoverse build @gravity-platform/my-node  # Or build one package
+# Edit apps/unoverse/nodes (logic), apps/unoverse/rx (design), or apps/unoverse/prompts (behavior)
+unoverse build               # Build all + restart
+unoverse build @gravity-platform/my-node  # Or build one node package
 
 # End your day
 unoverse stop

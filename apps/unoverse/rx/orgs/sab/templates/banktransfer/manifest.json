@@ -1,0 +1,22 @@
+{
+  "name": "Bank Transfer",
+  "description": "Guide a user through sending money — choose a source account and beneficiary, enter an amount and memo, review, and confirm. Use when the user wants to transfer or send money, pay a beneficiary, or move funds between accounts.",
+  "category": "Payments",
+  "version": "1.0.0",
+  "mode": "focus",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "message": { "type": "string", "description": "The user's request" }
+    }
+  },
+  "binding": {
+    "workflow": "wf-r4jzo7",
+    "trigger": "inputtrigger6"
+  },
+  "autoTrigger": true,
+  "expose": {
+    "openaiApps": false
+  },
+  "previewComponents": ["AccountTransferWidget"]
+}

@@ -1,0 +1,236 @@
+{
+  "unoverse": "1.0",
+  "kind": "component",
+  "name": "AccountTransferWidget",
+  "category": "Input",
+  "nodeSize": { "width": 1040, "height": 720 },
+  "description": "An interactive bank-transfer widget: step through choosing a source account, picking a beneficiary, entering an amount and memo, reviewing the transfer, and a success confirmation — with a step progress bar and a hero image. Renders the account and beneficiary lists, the entered amount and fee, and a confirmation number.",
+  "whenToUse": "Walk a user through sending money or paying a beneficiary — choose a source account, pick a recipient, enter an amount, review, and confirm. Pick when the outcome is a multi-step money-movement flow that ends in a transfer confirmation.",
+  "props": {
+    "displayState": { "type": "string", "default": "focused" },
+    "focusable": { "type": "boolean", "default": true },
+    "focusLabel": { "type": "string", "default": "Bank Transfer" },
+
+    "transferData": { "type": "object", "input": true, "default": {
+      "sourceAccount": { "accountName": "Salary Account", "accountNumber": "SA0380000000600100010001", "bankName": "Saudi Awwal Bank", "balance": "SAR 24,500.00", "currency": "SAR" },
+      "recipientAccount": { "accountName": "Ahmed Al-Rashid", "accountNumber": "SA1234567890123210", "bankName": "Saudi Awwal Bank", "currency": "SAR" },
+      "amount": "1,500.00",
+      "currency": "SAR",
+      "reference": "",
+      "transferType": "domestic",
+      "fee": "SAR 2.50",
+      "status": "draft"
+    } },
+
+    "inlinePrimary": { "type": "string", "default": "Send money securely" },
+    "inlineSecondary": { "type": "string", "default": "Tap to start a transfer" },
+
+    "step": { "type": "string", "default": "source" },
+    "stepLabel": { "type": "string", "default": "Step 1 of 4" },
+    "progressPct": { "type": "string", "default": "25%" },
+    "headerTitle": { "type": "string", "default": "Bank Transfer" },
+    "headerSubtitle": { "type": "string", "default": "Send money securely" },
+    "currencySymbol": { "type": "string", "default": "SAR" },
+
+    "sourceTitle": { "type": "string", "default": "From which account?" },
+    "sourceSubtitle": { "type": "string", "default": "Choose the account to send from" },
+    "availableAccounts": { "type": "array", "input": true, "default": [
+      { "accountName": "Salary Account", "accountNumber": "SA0380000000600100010001", "bankName": "Saudi Awwal Bank", "balance": "SAR 24,500.00", "currency": "SAR" },
+      { "accountName": "Everyday Account", "accountNumber": "SA0380000000600100010042", "bankName": "Saudi Awwal Bank", "balance": "SAR 8,300.50", "currency": "SAR" },
+      { "accountName": "Savings Account", "accountNumber": "SA0380000000600100010098", "bankName": "Saudi Awwal Bank", "balance": "SAR 51,200.00", "currency": "SAR" }
+    ] },
+
+    "recipientTitle": { "type": "string", "default": "Who are you paying?" },
+    "recipientSubtitle": { "type": "string", "default": "Choose a saved beneficiary" },
+    "beneficiaries": { "type": "array", "input": true, "default": [
+      { "id": "ben-ahmed", "name": "Ahmed Al-Rashid", "accountNumber": "SA1234567890123210", "bankName": "Saudi Awwal Bank", "type": "domestic", "currency": "SAR" },
+      { "id": "ben-sara", "name": "Sara Khan", "accountNumber": "SA9876543210008899", "bankName": "Al Rajhi Bank", "type": "domestic", "currency": "SAR" },
+      { "id": "ben-omar", "name": "Omar Hassan", "accountNumber": "SA5566778899004455", "bankName": "Riyad Bank", "type": "domestic", "currency": "SAR" }
+    ] },
+
+    "amountTitle": { "type": "string", "default": "How much?" },
+    "amountSubtitle": { "type": "string", "default": "Enter the amount and an optional memo" },
+    "amountLabel": { "type": "string", "default": "Amount" },
+    "amount": { "type": "string", "default": "1,500.00" },
+    "memoLabel": { "type": "string", "default": "Memo (optional)" },
+    "memo": { "type": "string", "default": "" },
+    "amountCta": { "type": "string", "default": "Continue to review" },
+
+    "reviewTitle": { "type": "string", "default": "Review transfer" },
+    "fromLabel": { "type": "string", "default": "From" },
+    "toLabel": { "type": "string", "default": "To" },
+    "feeLabel": { "type": "string", "default": "Transfer fee" },
+    "fee": { "type": "string", "default": "SAR 2.50" },
+    "memoReviewLabel": { "type": "string", "default": "Memo" },
+    "secureNote": { "type": "string", "default": "Secure transfer · Bank-level encryption" },
+    "reviewCta": { "type": "string", "default": "Confirm transfer" },
+    "backLabel": { "type": "string", "default": "Back" },
+
+    "sourceLabel": { "type": "string", "default": "Salary Account" },
+    "sourceMeta": { "type": "string", "default": "SAB · ····0001" },
+    "recipientLabel": { "type": "string", "default": "Ahmed Al-Rashid" },
+    "recipientBank": { "type": "string", "default": "SAB · ····3210" },
+
+    "confirmTitle": { "type": "string", "default": "Transfer successful" },
+    "confirmSubtitle": { "type": "string", "default": "Your transfer has been initiated and is on its way." },
+    "confirmNumberLabel": { "type": "string", "default": "Confirmation" },
+    "confirmationNumber": { "type": "string", "default": "TRF-9X7K2M4P" },
+    "amountSentLabel": { "type": "string", "default": "Amount sent" },
+    "arrivalLabel": { "type": "string", "default": "Estimated arrival" },
+    "estimatedArrival": { "type": "string", "default": "Tomorrow" },
+    "confirmCta": { "type": "string", "default": "Make another transfer" },
+
+    "heroImage": { "type": "string", "input": true, "default": "https://res.cloudinary.com/sonik/image/upload/v1767543207/SAB/travel.jpg" }
+  },
+  "root": {
+    "type": "Box",
+    "style": { "width": "full", "height": "full" },
+    "children": [
+      {
+        "type": "Button",
+        "visibleWhen": { "field": "displayState", "eq": "inline" },
+        "action": { "type": "setValue", "values": [{ "key": "displayState", "value": "focused" }] },
+        "style": { "position": "relative", "cursor": "pointer", "padding": "0", "direction": "row", "align": "stretch", "width": "full", "maxWidth": "140", "minHeight": "40", "background": "surface.base", "border": "subtle", "radius": "xl", "shadow": "sm", "overflow": "hidden", "transition": "all 150ms ease", "hover": { "shadow": "md" } },
+        "children": [
+          {
+            "type": "Box",
+            "style": { "flex": "0 0 auto", "width": "16", "background": "surface.inverse", "radiusTopLeft": "xl", "radiusBottomLeft": "xl", "direction": "row", "align": "center", "justify": "center" },
+            "children": [
+              { "type": "Icon", "icon": "transfer", "style": { "width": "6", "height": "6", "color": "text.inverse" } }
+            ]
+          },
+          {
+            "type": "Box",
+            "style": { "flex": "1", "minWidth": "0", "direction": "column", "gap": "1", "padding": "4" },
+            "children": [
+              {
+                "type": "Box",
+                "style": { "direction": "row", "justify": "center", "width": "full" },
+                "children": [
+                  { "type": "Text", "bind": { "value": "headerTitle" }, "style": { "font": "body.sm", "weight": "semibold", "color": "text.secondary" } }
+                ]
+              },
+              { "type": "Text", "bind": { "value": "inlinePrimary" }, "style": { "font": "title", "weight": "semibold", "lineHeight": "tight", "color": "text.primary" } },
+              { "type": "Text", "visibleWhen": "inlineSecondary", "bind": { "value": "inlineSecondary" }, "style": { "font": "body.sm", "color": "text.secondary" } },
+              {
+                "type": "Box",
+                "style": { "width": "full", "height": "1", "background": "surface.sunken", "radius": "full", "overflow": "hidden", "margin": ["2", "0", "0", "0"] },
+                "children": [
+                  { "type": "Box", "style": { "height": "full", "width": "{{progressPct}}", "background": "status.success", "radius": "full", "transition": "all 300ms ease" } }
+                ]
+              },
+              {
+                "type": "Box",
+                "visibleWhen": "stepLabel",
+                "style": { "direction": "row", "justify": "center", "margin": ["2", "0", "0", "0"] },
+                "children": [
+                  {
+                    "type": "Box",
+                    "style": { "background": "surface.sunken", "radius": "full", "padding": ["1", "2"] },
+                    "children": [
+                      { "type": "Text", "bind": { "value": "stepLabel" }, "style": { "font": "caption", "weight": "medium", "color": "text.tertiary" } }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Box",
+            "visibleWhen": "heroImage",
+            "style": { "flex": "0 0 auto", "width": "40", "overflow": "hidden", "hideBelow": "180", "position": "relative", "radiusTopRight": "xl", "radiusBottomRight": "xl" },
+            "children": [
+              { "type": "Image", "bind": { "src": "heroImage", "alt": "headerTitle" }, "style": { "position": "absolute", "inset": "0", "width": "full", "height": "full", "fit": "cover" } }
+            ]
+          },
+          {
+            "type": "Box",
+            "visibleWhen": "focusable",
+            "style": { "position": "absolute", "inset": "0 0 auto auto", "margin": "3", "width": "7", "height": "7", "radius": "full", "background": "surface.base", "border": "subtle", "shadow": "sm", "direction": "row", "align": "center", "justify": "center" },
+            "children": [
+              { "type": "Icon", "icon": "expand", "style": { "width": "4", "height": "4", "color": "text.secondary" } }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Box",
+        "visibleWhen": { "field": "displayState", "ne": "inline" },
+        "style": { "position": "relative", "width": "full", "height": "full", "minHeight": "160", "container": "inline-size", "direction": "row", "background": "surface.base", "border": "subtle", "radius": "lg", "shadow": "lg", "overflow": "hidden" },
+        "children": [
+      {
+        "type": "Box",
+        "style": { "flex": "1.5", "minWidth": "0", "direction": "column" },
+        "children": [
+          {
+            "type": "Box",
+            "style": { "width": "full", "direction": "row", "align": "center", "gap": "4", "padding": ["4", "6"], "background": "surface.inverse" },
+            "children": [
+              {
+                "type": "Box",
+                "style": { "width": "12", "height": "12", "radius": "xl", "border": "subtle", "direction": "row", "align": "center", "justify": "center" },
+                "children": [
+                  { "type": "Icon", "icon": "transfer", "style": { "width": "7", "height": "7", "color": "text.inverse" } }
+                ]
+              },
+              {
+                "type": "Box",
+                "style": { "flex": "1", "minWidth": "0", "direction": "column", "gap": "0" },
+                "children": [
+                  { "type": "Text", "bind": { "value": "headerTitle" }, "style": { "font": "headline.lg", "weight": "semibold", "color": "text.inverse" } },
+                  { "type": "Text", "visibleWhen": "headerSubtitle", "bind": { "value": "headerSubtitle" }, "style": { "font": "body.sm", "color": "text.inverse" } }
+                ]
+              }
+            ]
+          },
+
+          {
+            "type": "Box",
+            "style": { "direction": "row", "align": "center", "gap": "3", "padding": ["4", "8"], "width": "full", "borderBottom": "subtle" },
+            "children": [
+              { "type": "Text", "visibleWhen": "stepLabel", "bind": { "value": "stepLabel" }, "style": { "font": "label", "color": "text.tertiary" } },
+              {
+                "type": "Box",
+                "style": { "flex": "1", "height": "1", "background": "surface.sunken", "radius": "full", "overflow": "hidden" },
+                "children": [
+                  { "type": "Box", "style": { "height": "full", "width": "{{progressPct}}", "background": "status.success", "radius": "full", "transition": "all 300ms ease" } }
+                ]
+              }
+            ]
+          },
+
+          {
+            "type": "Box",
+            "style": { "direction": "column", "gap": "5", "padding": ["6", "8"], "width": "full" },
+            "children": [
+              {
+                "type": "Switch",
+                "on": "step",
+                "cases": {
+                  "source": { "$include": "states/source" },
+                  "recipient": { "$include": "states/recipient" },
+                  "amount": { "$include": "states/amount" },
+                  "review": { "$include": "states/review" },
+                  "confirmation": { "$include": "states/confirmation" },
+                  "default": { "$include": "states/source" }
+                }
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "type": "Box",
+        "visibleWhen": "heroImage",
+        "style": { "flex": "1", "minWidth": "0", "direction": "column", "background": "surface.sunken", "overflow": "hidden", "hideBelow": "180" },
+        "children": [
+          { "type": "Image", "bind": { "src": "heroImage", "alt": "headerTitle" }, "style": { "width": "full", "height": "full", "fit": "cover" } }
+        ]
+      },
+      { "type": "Ref", "ref": "close-button", "visibleWhen": "focusable", "action": { "type": "setValue", "values": [{ "key": "displayState", "value": "inline" }] }, "style": { "position": "absolute", "inset": "0 0 auto auto", "margin": "4" } }
+    ]
+      }
+    ]
+  }
+}

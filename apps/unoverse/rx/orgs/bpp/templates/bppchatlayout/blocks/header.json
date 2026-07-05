@@ -1,0 +1,23 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "row",
+    "align": "center",
+    "padding": "md",
+    "background": "transparent"
+  },
+  "children": [
+    {
+      "type": "Image",
+      "visibleWhen": "logoUrl",
+      "bind": {
+        "src": "logoUrl",
+        "alt": "brandName"
+      },
+      "style": {
+        "height": "8",
+        "fit": "contain"
+      }
+    }
+  ]
+}

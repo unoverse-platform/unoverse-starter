@@ -1,0 +1,266 @@
+{
+  "unoverse": "1.0",
+  "kind": "component",
+  "name": "JourneyFinder",
+  "category": "Input",
+  "nodeSize": { "width": 1040, "height": 760 },
+  "description": "A guided learning-journey finder: six quick questions about career stage, current situation, subject area, learning route, study mode and time commitment, with a phase stepper and progress bar. After the last answer it shows an animated searching state with a live status line while matched courses are found, then a results list of recommended courses with fit reasons. The searching-to-results flip is server-driven: the workflow pushes step \"results\" alongside the courses.",
+  "whenToUse": "Help a user find the right course or learning journey by answering a few quick questions about their goals and study preferences, then hand the collected answers to a course search and present the matched courses. Pick when the outcome is a guided question-and-answer flow that ends in a shortlist of recommended courses.",
+  "props": {
+    "displayState": { "type": "string", "default": "focused" },
+    "focusable": { "type": "boolean", "default": true },
+    "focusLabel": { "type": "string", "default": "Journey Finder" },
+    "inlinePrimary": { "type": "string", "default": "Find your ideal course" },
+    "inlineSecondary": { "type": "string", "default": "Answer a few quick questions" },
+    "step": { "type": "string", "input": true, "default": "careerstage" },
+    "phase": { "type": "string", "default": "about" },
+    "progressPct": { "type": "string", "default": "16%" },
+    "questionLabel": { "type": "string", "default": "Question 1 of 6" },
+    "headerTitle": { "type": "string", "default": "Find your learning journey" },
+    "headerSubtitle": { "type": "string", "default": "Six quick questions" },
+
+    "careerStageTitle": { "type": "string", "default": "What's your goal?" },
+    "careerStageSubtitle": { "type": "string", "default": "So we can point you in the right direction" },
+    "careerStageOptions": { "type": "array", "default": [
+      { "value": "start", "label": "Start my career", "description": "I'm exploring my options and ready to begin", "icon": "journey" },
+      { "value": "qualify", "label": "Become qualified", "description": "Earn a professional qualification", "icon": "qualifications" },
+      { "value": "build", "label": "Build my skills", "description": "Grow and progress in my current role", "icon": "skills" },
+      { "value": "change", "label": "Change career", "description": "Move into something completely new", "icon": "careerChange" }
+    ] },
+
+    "situationTitle": { "type": "string", "default": "Your situation today?" },
+    "situationSubtitle": { "type": "string", "default": "This shapes the routes open to you" },
+    "situationOptions": { "type": "array", "default": [
+      { "value": "school-leaver", "label": "School or college leaver", "description": "Finishing school and planning my next step", "icon": "school" },
+      { "value": "working", "label": "Working", "description": "Employed — my employer may fund my study", "icon": "work" },
+      { "value": "graduate", "label": "Graduate", "description": "I have a degree and want my next move", "icon": "courses" },
+      { "value": "returning", "label": "Returning to study", "description": "Coming back after time away", "icon": "tutor" }
+    ] },
+
+    "subjectTitle": { "type": "string", "default": "Choose your subject" },
+    "subjectSubtitle": { "type": "string", "default": "Choose the field that excites you most" },
+    "subjectOptions": { "type": "array", "default": [
+      { "value": "accountancy-tax", "label": "Accountancy & Tax", "description": "ACCA, AAT, CIMA, ACA" },
+      { "value": "law", "label": "Law", "description": "SQE, Bar and conversion" },
+      { "value": "technology", "label": "Technology", "description": "Software, cyber and IT" },
+      { "value": "hr", "label": "HR", "description": "CIPD qualifications" },
+      { "value": "management", "label": "Management", "description": "Teams, projects, change" },
+      { "value": "finance", "label": "Finance", "description": "CFA and investment" },
+      { "value": "healthcare", "label": "Nursing and Healthcare", "description": "Degrees and leadership" },
+      { "value": "ai", "label": "AI", "description": "Skills and apprenticeships" }
+    ] },
+
+    "routeTitle": { "type": "string", "default": "Pick your route" },
+    "routeSubtitle": { "type": "string", "default": "There's more than one way to get there" },
+    "routeOptions": { "type": "array", "default": [
+      { "value": "professional-qualification", "label": "Professional qualification", "description": "An industry-recognised qualification", "icon": "qualifications" },
+      { "value": "apprenticeship", "label": "Apprenticeship", "description": "Earn while you learn, employer funded", "icon": "apprenticeships" },
+      { "value": "degree", "label": "University degree", "description": "Undergraduate or postgraduate study", "icon": "courses" },
+      { "value": "short-courses", "label": "Short courses & CPD", "description": "Sharpen specific skills, fast", "icon": "layers" },
+      { "value": "unsure", "label": "Not sure yet", "description": "Recommend the best route for me", "icon": "search" }
+    ] },
+
+    "studyModeTitle": { "type": "string", "default": "How do you like to study?" },
+    "studyModeSubtitle": { "type": "string", "default": "Every learner is different" },
+    "studyModeOptions": { "type": "array", "default": [
+      { "value": "online-live", "label": "Online Classroom Live", "description": "Live online classes with expert tutors", "icon": "online" },
+      { "value": "online-ondemand", "label": "Online Classroom", "description": "On demand, at your own pace", "icon": "play" },
+      { "value": "in-centre", "label": "In centre", "description": "Face-to-face teaching at a study centre", "icon": "location" },
+      { "value": "no-preference", "label": "No preference", "description": "Show me everything that fits", "icon": "journey" }
+    ] },
+
+    "commitmentTitle": { "type": "string", "default": "Your time commitment?" },
+    "commitmentSubtitle": { "type": "string", "default": "Your journey should fit around your life" },
+    "commitmentOptions": { "type": "array", "default": [
+      { "value": "full-time", "label": "Full-time", "description": "Study will be my main focus", "icon": "calendar" },
+      { "value": "part-time", "label": "Part-time", "description": "Alongside work and other commitments", "icon": "clock" },
+      { "value": "flexible", "label": "Flexible", "description": "My own pace, when it suits me", "icon": "sliders" }
+    ] },
+
+    "searchingTitle": { "type": "string", "default": "Finding your journey…" },
+    "searchStatus": { "type": "string", "input": true, "default": "Matching courses to your goals…" },
+
+    "submittedTitle": { "type": "string", "default": "Journey captured" },
+    "submittedSubtitle": { "type": "string", "default": "Your recommendations will appear in the conversation" },
+
+    "resultsTitle": { "type": "string", "default": "Your learning journey" },
+    "resultsSubtitle": { "type": "string", "default": "Courses matched to your goals" },
+    "courses": { "type": "array", "input": true, "default": [
+      { "badge": "Professional Qualification", "name": "ACCA Qualification", "description": "Become a chartered certified accountant with industry-leading pass rates and expert tutors.", "meta": "Online Classroom Live · Part-time · 24–36 months", "fitReason": "A recognised qualification you can earn while working" },
+      { "badge": "Apprenticeship", "name": "Level 7 Accountancy & Taxation Professional", "description": "A fully funded route to chartered status with structured employer support.", "meta": "Blended · Part-time · 36 months", "fitReason": "Employer-funded, so you can qualify without stepping back from work" },
+      { "badge": "Professional Qualification", "name": "AAT Level 4 Diploma in Professional Accounting", "description": "Deepen your finance skills with a practical, flexible diploma.", "meta": "Online Classroom · Flexible · 12–18 months", "fitReason": "A flexible stepping stone toward full chartered status" }
+    ] },
+    "restartLabel": { "type": "string", "default": "Start again" },
+    "heroImage": { "type": "string", "input": true, "default": "https://res.cloudinary.com/sonik/image/upload/w_1000,ar_2:3,c_fill,g_face,e_art:hokusai/v1782963908/BPP/images/1738752132-woman-conversation-laptop.jpg" }
+  },
+  "outputs": {
+    "careerStage": { "type": "string", "description": "The user's career goal", "enum": ["start", "qualify", "build", "change"] },
+    "situation": { "type": "string", "description": "Current situation", "enum": ["school-leaver", "working", "graduate", "returning"] },
+    "subject": { "type": "string", "description": "Chosen subject area", "enum": ["accountancy-tax", "law", "technology", "hr", "management", "finance", "healthcare", "ai"] },
+    "route": { "type": "string", "description": "Preferred learning route", "enum": ["professional-qualification", "apprenticeship", "degree", "short-courses", "unsure"] },
+    "studyMode": { "type": "string", "description": "Preferred study mode", "enum": ["online-live", "online-ondemand", "in-centre", "no-preference"] },
+    "commitment": { "type": "string", "description": "Time commitment", "enum": ["full-time", "part-time", "flexible"] }
+  },
+  "root": {
+    "type": "Box",
+    "style": { "width": "full", "height": "full" },
+    "children": [
+      {
+        "type": "Button",
+        "visibleWhen": { "field": "displayState", "eq": "inline" },
+        "action": { "type": "setValue", "values": [{ "key": "displayState", "value": "focused" }], "then": { "type": "setTemplateValue", "values": [{ "key": "mode", "value": "focus" }] } },
+        "style": { "position": "relative", "cursor": "pointer", "padding": "0", "direction": "row", "align": "stretch", "width": "full", "maxWidth": "140", "minHeight": "36", "background": "surface.base", "border": "subtle", "radius": "xl", "shadow": "sm", "overflow": "hidden", "transition": "all 150ms ease", "hover": { "shadow": "md" } },
+        "children": [
+          {
+            "type": "Box",
+            "style": { "flex": "0 0 auto", "width": "16", "background": "surface.inverse", "radiusTopLeft": "xl", "radiusBottomLeft": "xl", "direction": "row", "align": "center", "justify": "center" },
+            "children": [
+              { "type": "Icon", "icon": "journey", "style": { "width": "6", "height": "6", "color": "text.inverse" } }
+            ]
+          },
+          {
+            "type": "Box",
+            "style": { "flex": "1", "minWidth": "0", "direction": "column", "gap": "1", "padding": "4" },
+            "children": [
+              {
+                "type": "Box",
+                "style": { "direction": "row", "justify": "center", "width": "full" },
+                "children": [
+                  { "type": "Text", "bind": { "value": "headerTitle" }, "style": { "font": "body.sm", "weight": "semibold", "color": "text.secondary" } }
+                ]
+              },
+              { "type": "Text", "bind": { "value": "inlinePrimary" }, "style": { "font": "title", "weight": "semibold", "lineHeight": "tight", "color": "text.primary" } },
+              { "type": "Text", "visibleWhen": "inlineSecondary", "bind": { "value": "inlineSecondary" }, "style": { "font": "body.sm", "color": "text.secondary" } },
+              {
+                "type": "Box",
+                "style": { "width": "full", "height": "1", "background": "surface.sunken", "radius": "full", "overflow": "hidden", "margin": ["2", "0", "0", "0"] },
+                "children": [
+                  { "type": "Box", "style": { "height": "full", "width": "{{progressPct}}", "background": "action.primary", "radius": "full", "transition": "all 300ms ease" } }
+                ]
+              },
+              {
+                "type": "Box",
+                "visibleWhen": "questionLabel",
+                "style": { "direction": "row", "justify": "center", "margin": ["2", "0", "0", "0"] },
+                "children": [
+                  {
+                    "type": "Box",
+                    "style": { "background": "surface.sunken", "radius": "full", "padding": ["1", "2"] },
+                    "children": [
+                      { "type": "Text", "bind": { "value": "questionLabel" }, "style": { "font": "caption", "weight": "medium", "color": "text.tertiary" } }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Box",
+            "visibleWhen": "heroImage",
+            "style": { "flex": "0 0 auto", "width": "40", "overflow": "hidden", "hideBelow": "180", "position": "relative", "radiusTopRight": "xl", "radiusBottomRight": "xl" },
+            "children": [
+              { "type": "Image", "bind": { "src": "heroImage", "alt": "headerTitle" }, "style": { "position": "absolute", "inset": "0", "width": "full", "height": "full", "fit": "cover" } }
+            ]
+          },
+          {
+            "type": "Box",
+            "visibleWhen": "focusable",
+            "style": { "position": "absolute", "inset": "0 0 auto auto", "margin": "3", "width": "7", "height": "7", "radius": "full", "background": "surface.base", "border": "subtle", "shadow": "sm", "direction": "row", "align": "center", "justify": "center" },
+            "children": [
+              { "type": "Icon", "icon": "expand", "style": { "width": "4", "height": "4", "color": "text.secondary" } }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "Box",
+        "visibleWhen": { "field": "displayState", "ne": "inline" },
+        "style": { "position": "relative", "width": "full", "height": "full", "minHeight": "160", "maxHeight": "180", "container": "inline-size", "direction": "row", "background": "surface.base", "overflow": "hidden" },
+        "children": [
+          {
+            "type": "Box",
+            "style": { "flex": "1.5", "minWidth": "0", "minHeight": "0", "direction": "column" },
+            "children": [
+              {
+                "type": "Box",
+                "style": { "width": "full", "direction": "row", "align": "center", "gap": "4", "padding": ["4", "6"], "background": "surface.inverse" },
+                "children": [
+                  {
+                    "type": "Box",
+                    "style": { "direction": "column", "gap": "0" },
+                    "children": [
+                      { "type": "Text", "bind": { "value": "headerTitle" }, "style": { "font": "headline.lg", "weight": "semibold", "color": "text.inverse" } },
+                      { "type": "Text", "visibleWhen": "headerSubtitle", "bind": { "value": "headerSubtitle" }, "style": { "font": "body.sm", "color": "text.inverse" } }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "visibleWhen": { "field": "phase", "ne": "results" },
+                "style": { "direction": "column", "gap": "3", "padding": ["4", "8"], "width": "full", "borderBottom": "subtle" },
+                "children": [
+                  {
+                    "type": "Box",
+                    "style": { "direction": "row", "align": "center", "gap": "3", "width": "full" },
+                    "children": [
+                      {
+                        "type": "Switch",
+                        "on": "step",
+                        "cases": {
+                          "situation": { "type": "Button", "action": { "type": "setValue", "values": [{ "key": "step", "value": "careerstage" }, { "key": "phase", "value": "about" }, { "key": "progressPct", "value": "16%" }, { "key": "questionLabel", "value": "Question 1 of 6" }] }, "style": { "flex": "0 0 auto", "width": "6", "height": "6", "radius": "full", "background": "surface.sunken", "border": "none", "cursor": "pointer", "direction": "row", "align": "center", "justify": "center", "transition": "all 150ms ease", "hover": { "background": "border.subtle" } }, "children": [{ "type": "Icon", "icon": "arrowLeft", "style": { "width": "4", "height": "4", "color": "text.secondary" } }] },
+                          "subject": { "type": "Button", "action": { "type": "setValue", "values": [{ "key": "step", "value": "situation" }, { "key": "phase", "value": "about" }, { "key": "progressPct", "value": "33%" }, { "key": "questionLabel", "value": "Question 2 of 6" }] }, "style": { "flex": "0 0 auto", "width": "6", "height": "6", "radius": "full", "background": "surface.sunken", "border": "none", "cursor": "pointer", "direction": "row", "align": "center", "justify": "center", "transition": "all 150ms ease", "hover": { "background": "border.subtle" } }, "children": [{ "type": "Icon", "icon": "arrowLeft", "style": { "width": "4", "height": "4", "color": "text.secondary" } }] },
+                          "route": { "type": "Button", "action": { "type": "setValue", "values": [{ "key": "step", "value": "subject" }, { "key": "phase", "value": "direction" }, { "key": "progressPct", "value": "50%" }, { "key": "questionLabel", "value": "Question 3 of 6" }] }, "style": { "flex": "0 0 auto", "width": "6", "height": "6", "radius": "full", "background": "surface.sunken", "border": "none", "cursor": "pointer", "direction": "row", "align": "center", "justify": "center", "transition": "all 150ms ease", "hover": { "background": "border.subtle" } }, "children": [{ "type": "Icon", "icon": "arrowLeft", "style": { "width": "4", "height": "4", "color": "text.secondary" } }] },
+                          "studymode": { "type": "Button", "action": { "type": "setValue", "values": [{ "key": "step", "value": "route" }, { "key": "phase", "value": "direction" }, { "key": "progressPct", "value": "66%" }, { "key": "questionLabel", "value": "Question 4 of 6" }] }, "style": { "flex": "0 0 auto", "width": "6", "height": "6", "radius": "full", "background": "surface.sunken", "border": "none", "cursor": "pointer", "direction": "row", "align": "center", "justify": "center", "transition": "all 150ms ease", "hover": { "background": "border.subtle" } }, "children": [{ "type": "Icon", "icon": "arrowLeft", "style": { "width": "4", "height": "4", "color": "text.secondary" } }] },
+                          "commitment": { "type": "Button", "action": { "type": "setValue", "values": [{ "key": "step", "value": "studymode" }, { "key": "phase", "value": "study" }, { "key": "progressPct", "value": "83%" }, { "key": "questionLabel", "value": "Question 5 of 6" }] }, "style": { "flex": "0 0 auto", "width": "6", "height": "6", "radius": "full", "background": "surface.sunken", "border": "none", "cursor": "pointer", "direction": "row", "align": "center", "justify": "center", "transition": "all 150ms ease", "hover": { "background": "border.subtle" } }, "children": [{ "type": "Icon", "icon": "arrowLeft", "style": { "width": "4", "height": "4", "color": "text.secondary" } }] }
+                        }
+                      },
+                      { "type": "Text", "visibleWhen": "questionLabel", "bind": { "value": "questionLabel" }, "style": { "font": "label", "color": "text.tertiary" } },
+                      {
+                        "type": "Box",
+                        "style": { "flex": "1", "height": "1", "background": "surface.sunken", "radius": "full", "overflow": "hidden" },
+                        "children": [
+                          { "type": "Box", "style": { "height": "full", "width": "{{progressPct}}", "background": "action.primary", "radius": "full", "transition": "all 300ms ease" } }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "Box",
+                "style": { "flex": "1", "minHeight": "0", "overflow": "auto", "direction": "column", "gap": "5", "padding": ["6", "8"], "width": "full" },
+                "children": [
+                  {
+                    "type": "Switch",
+                    "on": "step",
+                    "cases": {
+                      "careerstage": { "$include": "states/careerstage" },
+                      "situation": { "$include": "states/situation" },
+                      "subject": { "$include": "states/subject" },
+                      "route": { "$include": "states/route" },
+                      "studymode": { "$include": "states/studymode" },
+                      "commitment": { "$include": "states/commitment" },
+                      "searching": { "$include": "states/searching" },
+                      "results": { "$include": "states/results" },
+                      "default": { "$include": "states/careerstage" }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Box",
+            "visibleWhen": { "field": "phase", "ne": "results" },
+            "style": { "flex": "0.55", "minWidth": "0", "direction": "column", "background": "surface.sunken", "overflow": "hidden", "hideBelow": "180" },
+            "children": [
+              { "type": "Image", "bind": { "src": "heroImage", "alt": "headerTitle" }, "style": { "width": "full", "height": "full", "fit": "cover" } }
+            ]
+          },
+          { "type": "Ref", "ref": "close-button", "visibleWhen": "focusable", "action": { "type": "setValue", "values": [{ "key": "displayState", "value": "inline" }], "then": { "type": "setTemplateValue", "values": [{ "key": "mode", "value": null }] } }, "style": { "position": "absolute", "inset": "0 0 auto auto", "margin": "4" } }
+        ]
+      }
+    ]
+  }
+}

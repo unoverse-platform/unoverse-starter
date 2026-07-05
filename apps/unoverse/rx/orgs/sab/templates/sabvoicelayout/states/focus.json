@@ -1,0 +1,12 @@
+{
+  "type": "Box",
+  "visibleWhen": "hasMessages",
+  "style": { "flex": 1, "direction": "column", "overflow": "auto", "padding": "lg", "borderLeft": "subtle", "background": "surface.base" },
+  "children": [
+    {
+      "type": "ComponentSlot",
+      "select": { "from": "all" },
+      "fallback": { "type": "Skeleton", "variant": "card" }
+    }
+  ]
+}

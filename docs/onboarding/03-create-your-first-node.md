@@ -15,7 +15,7 @@ Before building your own, study how existing nodes are structured. Review these 
 ### OpenAI Node (Simple LLM call)
 
 ```
-packages/openai/src/OpenAI/
+apps/unoverse/nodes/openai/src/OpenAI/
 ├── node/
 │   ├── index.ts      # Node definition (inputs, outputs, config schema)
 │   └── executor.ts   # Node executor (extends PromiseNode)
@@ -28,7 +28,7 @@ packages/openai/src/OpenAI/
 ### SearchWeb Node (API integration with credentials)
 
 ```
-packages/ingest/src/SearchWeb/
+apps/unoverse/nodes/ingest/src/SearchWeb/
 ├── node/
 │   ├── index.ts      # Node definition with credentials
 │   └── executor.ts   # Executor using credentials
@@ -86,7 +86,7 @@ const apiKey = credentials?.apiKey;
 
 ## Step 4: Use AI to Generate Your Node
 
-The complete node documentation is in `packages/docs/nodes/`. Point your IDE's AI assistant to this folder.
+The complete node documentation is in `docs/nodes/`. Point your IDE's AI assistant to this folder.
 
 | Document                                            | What You'll Learn           |
 | --------------------------------------------------- | --------------------------- |
@@ -99,8 +99,8 @@ The complete node documentation is in `packages/docs/nodes/`. Point your IDE's A
 **Prompt your AI assistant:**
 
 > "I want to create a new Gravity node that [describe what it does].
-> Use the documentation in `packages/docs/nodes/` and follow the patterns
-> from `packages/openai/src/OpenAI/` as a reference.
+> Use the documentation in `docs/nodes/` and follow the patterns
+> from `apps/unoverse/nodes/openai/src/OpenAI/` as a reference.
 > Create the node definition, executor, and service files."
 
 ## Step 5: Build & Deploy

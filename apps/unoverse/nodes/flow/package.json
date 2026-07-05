@@ -1,0 +1,57 @@
+{
+  "name": "@gravity-platform/flow",
+  "version": "1.1.11",
+  "description": "Flow control nodes for GravityWorkflow - Code, Loop, IfElse, Context, Relay, Note, UMAP",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "umap-js": "^1.3.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "gravity": {
+    "displayName": "Flow Control",
+    "category": "flow",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1750052178/gravity/icons/6359572-200.png",
+    "nodes": [
+      {
+        "name": "MCP Service",
+        "type": "PromiseNode",
+        "description": "Expose workflow nodes as MCP tools for agent consumption",
+        "category": "Flow",
+        "mcp": true
+      },
+      {
+        "name": "Send Object",
+        "type": "PromiseNode",
+        "description": "Route structured data objects between workflow nodes",
+        "category": "Output",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "MCP tool exposure",
+      "Object routing",
+      "Code execution",
+      "Loop iteration",
+      "Conditional branching",
+      "UMAP dimensionality reduction"
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

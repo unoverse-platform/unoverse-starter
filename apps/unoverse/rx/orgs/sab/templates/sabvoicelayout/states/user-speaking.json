@@ -1,0 +1,29 @@
+{
+  "type": "Box",
+  "visibleWhen": { "field": "callState", "eq": "userSpeaking" },
+  "style": { "direction": "column", "align": "center", "gap": "4", "width": "full" },
+  "children": [
+    {
+      "type": "Box",
+      "style": { "minHeight": "12", "direction": "row", "align": "center", "justify": "center" },
+      "children": [
+        {
+          "type": "Box",
+          "style": { "direction": "row", "align": "center", "gap": "sm", "padding": ["2", "4"], "radius": "full", "background": "action.subtle" },
+          "children": [
+            { "type": "Box", "style": { "width": "2", "height": "2", "radius": "full", "background": "action.primary", "animation": { "name": "wave", "duration": "1s", "easing": "ease-in-out" } } },
+            { "type": "Text", "bind": { "value": "userSpeakingLabel" }, "style": { "font": "body.sm", "color": "action.primary" } }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Box",
+      "style": { "minHeight": "20", "direction": "row", "align": "center", "justify": "center" },
+      "children": [
+        { "$include": "blocks/call-controls" }
+      ]
+    },
+    { "type": "Box", "style": { "minHeight": "14" } }
+  ]
+}

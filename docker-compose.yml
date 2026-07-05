@@ -3,13 +3,15 @@
 # =============================================================================
 #
 # LAYER 1: CORE PLATFORM (Pre-compiled via GitHub Actions → DOCR)
-#   - server, workflow, canvas, umap, unoverse, mcp-server, memory
-#   - Code protected, pulled as images
-#   - unoverse (the node plane) mounts ./packages for auto-discovery of custom nodes
-#     (node-service is retired — unoverse absorbed it)
+#   - unoverse (the platform runtime — engine in-process + node plane), canvas,
+#     umap, mcp-server, memory. Code protected, pulled as images.
 #
-# LAYER 2: CLIENT-SPECIFIC
-#   - packages/ (custom nodes, design-system components)
+# LAYER 2: DEVELOPER CARVE-OUT (mounted over the unoverse image, dev-editable)
+#   - apps/unoverse/nodes    — node logic
+#   - apps/unoverse/rx       — design (components, templates, styles)
+#   - apps/unoverse/prompts  — behavior (skills + blocks)
+#   Everything else under apps/unoverse (engine, server, web, tools, plugin-base)
+#   stays image-only. Marketplace nodes install from npm at runtime (Canvas storefront).
 #
 # OBSERVABILITY (optional, enabled via --profile observability):
 #   - Dozzle — single-container live log viewer (http://localhost:8080)
@@ -164,15 +166,19 @@ services:
       # into the image; only the core workflow nodes ship with the platform (in the
       # workflow image). This volume persists installs across restarts.
       - PLUGINS_DIR=/app/plugins
-      # Legacy customer packages (Layer 2, deploy-packages.yml) — same mounts
-      # node-service had, so customer-built nodes keep auto-discovering. The dist
-      # bundles are CJS, so NODE_PATH resolves their hoisted deps.
-      - PACKAGES_PATH=/app/host_packages
+      # Dev-editable folders are mounted over the image below; NODE_PATH resolves
+      # their hoisted deps from the local workspace node_modules.
       - NODE_PATH=/app/host_node_modules
     volumes:
       - unoverse_plugins:/app/plugins
-      - ./packages:/app/host_packages # Customer node packages (auto-discovery)
-      - ./node_modules:/app/host_node_modules # Hoisted package deps
+      # ── Dev carve-out: the three developer-editable asset folders. Mounted over
+      # the image so local edits are picked up on restart (nodes need `dist/` built
+      # — `unoverse build`; rx/prompts are read as data, no build). Everything else
+      # under apps/unoverse (engine, server, web, tools, plugin-base) stays image-only.
+      - ./apps/unoverse/nodes:/app/apps/unoverse/nodes # node logic
+      - ./apps/unoverse/rx:/app/apps/unoverse/rx # design (components, templates, styles)
+      - ./apps/unoverse/prompts:/app/apps/unoverse/prompts # behavior (skills + blocks)
+      - ./node_modules:/app/host_node_modules # Hoisted deps for locally-built nodes
     healthcheck:
       # Ready = internal runtime port up (nodes are loaded into memory BEFORE it binds).
       test:

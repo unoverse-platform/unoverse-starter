@@ -1,0 +1,27 @@
+{
+  "name": "BPP Assistant",
+  "description": "The BPP Assistant — greets the learner with AI-guided journeys (find a course, qualifications, apprenticeships) and answers questions about BPP courses, professional qualifications and apprenticeships. The default conversational surface for BPP.",
+  "category": "Assistant",
+  "version": "1.0.0",
+  "mode": "template",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "description": "The user's request"
+      }
+    }
+  },
+  "autoTrigger": false,
+  "expose": {
+    "openaiApps": false
+  },
+  "binding": {
+    "workflow": "wf-8koixv",
+    "trigger": "inputtrigger1"
+  },
+  "previewComponents": [
+    "MarkdownRenderer"
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "type": "Box",
+  "visibleWhen": "isEmpty",
+  "style": { "direction": "column", "flex": 1, "minHeight": "0", "overflow": "auto", "align": "center", "justify": "center", "gap": "xl", "padding": "xl" },
+  "children": [
+    {
+      "type": "Image",
+      "visibleWhen": "logoUrl",
+      "bind": { "src": "logoUrl", "alt": "brandName" },
+      "style": { "height": "10", "fit": "contain" }
+    },
+    {
+      "type": "Box",
+      "style": { "direction": "column", "align": "center", "gap": "xs" },
+      "children": [
+        { "type": "Text", "bind": { "value": "brandName" }, "style": { "font": "headline.lg", "color": "text.primary", "align": "center" } },
+        { "type": "Text", "bind": { "value": "brandSubtitle" }, "style": { "font": "body.md", "color": "text.secondary", "align": "center" } }
+      ]
+    },
+    {
+      "type": "Each",
+      "bind": { "items": "suggestions" },
+      "style": { "columns": 2, "gap": "md", "width": "full", "maxWidth": 560 },
+      "template": {
+        "type": "Button",
+        "action": "sendMessage",
+        "style": {
+          "direction": "column", "align": "start", "gap": "sm", "width": "full", "minHeight": "28",
+          "padding": "md", "border": "subtle", "radius": "lg", "background": "surface.base",
+          "color": "text.primary", "cursor": "pointer", "transition": "all 150ms ease",
+          "hover": { "background": "action.subtle", "borderRight": "thick action.primary" }
+        },
+        "children": [
+          {
+            "type": "Box",
+            "style": { "align": "center", "justify": "center", "padding": "sm", "radius": "lg", "background": "action.subtle" },
+            "children": [
+              { "type": "Icon", "bind": { "name": "icon" }, "style": { "width": "5", "height": "5", "color": "action.primary" } }
+            ]
+          },
+          {
+            "type": "Box",
+            "style": { "direction": "column", "align": "start", "gap": "xs" },
+            "children": [
+              { "type": "Text", "bind": { "value": "title" }, "style": { "font": "title", "color": "text.primary", "lineHeight": "tight" } },
+              { "type": "Text", "bind": { "value": "subtitle" }, "style": { "font": "body.md", "color": "text.secondary", "lineHeight": "tight" } }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

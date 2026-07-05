@@ -1,0 +1,124 @@
+{
+  "name": "@gravity-platform/openai",
+  "version": "1.1.21",
+  "description": "OpenAI integration for Gravity workflow system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "openai",
+    "workflow",
+    "nodes",
+    "gpt",
+    "embeddings"
+  ],
+  "gravity": {
+    "displayName": "OpenAI",
+    "category": "ai",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1749262616/gravity/icons/ChatGPT-Logo.svg.webp",
+    "nodes": [
+      {
+        "name": "ChatGPT Agent",
+        "type": "PromiseNode",
+        "description": "Conversational AI agent with tool use and memory",
+        "category": "AI",
+        "mcp": false
+      },
+      {
+        "name": "OpenAI",
+        "type": "PromiseNode",
+        "description": "Single-shot GPT completion with configurable model and parameters",
+        "category": "AI",
+        "mcp": false
+      },
+      {
+        "name": "OpenAI Agent",
+        "type": "CallbackNode",
+        "description": "Multi-turn agent with OpenAI Agents SDK and tool orchestration",
+        "category": "AI",
+        "mcp": false
+      },
+      {
+        "name": "Embedding Service",
+        "type": "PromiseNode",
+        "description": "Generate text embeddings via text-embedding-3-small/large",
+        "category": "AI",
+        "mcp": true
+      },
+      {
+        "name": "OpenAI Service",
+        "type": "PromiseNode",
+        "description": "MCP-exposed OpenAI completions for agent tool calls",
+        "category": "AI",
+        "mcp": true
+      },
+      {
+        "name": "OpenAI Stream",
+        "type": "CallbackNode",
+        "description": "Streaming token-by-token GPT response with real-time output",
+        "category": "AI",
+        "mcp": false
+      },
+      {
+        "name": "GPT-5 Structured Output",
+        "type": "PromiseNode",
+        "description": "JSON-schema-validated structured output from GPT-5",
+        "category": "AI",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "GPT-4o & GPT-5 models",
+      "Streaming responses",
+      "Function/tool calling",
+      "Text embeddings",
+      "Structured JSON output",
+      "Vision (image inputs)",
+      "OpenAI Agents SDK"
+    ],
+    "credentials": [
+      {
+        "name": "OpenAI API Key",
+        "type": "openaiApiKey",
+        "required": true,
+        "description": "API key from platform.openai.com"
+      }
+    ]
+  },
+  "author": "Gravity Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@openai/agents": "^0.11.4",
+    "openai": "^6.15.0",
+    "p-retry": "^5.1.2",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

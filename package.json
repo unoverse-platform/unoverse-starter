@@ -4,8 +4,7 @@
   "private": true,
   "description": "Unoverse Starter Template",
   "workspaces": [
-    "packages/*",
-    "apps/*"
+    "apps/unoverse/nodes/*"
   ],
   "scripts": {
     "dev": "turbo run dev --concurrency 20",

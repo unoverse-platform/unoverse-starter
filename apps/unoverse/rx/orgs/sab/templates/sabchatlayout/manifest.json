@@ -1,0 +1,21 @@
+{
+  "name": "SAB Smart Assistant",
+  "description": "The SAB branded chat home — greets the user, offers starter prompts (travel cards, transfers, new card, live support), and routes their request to the right flow. Use as the default conversational assistant when the user just wants to chat or isn't sure where to start.",
+  "category": "Assistant",
+  "version": "1.0.0",
+  "mode": "template",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "message": { "type": "string", "description": "The user's request" }
+    }
+  },
+  "binding": {
+    "workflow": "wf-r4jzo7",
+    "trigger": "inputtrigger1"
+  },
+  "autoTrigger": false,
+  "expose": {
+    "openaiApps": false
+  }
+}

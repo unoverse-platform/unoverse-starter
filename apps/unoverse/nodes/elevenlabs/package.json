@@ -1,0 +1,91 @@
+{
+  "name": "@gravity-platform/elevenlabs",
+  "version": "1.1.0",
+  "description": "ElevenLabs audio AI for Gravity workflows — text-to-speech, multi-speaker dialogue, sound effects, and speech-to-text",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "elevenlabs",
+    "tts",
+    "text-to-speech",
+    "speech-to-text",
+    "sound-effects",
+    "audio",
+    "voice"
+  ],
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gravity": {
+    "displayName": "ElevenLabs",
+    "category": "media",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1768540562/gravity/icons/elevanlabs.jpg",
+    "nodes": [
+      {
+        "name": "ElevenLabs TTS",
+        "type": "PromiseNode",
+        "description": "Convert text to lifelike speech with any ElevenLabs voice",
+        "category": "Voice",
+        "mcp": false
+      },
+      {
+        "name": "ElevenLabs Dialogue",
+        "type": "PromiseNode",
+        "description": "Render a multi-speaker script to a single audio track, each line in its own voice",
+        "category": "Voice",
+        "mcp": false
+      },
+      {
+        "name": "ElevenLabs Sound Effects",
+        "type": "PromiseNode",
+        "description": "Generate a sound effect clip from a text prompt",
+        "category": "Media & Design",
+        "mcp": false
+      },
+      {
+        "name": "ElevenLabs Speech to Text",
+        "type": "PromiseNode",
+        "description": "Transcribe an audio or video file to text with the Scribe model",
+        "category": "Voice",
+        "mcp": false
+      },
+      {
+        "name": "ElevenLabs Music",
+        "type": "PromiseNode",
+        "description": "Compose an original music track from a text prompt",
+        "category": "Media & Design",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Text-to-speech (any voice)",
+      "Multi-speaker dialogue",
+      "Sound effect generation",
+      "Music composition",
+      "Speech-to-text transcription",
+      "Word-level timestamps & diarization"
+    ],
+    "credentials": [
+      {
+        "name": "ElevenLabs API Key",
+        "type": "elevenlabsCredential",
+        "required": true,
+        "description": "API key from the ElevenLabs dashboard (Profile → API Keys)"
+      }
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

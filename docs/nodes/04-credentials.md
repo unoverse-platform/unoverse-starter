@@ -61,7 +61,7 @@ export async function myService(config: any, credentialContext: any, api?: any) 
 ## Real Example — OpenAI
 
 ```typescript
-// packages/openai/src/shared/openaiStream/client/openaiClient.ts
+// apps/unoverse/nodes/openai/src/shared/openaiStream/client/openaiClient.ts
 export async function initializeOpenAIClient(context: any, logger: any, api?: any) {
   const availableCredentials = context.credentials || {};
 

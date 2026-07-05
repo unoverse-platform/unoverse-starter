@@ -1,0 +1,85 @@
+{
+  "name": "@gravity-platform/aws-toolkit",
+  "version": "1.1.8",
+  "description": "AWS services toolkit for Gravity workflow system - includes Transcribe and Textract",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "aws",
+    "workflow",
+    "nodes",
+    "transcribe",
+    "textract",
+    "toolkit"
+  ],
+  "author": "Gravity Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.886.0",
+    "@aws-sdk/client-textract": "^3.956.0",
+    "@aws-sdk/client-transcribe-streaming": "^3.956.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "gravity": {
+    "displayName": "AWS Toolkit",
+    "category": "cloud",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1755603269/gravity/icons/Textract.png",
+    "nodes": [
+      {
+        "name": "Amazon Textract",
+        "type": "PromiseNode",
+        "description": "Extract text, tables, and forms from documents and images via OCR",
+        "category": "Documents",
+        "mcp": false
+      },
+      {
+        "name": "Transcribe",
+        "type": "PromiseNode",
+        "description": "Convert audio/video to text with speaker diarization",
+        "category": "Voice",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Document OCR (Textract)",
+      "Audio transcription",
+      "Table & form extraction",
+      "Speaker diarization"
+    ],
+    "credentials": [
+      {
+        "name": "AWS Credentials",
+        "type": "awsCredentials",
+        "required": true,
+        "description": "AWS access key + secret with Textract and Transcribe permissions"
+      }
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://unoverse/rx/unoverse.schema.json",
+  "title": "Unoverse definition",
+  "description": "Editor guidance for rx/ definitions (UNOVERSE_AUTHORING.md, UNOVERSE_LAYERS.md). A file with `unoverse` is a definition envelope; otherwise it is a bare node partial (blocks/ , states/ , $include siblings). Structural only — style/bind/props/action stay freeform so no valid value is ever flagged.",
+  "if": { "required": ["unoverse"] },
+  "then": { "$ref": "#/definitions/definition" },
+  "else": { "$ref": "#/definitions/node" },
+
+  "definitions": {
+    "definition": {
+      "type": "object",
+      "required": ["unoverse", "kind", "name", "root"],
+      "properties": {
+        "unoverse": { "type": "string", "description": "Schema version, e.g. \"1.0\"." },
+        "kind": { "enum": ["component", "template", "atom"] },
+        "name": { "type": "string", "description": "Display name (independent of filename)." },
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "whenToUse": { "type": "string", "description": "When an author/agent should pick this (REQUIRED for components; keep generic — no hardcoded agent/workflow names)." },
+        "nodeSize": { "$ref": "#/definitions/nodeSize" },
+        "props": { "$ref": "#/definitions/props" },
+        "outputs": { "$ref": "#/definitions/outputs" },
+        "root": { "$ref": "#/definitions/node", "description": "The primitive tree — the UI." }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "kind": { "const": "component" } }, "required": ["kind"] },
+          "then": { "required": ["category", "description", "whenToUse"] }
+        }
+      ]
+    },
+
+    "props": {
+      "type": "object",
+      "additionalProperties": {
+        "comment": "Validate real (object) prop defs; leave non-object values (e.g. `_comment_*` JSON comments) alone so they're never flagged.",
+        "if": { "type": "object" },
+        "then": {
+          "properties": {
+            "type": { "enum": ["string", "number", "boolean", "object", "array"] },
+            "default": {},
+            "input": { "type": "boolean", "description": "true = fed by the workflow at runtime (the default is just the mock)." },
+            "description": { "type": "string" }
+          }
+        }
+      }
+    },
+
+    "outputs": {
+      "type": "object",
+      "description": "Component OUTPUT contract (components only): keys this component writes to its own slice (via setValue) that are its PRODUCT — e.g. a wizard's answers. nodegen projects them as the generated node's output ports; the node emits them (standard promise __outputs) when a run carries the submitted component state. View-state keys (step, progress…) must NOT be declared. See UNOVERSE_NODE_RUNTIME.md § Component outputs.",
+      "additionalProperties": {
+        "if": { "type": "object" },
+        "then": {
+          "properties": {
+            "type": { "enum": ["string", "number", "boolean", "object", "array"] },
+            "description": { "type": "string" },
+            "enum": { "type": "array", "description": "Closed set of allowed values (option values). Doubles as the MCP elicitation enum so foreign hosts render a select, not free text." }
+          }
+        }
+      }
+    },
+
+    "nodeSize": {
+      "type": "object",
+      "properties": { "width": { "type": "number" }, "height": { "type": "number" } }
+    },
+
+    "node": {
+      "type": "object",
+      "if": { "required": ["$include"] },
+      "then": {
+        "required": ["$include"],
+        "properties": { "$include": { "type": "string", "description": "Inline a sibling file (recursively). Path is relative to the ROOT definition folder — e.g. \"blocks/header\", \"states/welcome\"." } }
+      },
+      "else": { "$ref": "#/definitions/typedNode" }
+    },
+
+    "typedNode": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "description": "The closed primitive set (UNOVERSE_AUTHORING.md §10). Adding to it is an SDK change gated by guard tests.",
+          "enum": ["Box", "Stack", "Row", "Column", "Each", "Switch", "ComponentSlot", "Timeline", "Text", "Image", "Button", "Input", "Markdown", "Skeleton", "Icon", "Ref"]
+        },
+        "style": { "type": "object", "description": "Token names only — never raw px/rem/#hex (LAW 1). Values live in rx/styles." },
+        "bind": { "type": "object", "description": "targetProp → data field, e.g. { \"value\": \"title\" }." },
+        "children": { "type": "array", "items": { "$ref": "#/definitions/node" } },
+        "visibleWhen": { "$ref": "#/definitions/condition" },
+        "action": {},
+        "ref": { "type": "string", "description": "Atom name (rx/atoms) to inline (Ref only)." },
+        "props": { "type": "object", "description": "Ref field remap: atomField → your data field." },
+        "icon": { "type": "string" },
+        "on": { "type": "string", "description": "Switch discriminant — the field whose value selects a case." },
+        "cases": { "type": "object", "additionalProperties": { "$ref": "#/definitions/node" }, "description": "Switch branches: value → node. A branch must NOT re-check its own value (a layer never guards itself — UNOVERSE_LAYERS.md §3)." },
+        "template": { "$ref": "#/definitions/node", "description": "Each per-item subtree." },
+        "select": { "type": "object", "description": "ComponentSlot filter: { type?, from?, limit? }." },
+        "fallback": { "$ref": "#/definitions/node" },
+        "user": { "$ref": "#/definitions/node" },
+        "assistant": { "$ref": "#/definitions/node" },
+        "assistantData": { "type": "object" },
+        "userData": { "type": "object" }
+      },
+      "allOf": [
+        { "if": { "properties": { "type": { "const": "Switch" } }, "required": ["type"] }, "then": { "required": ["on", "cases"] } },
+        { "if": { "properties": { "type": { "const": "Each" } }, "required": ["type"] }, "then": { "required": ["bind", "template"] } },
+        { "if": { "properties": { "type": { "const": "Ref" } }, "required": ["type"] }, "then": { "required": ["ref"] } },
+        { "if": { "properties": { "type": { "const": "ComponentSlot" } }, "required": ["type"] }, "then": { "required": ["select"] } }
+      ]
+    },
+
+    "condition": {
+      "description": "A small declarative predicate — NOT a language. Pick ONE of eq / ne / in, or (with none) a truthy test on the named field. No and/or/arithmetic (UNOVERSE_AUTHORING.md §7).",
+      "oneOf": [
+        { "type": "string", "description": "Truthy test on this field/flag (empty array = falsy)." },
+        {
+          "type": "object",
+          "required": ["field"],
+          "additionalProperties": false,
+          "properties": {
+            "field": { "type": "string" },
+            "eq": {},
+            "ne": {},
+            "in": { "type": "array" }
+          }
+        }
+      ]
+    }
+  }
+}

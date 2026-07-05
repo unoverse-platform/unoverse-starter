@@ -1,0 +1,62 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "column",
+    "gap": "4",
+    "width": "full"
+  },
+  "children": [
+    {
+      "type": "Ref",
+      "ref": "section-header",
+      "props": {
+        "title": "feeTitle",
+        "subtitle": "feeSubtitle"
+      }
+    },
+    {
+      "type": "Each",
+      "bind": {
+        "items": "feeOptions"
+      },
+      "style": {
+        "direction": "column",
+        "gap": "2",
+        "width": "full"
+      },
+      "template": {
+        "type": "Ref",
+        "ref": "choice-row",
+        "action": {
+          "type": "setValue",
+          "values": [
+            {
+              "key": "feeTolerance",
+              "value": "{{value}}"
+            },
+            {
+              "key": "step",
+              "value": "result"
+            },
+            {
+              "key": "phase",
+              "value": "result"
+            },
+            {
+              "key": "progressPct",
+              "value": "100%"
+            },
+            {
+              "key": "headerTitle",
+              "value": "Your Best Match"
+            },
+            {
+              "key": "inlinePrimary",
+              "value": "View your recommendation"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

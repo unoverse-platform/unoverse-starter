@@ -1,0 +1,143 @@
+/**
+ * Gemini Image Generation Node Definition
+ * Provides AI image generation capabilities using Google's Gemini models
+ */
+
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import GeminiImageGenExecutor from "./executor";
+
+// Export a function that creates the definition after platform deps are set
+export function createNodeDefinition(): EnhancedNodeDefinition {
+  const { NodeInputType } = getPlatformDependencies();
+
+  return {
+    packageVersion: "1.1.0",
+    type: "GeminiImageGen",
+    isService: false,
+    name: "Gemini Image Gen",
+    description: "Generate images using Google's Gemini AI models",
+    whenToUse:
+      "Generate or create an IMAGE, picture, illustration, or photo from a text prompt — optionally pass a reference image URL to keep a person's likeness/style consistent across generations. It returns ACTUAL rendered image data (not a text description of an image, and not a fixed-template branded asset).",
+    category: "Media & Design",
+    color: "#4285F4",
+    logoUrl: "https://res.cloudinary.com/sonik/image/upload/v1768126954/gravity/icons/gemini.png",
+
+    inputs: [
+      {
+        name: "signal",
+        type: NodeInputType.OBJECT,
+        description: "Data from previous nodes that can be referenced in templates",
+      },
+    ],
+
+    outputs: [
+      {
+        name: "images",
+        type: NodeInputType.ARRAY,
+        description: "Array of generated images with base64 data and metadata",
+        fields: [
+          { name: "data", type: NodeInputType.STRING, description: "Base64-encoded image data (index first, e.g. images.0.data)" },
+          { name: "mimeType", type: NodeInputType.STRING, description: "e.g. image/png" },
+          { name: "fileName", type: NodeInputType.STRING, description: "Generated file name" },
+        ],
+      },
+      {
+        name: "text",
+        type: NodeInputType.STRING,
+        description: "Optional text response from Gemini",
+      },
+      {
+        name: "metadata",
+        type: NodeInputType.OBJECT,
+        description: "Generation metadata including model and image count",
+        fields: [
+          { name: "model", type: NodeInputType.STRING, description: "Model used" },
+          { name: "imageCount", type: NodeInputType.NUMBER, description: "Number of images generated" },
+          { name: "timestamp", type: NodeInputType.STRING, description: "ISO generation time" },
+        ],
+      },
+    ],
+
+    configSchema: {
+      type: "object",
+      properties: {
+        model: {
+          type: "string",
+          title: "Model",
+          description: "Select the Gemini model to use",
+          enum: ["gemini-3.1-flash-image-preview", "gemini-3-pro-image-preview", "gemini-2.5-flash-image"],
+          enumNames: [
+            "Gemini 3.1 Flash Image (Best for character consistency)",
+            "Gemini 3 Pro (Nano Banana Pro)",
+            "Gemini 2.5 Flash Image (Nano Banana)",
+          ],
+          default: "gemini-3.1-flash-image-preview",
+        },
+        prompt: {
+          type: "string",
+          title: "Image Prompt",
+          description:
+            "Describe the image you want to generate. Supports template syntax like {{signal.<sourceNodeId>.<outputHandle>.<field>}} to reference input data.",
+          default: "",
+          "ui:field": "template",
+          "ui:ai": {
+            editable: true,
+          },
+        },
+        fileName: {
+          type: "string",
+          title: "File Name Prefix",
+          description: "Prefix for generated image file names (optional)",
+          default: "generated_image",
+          "ui:field": "template",
+        },
+        referenceImageUrl: {
+          type: "string",
+          title: "Reference Image URL",
+          description: "URL of a reference image for likeness/style. Supports {{signal.node.output.photo_url}} syntax.",
+          default: "",
+          "ui:field": "template",
+        },
+      },
+      required: ["model", "prompt"],
+    },
+
+    // This is where we declare credential requirements
+    credentials: [
+      {
+        name: "geminiCredential",
+        required: true,
+        displayName: "Google Gemini API",
+        description: "Google Gemini API credentials for authentication",
+      },
+    ],
+
+    capabilities: {
+      isTrigger: false,
+    },
+    testData: {
+      config: {
+        model: "gemini-3.1-flash-image-preview",
+        prompt:
+          "A serene mountain landscape at sunrise, photorealistic, golden-hour lighting, mist rolling over pine forests, wide-angle composition",
+        fileName: "generated_image",
+        referenceImageUrl: "",
+      },
+      inputs: {
+        signal: {},
+      },
+    },
+  };
+}
+
+// Create and export the node
+const definition = createNodeDefinition();
+
+// Export as enhanced node
+export const GeminiImageGenNode = {
+  definition,
+  executor: GeminiImageGenExecutor,
+};
+
+// Export for node registry
+export { definition };

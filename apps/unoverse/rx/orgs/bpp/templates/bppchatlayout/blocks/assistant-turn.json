@@ -1,0 +1,123 @@
+{
+  "type": "Box",
+  "visibleWhen": "active",
+  "style": {
+    "direction": "row",
+    "gap": "sm",
+    "align": "start"
+  },
+  "children": [
+    {
+      "type": "Image",
+      "bind": {
+        "src": "avatarUrl",
+        "alt": "assistantName"
+      },
+      "style": {
+        "width": "8",
+        "height": "8",
+        "radius": "full",
+        "shadow": "md",
+        "fit": "cover"
+      }
+    },
+    {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "flex": 1,
+        "gap": "sm",
+        "minWidth": 0
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "background": "surface.sunken",
+            "border": "subtle",
+            "radius": "2xl",
+            "radiusTopLeft": "0",
+            "maxWidth": 560,
+            "padding": "0",
+            "radiusTopRight": "0"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "width": "full",
+                "height": "1",
+                "background": "brand.bpp.yellow",
+                "flex": "0 0 auto",
+                "radiusTopLeft": "0",
+                "radiusTopRight": "0"
+              }
+            },
+            {
+              "type": "Box",
+              "style": {
+                "direction": "column",
+                "padding": [
+                  "sm",
+                  "md"
+                ]
+              },
+              "children": [
+                {
+                  "type": "ComponentSlot",
+                  "select": {}
+                }
+              ]
+            }
+          ],
+          "visibleWhen": {
+            "field": "empty",
+            "eq": false
+          }
+        },
+        {
+          "type": "Box",
+          "visibleWhen": "streaming",
+          "children": [
+            {
+              "type": "Box",
+              "visibleWhen": "empty",
+              "style": {
+                "direction": "row",
+                "gap": "sm",
+                "align": "center"
+              },
+              "children": [
+                {
+                  "$include": "blocks/thinking-dots"
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "thinkingText"
+                  },
+                  "style": {
+                    "font": "body.sm",
+                    "color": "brand.bpp.ink-faint"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "visibleWhen": "time",
+          "bind": {
+            "value": "time"
+          },
+          "style": {
+            "font": "body.sm",
+            "color": "brand.bpp.ink-faint"
+          }
+        }
+      ]
+    }
+  ]
+}

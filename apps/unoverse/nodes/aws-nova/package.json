@@ -1,0 +1,57 @@
+{
+  "name": "@gravity-platform/aws-nova",
+  "version": "1.2.11",
+  "description": "AWS Nova integration for Gravity workflow system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.0.0",
+    "@smithy/node-http-handler": "^3.0.0",
+    "pino": "^10.1.0",
+    "rxjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gravity": {
+    "displayName": "AWS Nova",
+    "category": "ai",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/awsIcon.png",
+    "nodes": [
+      {
+        "name": "AWS Nova Speech",
+        "type": "CallbackNode",
+        "description": "Real-time speech synthesis via AWS Nova with streaming audio",
+        "category": "Voice",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Real-time speech synthesis",
+      "Streaming audio output",
+      "Multiple voice options",
+      "Low-latency generation"
+    ],
+    "credentials": [
+      {
+        "name": "AWS Credentials",
+        "type": "awsCredentials",
+        "required": true,
+        "description": "AWS access key + secret with Bedrock permissions"
+      }
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

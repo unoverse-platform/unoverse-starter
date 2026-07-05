@@ -1,0 +1,60 @@
+{
+  "name": "@gravity-platform/salesforce",
+  "version": "1.0.3",
+  "description": "Salesforce integration for Gravity workflow system — query, read, create, and update records via MCP tools",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "salesforce",
+    "crm",
+    "mcp",
+    "soql"
+  ],
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gravity": {
+    "displayName": "Salesforce",
+    "category": "productivity",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1781672225/gravity/icons/Salesforce-dark.svg",
+    "nodes": [
+      {
+        "name": "Salesforce",
+        "type": "PromiseNode",
+        "description": "Query with SOQL, read/create/update records, and inspect object metadata in a Salesforce org",
+        "category": "Go To Market",
+        "mcp": true
+      }
+    ],
+    "features": [
+      "Run SOQL queries",
+      "Read records by ID",
+      "Create new records",
+      "Update existing records",
+      "Describe object fields and metadata",
+      "List available objects (sObjects)"
+    ],
+    "credentials": [
+      {
+        "name": "Salesforce Connected App",
+        "type": "salesforceOAuth",
+        "required": true,
+        "description": "My Domain URL + Consumer Key/Secret from a Salesforce connected app (OAuth2 client credentials). The node mints access tokens automatically."
+      }
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

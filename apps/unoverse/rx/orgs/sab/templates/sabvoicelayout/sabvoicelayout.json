@@ -1,0 +1,97 @@
+{
+  "unoverse": "1.0",
+  "kind": "template",
+  "name": "SABVoiceLayout",
+  "category": "Layout",
+  "description": "Voice-call surface for an AI assistant: a centred animated avatar with speaking rings + audio bars, a connection/duration status line, a knowledge-lookup / user-speaking indicator, and start / mute / end controls. Streamed components (cards, confirmations) open in a right-hand focus panel during the call.",
+  "whenToUse": "The branded full-duplex VOICE assistant surface. For a text chat surface use SABChatLayout; for a two-column content split use KeyService.",
+  "service": "voice",
+  "props": {
+    "logoUrl": { "type": "string", "default": "https://res.cloudinary.com/sonik/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1765613643/gravity/face.webp" },
+    "brandName": { "type": "string", "default": "SAB Voice" },
+    "brandLogoUrl": { "type": "string", "default": "https://res.cloudinary.com/sonik/image/upload/v1764865338/SAB/sablogo.jpg" },
+    "assistantName": { "type": "string", "default": "SAB Assistant" },
+    "assistantSubtitle": { "type": "string", "default": "Your AI Voice Assistant" },
+    "instructions": { "type": "string", "default": "Tap the button above to start a voice conversation." },
+    "startCallLabel": { "type": "string", "default": "Start Call" },
+    "userSpeakingLabel": { "type": "string", "default": "You are speaking…" },
+
+    "startIcon": { "type": "string", "default": "phone" },
+    "muteIcon": { "type": "string", "default": "mic" },
+    "mutedIcon": { "type": "string", "default": "micOff" },
+    "endIcon": { "type": "string", "default": "phoneOff" },
+
+    "waveBars": {
+      "type": "array",
+      "default": [
+        { "delay": "0s" }, { "delay": "0.09s" }, { "delay": "0.18s" }, { "delay": "0.27s" }, { "delay": "0.36s" }
+      ]
+    },
+    "lookupDots": {
+      "type": "array",
+      "default": [ { "delay": "0s" }, { "delay": "0.15s" }, { "delay": "0.3s" } ]
+    },
+
+    "_comment_voice_state": "`callState` is the SINGLE call-phase field the states key off (idle | active | agentSpeaking | userSpeaking) — exactly one shows. `isLookingUp` shows the knowledge-lookup indicator INSIDE the agentSpeaking screen when required. `isMuted` flips the mute icon; `hasMessages` opens the right-hand streamed-component panel. Defaults render the idle screen.",
+    "callState": { "type": "string", "default": "idle" },
+    "isLookingUp": { "type": "boolean", "default": false },
+    "isMuted": { "type": "boolean", "default": false },
+    "hasMessages": { "type": "boolean", "default": false },
+    "statusText": { "type": "string", "default": "Ready to call" },
+    "lookupLabel": { "type": "string", "default": "Searching the knowledge base…" }
+  },
+  "root": {
+    "type": "Box",
+    "service": "voice",
+    "style": { "direction": "row", "width": "full", "height": "full", "background": "surface.sunken" },
+    "children": [
+      {
+        "type": "Box",
+        "style": { "flex": 1, "direction": "column", "minWidth": 0 },
+        "children": [
+          {
+            "type": "Box",
+            "style": { "direction": "row", "align": "center", "padding": "md", "background": "surface.base", "borderBottom": "subtle" },
+            "children": [
+              { "type": "Image", "visibleWhen": "brandLogoUrl", "bind": { "src": "brandLogoUrl", "alt": "brandName" }, "style": { "height": "7", "fit": "contain" } }
+            ]
+          },
+
+          {
+            "type": "Box",
+            "style": { "flex": 1, "direction": "column", "align": "center", "justify": "center", "gap": "xl", "padding": "xl" },
+            "children": [
+              {
+                "type": "Box",
+                "style": { "direction": "column", "align": "center", "gap": "lg" },
+                "children": [
+                  {
+                    "type": "Ref",
+                    "ref": "agent-avatar",
+                    "props": { "avatarUrl": "logoUrl", "assistantName": "assistantName" }
+                  },
+                  {
+                    "type": "Box",
+                    "style": { "direction": "column", "align": "center", "gap": "xs" },
+                    "children": [
+                      { "type": "Text", "bind": { "value": "assistantName" }, "style": { "font": "headline.lg", "color": "text.primary", "align": "center" } },
+                      { "type": "Text", "bind": { "value": "assistantSubtitle" }, "style": { "font": "body.md", "color": "text.secondary", "align": "center" } },
+                      { "type": "Text", "visibleWhen": "statusText", "bind": { "value": "statusText" }, "style": { "font": "body.sm", "color": "text.tertiary", "align": "center" } }
+                    ]
+                  }
+                ]
+              },
+
+              { "$include": "states/idle" },
+              { "$include": "states/active" },
+              { "$include": "states/agent-speaking" },
+              { "$include": "states/user-speaking" }
+            ]
+          }
+        ]
+      },
+
+      { "$include": "states/focus" }
+    ]
+  }
+}

@@ -1,15 +1,15 @@
 ---
-# Deploy Customer Packages
-# Rsyncs packages/ (the customer's custom-node workspace) from local machine
-# to the server, builds it, and restarts unoverse (the node plane).
+# Deploy Developer Carve-Out
+# Rsyncs the three developer-editable folders (apps/unoverse/{nodes,rx,prompts})
+# from the local machine to the server, builds them, and restarts unoverse.
 #
-# Usage (via gravity CLI — recommended):
+# Usage (via CLI — recommended):
 #   unoverse deploy packages
 #
 # Usage (direct ansible):
 #   ansible-playbook -i inventory/production.yml playbooks/deploy-packages.yml
 
-- name: Deploy Customer Packages
+- name: Deploy Developer Carve-Out
   hosts: all
   become: yes
 
@@ -25,10 +25,10 @@
       become: yes
 
   tasks:
-    - name: "[1/4] Sync packages/ to server"
+    - name: "[1/4] Sync developer folders (nodes, rx, prompts) to server"
       ansible.posix.synchronize:
-        src: "{{ local_root }}/packages/"
-        dest: "{{ gravity_dir }}/packages/"
+        src: "{{ local_root }}/apps/unoverse/{{ item }}/"
+        dest: "{{ gravity_dir }}/apps/unoverse/{{ item }}/"
         delete: yes
         rsync_opts:
           - "--exclude=node_modules"
@@ -37,6 +37,10 @@
           - "--exclude=.DS_Store"
           - "--exclude=*.swp"
           - "--exclude=*.log"
+      loop:
+        - nodes
+        - rx
+        - prompts
 
     - name: "[2/4] Sync workspace config files"
       copy:
@@ -72,11 +76,11 @@
       register: restart_result
       ignore_errors: yes
 
-    - name: "=== PACKAGES DEPLOYED ==="
+    - name: "=== CARVE-OUT DEPLOYED ==="
       debug:
         msg: |
           ============================================
-          PACKAGES DEPLOYED
+          DEVELOPER CARVE-OUT DEPLOYED (nodes, rx, prompts)
           ============================================
           Build:   {{ 'OK' if build_result.rc == 0 else 'FAILED' }}
           Restart: {{ 'OK' if restart_result.rc == 0 else 'FAILED' }}

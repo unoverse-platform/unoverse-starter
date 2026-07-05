@@ -1,0 +1,141 @@
+{
+  "name": "@gravity-platform/gtm",
+  "version": "1.0.2",
+  "description": "Go-to-market nodes — Apollo.io & Hunter.io people/company search, enrichment and email verification",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "jest --passWithNoTests",
+    "lint": "eslint src --ext .ts",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "gtm",
+    "go-to-market",
+    "apollo",
+    "hunter",
+    "prospecting",
+    "enrichment",
+    "email-verification",
+    "workflow",
+    "nodes"
+  ],
+  "author": "Gravity Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "typescript": "^5.0.0"
+  },
+  "gravity": {
+    "displayName": "GTM",
+    "category": "ingest",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1781366295/gravity/icons/hunter.png",
+    "nodes": [
+      {
+        "name": "Apollo People",
+        "type": "PromiseNode",
+        "description": "Search contacts in Apollo.io by title, company, or filters",
+        "category": "Go To Market",
+        "mcp": false
+      },
+      {
+        "name": "Apollo Company",
+        "type": "PromiseNode",
+        "description": "Search companies in Apollo.io by domain, industry, or keywords",
+        "category": "Go To Market",
+        "mcp": false
+      },
+      {
+        "name": "Apollo People Enrich",
+        "type": "PromiseNode",
+        "description": "Enrich a person from email, name+company, or LinkedIn URL via Apollo.io",
+        "category": "Go To Market",
+        "mcp": false
+      },
+      {
+        "name": "Apollo Company Enrich",
+        "type": "PromiseNode",
+        "description": "Enrich company data with full Apollo.io profiles",
+        "category": "Go To Market",
+        "mcp": false
+      },
+      {
+        "name": "Hunter Domain Search",
+        "type": "PromiseNode",
+        "description": "Find all email addresses Hunter.io has for a domain or company",
+        "category": "Go To Market",
+        "mcp": false
+      },
+      {
+        "name": "Hunter Email Finder",
+        "type": "PromiseNode",
+        "description": "Find a person's email from name+domain or a LinkedIn profile",
+        "category": "Go To Market",
+        "mcp": false
+      },
+      {
+        "name": "Hunter Email Verifier",
+        "type": "PromiseNode",
+        "description": "Verify whether an email address is deliverable",
+        "category": "Go To Market",
+        "mcp": false
+      },
+      {
+        "name": "Hunter Enrich",
+        "type": "PromiseNode",
+        "description": "Enrich a person/company from an email, LinkedIn profile, or domain",
+        "category": "Go To Market",
+        "mcp": false
+      },
+      {
+        "name": "Hunter Discover",
+        "type": "PromiseNode",
+        "description": "Find target companies by industry, tech, size, location or query",
+        "category": "Go To Market",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Apollo.io people & company search",
+      "Apollo.io person & company enrichment (incl. LinkedIn URL)",
+      "Hunter.io email discovery & domain search",
+      "Hunter.io email finder from a LinkedIn profile",
+      "Hunter.io email deliverability verification",
+      "Hunter.io person & company enrichment",
+      "Hunter.io company discovery for prospecting"
+    ],
+    "credentials": [
+      {
+        "name": "Apollo API Key",
+        "type": "apolloCredential",
+        "required": false,
+        "description": "API key from app.apollo.io"
+      },
+      {
+        "name": "Hunter API Key",
+        "type": "hunterCredential",
+        "required": false,
+        "description": "API key from hunter.io dashboard"
+      }
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

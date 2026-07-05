@@ -99,10 +99,10 @@ APIFY_API_TOKEN=
 ```bash
 # from the starter repo root (node packages live in packages/)
 npm install                       # picks up dotenv
-cp packages/<pkg>/.env.example packages/<pkg>/.env  # fill in your dev keys
+cp apps/unoverse/nodes/<pkg>/.env.example apps/unoverse/nodes/<pkg>/.env  # fill in your dev keys
 npm test -w @gravity-platform/<pkg>     # whole package
 # or one node:
-cd packages/<pkg> && npx jest HyperbrowserExtract
+cd apps/unoverse/nodes/<pkg> && npx jest HyperbrowserExtract
 ```
 
 ## Guidelines

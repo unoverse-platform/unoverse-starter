@@ -1,0 +1,414 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "row",
+    "gap": "6",
+    "width": "full",
+    "align": "start"
+  },
+  "children": [
+    {
+      "type": "Box",
+      "style": {
+        "flex": "1",
+        "minWidth": "0",
+        "direction": "column",
+        "gap": "3",
+        "align": "center"
+      },
+      "children": [
+        {
+          "type": "Image",
+          "bind": {
+            "src": "cardImage",
+            "alt": "cardName"
+          },
+          "style": {
+            "width": "full",
+            "maxWidth": "75",
+            "radius": "xl",
+            "shadow": "lg"
+          }
+        },
+        {
+          "type": "Box",
+          "style": {
+            "width": "full",
+            "maxWidth": "75",
+            "direction": "row",
+            "align": "center",
+            "justify": "center",
+            "gap": "6",
+            "padding": [
+              "3",
+              "4"
+            ],
+            "background": "surface.base",
+            "border": "subtle",
+            "radius": "xl",
+            "shadow": "sm"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "direction": "column",
+                "align": "center",
+                "gap": "0"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "feeValue"
+                  },
+                  "style": {
+                    "font": "headline.sm",
+                    "weight": "bold",
+                    "color": "text.primary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "feeUnit"
+                  },
+                  "style": {
+                    "font": "caption",
+                    "color": "text.tertiary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Box",
+              "style": {
+                "flex": "0 0 auto",
+                "width": "1",
+                "height": "10",
+                "background": "border.subtle",
+                "radius": "full"
+              }
+            },
+            {
+              "type": "Box",
+              "style": {
+                "direction": "column",
+                "align": "center",
+                "gap": "0"
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "tierValue"
+                  },
+                  "style": {
+                    "font": "headline.sm",
+                    "weight": "bold",
+                    "color": "text.primary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "tierLabel"
+                  },
+                  "style": {
+                    "font": "caption",
+                    "color": "text.tertiary"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "Button",
+          "action": {
+            "type": "setValue",
+            "values": [
+              {
+                "key": "step",
+                "value": "income"
+              },
+              {
+                "key": "phase",
+                "value": "eligibility"
+              },
+              {
+                "key": "progressPct",
+                "value": "14%"
+              },
+              {
+                "key": "questionLabel",
+                "value": "Question 1 of 7"
+              },
+              {
+                "key": "headerTitle",
+                "value": "Quick Eligibility Check"
+              },
+              {
+                "key": "inlinePrimary",
+                "value": "Find your perfect card"
+              }
+            ]
+          },
+          "bind": {
+            "label": "restartLabel"
+          },
+          "style": {
+            "cursor": "pointer",
+            "font": "label",
+            "weight": "medium",
+            "background": "transparent",
+            "color": "text.tertiary",
+            "border": "none",
+            "padding": [
+              "2",
+              "3"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "type": "Box",
+      "style": {
+        "flex": "1.4",
+        "minWidth": "0",
+        "direction": "column",
+        "gap": "3"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "row",
+            "align": "start",
+            "gap": "4",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Box",
+              "style": {
+                "flex": "1",
+                "minWidth": "0",
+                "direction": "column",
+                "gap": "1.5",
+                "align": "start"
+              },
+              "children": [
+                {
+                  "type": "Box",
+                  "style": {
+                    "flex": "0 0 auto",
+                    "background": "surface.inverse",
+                    "radius": "md",
+                    "padding": [
+                      "1.5",
+                      "3"
+                    ]
+                  },
+                  "children": [
+                    {
+                      "type": "Text",
+                      "bind": {
+                        "value": "cardFamily"
+                      },
+                      "style": {
+                        "font": "caption",
+                        "weight": "bold",
+                        "lineHeight": "none",
+                        "color": "text.inverse"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "cardName"
+                  },
+                  "style": {
+                    "font": "headline.lg",
+                    "weight": "bold",
+                    "lineHeight": "tight",
+                    "color": "text.primary"
+                  }
+                },
+                {
+                  "type": "Text",
+                  "visibleWhen": "cardDescription",
+                  "bind": {
+                    "value": "cardDescription"
+                  },
+                  "style": {
+                    "font": "body.md",
+                    "color": "text.secondary"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Ref",
+              "ref": "match-gauge",
+              "props": {
+                "value": "matchScore",
+                "label": "matchLabel"
+              },
+              "style": {
+                "flex": "0 0 auto"
+              }
+            }
+          ]
+        },
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "gap": "2",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Text",
+              "bind": {
+                "value": "benefitsTitle"
+              },
+              "style": {
+                "font": "label",
+                "weight": "semibold",
+                "color": "text.tertiary"
+              }
+            },
+            {
+              "type": "Each",
+              "bind": {
+                "items": "keyBenefits"
+              },
+              "style": {
+                "direction": "column",
+                "gap": "1.5",
+                "width": "full"
+              },
+              "template": {
+                "type": "Box",
+                "style": {
+                  "direction": "row",
+                  "align": "center",
+                  "gap": "3",
+                  "width": "full",
+                  "padding": ["1.5", "0"]
+                },
+                "children": [
+                  {
+                    "type": "Box",
+                    "style": {
+                      "flex": "0 0 auto",
+                      "width": "5",
+                      "height": "5",
+                      "radius": "full",
+                      "background": "status.success-subtle",
+                      "direction": "row",
+                      "align": "center",
+                      "justify": "center"
+                    },
+                    "children": [
+                      {
+                        "type": "Icon",
+                        "icon": "check",
+                        "style": {
+                          "width": "4",
+                          "height": "4",
+                          "color": "status.success"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "Text",
+                    "bind": {
+                      "value": "label"
+                    },
+                    "style": {
+                      "font": "body.md",
+                      "color": "text.primary"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "gap": "2",
+            "width": "full"
+          },
+          "children": [
+            {
+              "type": "Button",
+              "action": "apply",
+              "style": {
+                "width": "full",
+                "direction": "row",
+                "align": "center",
+                "justify": "center",
+                "gap": "2",
+                "cursor": "pointer",
+                "background": "action.primary",
+                "border": "none",
+                "padding": [
+                  "4",
+                  "6"
+                ],
+                "radius": "lg",
+                "transition": "all 150ms ease",
+                "hover": {
+                  "background": "action.primary-hover"
+                }
+              },
+              "children": [
+                {
+                  "type": "Text",
+                  "bind": {
+                    "value": "applyLabel"
+                  },
+                  "style": {
+                    "font": "button",
+                    "color": "action.primary-text"
+                  }
+                },
+                {
+                  "type": "Icon",
+                  "icon": "arrowRight",
+                  "style": {
+                    "width": "5",
+                    "height": "5",
+                    "color": "action.primary-text"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "Text",
+              "visibleWhen": "ctaNote",
+              "bind": {
+                "value": "ctaNote"
+              },
+              "style": {
+                "font": "caption",
+                "color": "text.tertiary",
+                "width": "full"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

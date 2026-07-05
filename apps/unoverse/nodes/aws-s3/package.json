@@ -1,0 +1,74 @@
+{
+  "name": "@gravity-platform/aws-s3",
+  "version": "1.1.8",
+  "description": "AWS S3 storage nodes for Gravity workflow system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "workflow",
+    "aws",
+    "s3",
+    "storage"
+  ],
+  "author": "Gravity AI",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/s3-request-presigner": "^3.0.0",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  },
+  "gravity": {
+    "displayName": "AWS S3",
+    "category": "storage",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1749916163/gravity/icons/Amazon-S3-Logo.svg.png",
+    "nodes": [
+      {
+        "name": "S3 File Content",
+        "type": "PromiseNode",
+        "description": "Read file contents from S3 with automatic content-type handling",
+        "category": "Storage & Data",
+        "mcp": false
+      },
+      {
+        "name": "S3 Files",
+        "type": "PromiseNode",
+        "description": "List files in an S3 bucket with prefix filtering",
+        "category": "Storage & Data",
+        "mcp": false
+      },
+      {
+        "name": "S3 Upload",
+        "type": "PromiseNode",
+        "description": "Upload files to S3 with presigned URL generation",
+        "category": "Storage & Data",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "File read & download",
+      "Bucket listing with filters",
+      "Upload with presigned URLs",
+      "Content-type detection"
+    ],
+    "credentials": [
+      {
+        "name": "AWS Credentials",
+        "type": "awsCredentials",
+        "required": true,
+        "description": "AWS access key + secret with S3 permissions"
+      }
+    ]
+  }
+}

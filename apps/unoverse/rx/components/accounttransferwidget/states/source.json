@@ -1,0 +1,13 @@
+{
+  "type": "Box",
+  "style": { "direction": "column", "gap": "4", "width": "full" },
+  "children": [
+    { "type": "Ref", "ref": "section-header", "props": { "title": "sourceTitle", "subtitle": "sourceSubtitle" } },
+    {
+      "type": "Each",
+      "bind": { "items": "availableAccounts" },
+      "style": { "direction": "column", "gap": "2", "width": "full" },
+      "template": { "type": "Ref", "ref": "account-row", "props": { "label": "accountName", "sub": "accountNumber", "balance": "balance", "meta": "bankName" }, "action": { "type": "setValue", "values": [{ "key": "sourceLabel", "value": "{{accountName}}" }, { "key": "sourceMeta", "value": "{{bankName}}" }, { "key": "step", "value": "recipient" }, { "key": "progressPct", "value": "50%" }, { "key": "stepLabel", "value": "Step 2 of 4" }, { "key": "inlinePrimary", "value": "Pick a recipient" }] } }
+    }
+  ]
+}

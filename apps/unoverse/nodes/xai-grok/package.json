@@ -1,0 +1,56 @@
+{
+  "name": "@gravity-platform/xai-grok",
+  "version": "1.2.0",
+  "description": "xAI Grok Voice Agent integration for Gravity workflow system",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "pino": "^10.1.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.14",
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gravity": {
+    "displayName": "xAI Grok",
+    "category": "ai",
+    "logoUrl": null,
+    "nodes": [
+      {
+        "name": "xAI Grok Voice",
+        "type": "CallbackNode",
+        "description": "Real-time voice agent with Grok AI via WebSocket streaming",
+        "category": "Voice",
+        "mcp": false
+      }
+    ],
+    "features": [
+      "Real-time voice agent",
+      "WebSocket streaming",
+      "Conversational AI",
+      "Low-latency responses"
+    ],
+    "credentials": [
+      {
+        "name": "xAI API Key",
+        "type": "xaiApiKey",
+        "required": true,
+        "description": "API key from console.x.ai"
+      }
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "Box",
+  "visibleWhen": { "field": "callState", "eq": "idle" },
+  "style": { "direction": "column", "align": "center", "gap": "4", "width": "full" },
+  "children": [
+    { "type": "Box", "style": { "minHeight": "12" } },
+    {
+      "type": "Box",
+      "style": { "minHeight": "20", "direction": "row", "align": "center", "justify": "center" },
+      "children": [
+        { "type": "Ref", "ref": "call-action", "action": "startCall", "props": { "icon": "startIcon", "label": "startCallLabel" } }
+      ]
+    },
+    {
+      "type": "Box",
+      "style": { "minHeight": "14", "direction": "row", "align": "center", "justify": "center" },
+      "children": [
+        { "type": "Text", "bind": { "value": "instructions" }, "style": { "font": "body.sm", "color": "text.tertiary", "align": "center", "maxWidth": "90" } }
+      ]
+    }
+  ]
+}

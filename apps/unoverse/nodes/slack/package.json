@@ -1,0 +1,60 @@
+{
+  "name": "@gravity-platform/slack",
+  "version": "1.1.5",
+  "description": "Slack integration for Gravity workflow system — send messages, search, manage channels via MCP tools",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "gravity",
+    "slack",
+    "messaging",
+    "mcp",
+    "chat"
+  ],
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "gravity": {
+    "displayName": "Slack",
+    "category": "communication",
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1779530623/gravity/icons/Slack.svg",
+    "nodes": [
+      {
+        "name": "Slack",
+        "type": "PromiseNode",
+        "description": "Send messages, search conversations, manage channels, and look up users in Slack workspaces",
+        "category": "Communication",
+        "mcp": true
+      }
+    ],
+    "features": [
+      "Send and update messages",
+      "Search workspace content",
+      "List and manage channels",
+      "Look up users by email or ID",
+      "Read channel history",
+      "Add reactions to messages"
+    ],
+    "credentials": [
+      {
+        "name": "Slack Bot Token",
+        "type": "slackBotToken",
+        "required": true,
+        "description": "Bot User OAuth Token from api.slack.com/apps (starts with xoxb-)"
+      }
+    ]
+  },
+  "peerDependencies": {
+    "@gravity-platform/plugin-base": ">=1.1.6"
+  }
+}

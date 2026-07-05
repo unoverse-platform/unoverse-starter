@@ -1,0 +1,58 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "column",
+    "gap": "4",
+    "width": "full"
+  },
+  "children": [
+    {
+      "type": "Ref",
+      "ref": "section-header",
+      "props": {
+        "title": "travelTitle",
+        "subtitle": "travelSubtitle"
+      }
+    },
+    {
+      "type": "Each",
+      "bind": {
+        "items": "travelOptions"
+      },
+      "style": {
+        "direction": "column",
+        "gap": "2",
+        "width": "full"
+      },
+      "template": {
+        "type": "Ref",
+        "ref": "choice-row",
+        "action": {
+          "type": "setValue",
+          "values": [
+            {
+              "key": "travelFrequency",
+              "value": "{{value}}"
+            },
+            {
+              "key": "step",
+              "value": "feetolerance"
+            },
+            {
+              "key": "phase",
+              "value": "bestfit"
+            },
+            {
+              "key": "progressPct",
+              "value": "90%"
+            },
+            {
+              "key": "questionLabel",
+              "value": "Last question"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
