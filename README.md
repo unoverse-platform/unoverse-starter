@@ -17,8 +17,8 @@ mounted straight into the running platform.
 
 - **Docker** + Docker Compose
 - **Node.js 20+** and npm (for building custom nodes)
-- Credentials from your platform admin: a **GitHub PAT** (this repo) and a
-  **read-only registry token** (Docker images)
+- A **read-only registry token** from your platform admin (for pulling the
+  platform's Docker images)
 - A **Postgres** database, **Redis**, and an **Auth0 (OIDC)** app — all
   configured in `.env` (`.env.example` documents every variable)
 
