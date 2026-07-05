@@ -32,8 +32,8 @@ Install these on your machine:
 2. Clone your fork:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/unoverse-starter.git ~/gravity
-cd ~/gravity
+git clone https://github.com/YOUR_USERNAME/unoverse-starter.git ~/unoverse
+cd ~/unoverse
 ```
 
 3. Add the upstream remote so you can pull future platform updates:
@@ -60,7 +60,7 @@ When you sign up for Unoverse, you'll receive:
 The `unoverse` CLI handles everything — Docker login, environment config, and image pulling:
 
 ```bash
-cd ~/gravity
+cd ~/unoverse
 ./unoverse init
 ```
 
@@ -156,33 +156,16 @@ All checks should pass:
 
 ---
 
-## Developing Your Code
+## Where Your Code Lives
 
-### Custom Nodes
+Three developer-editable folders are mounted into the running platform — everything
+you build goes in one of them:
 
-```bash
-# Edit your node code in apps/unoverse/nodes/my-custom-node/
-unoverse build @unoverse-platform/my-custom-node
-```
-
-### UI Components & Templates
-
-Components, templates, and styles are **JSON definitions** rendered by the platform's
-SDK — no React code, no CSS. See `docs/unoverse/UNOVERSE_AUTHORING.md`.
-
-```bash
-# Edit definitions in apps/unoverse/rx/ (components, atoms, orgs/<org>/{templates,styles})
-# Then regenerate the component nodes and restart:
-unoverse gendesign
-# Restyles/edits of existing components apply live — no regenerate needed
-```
-
-### Studio (Component Preview)
-
-Preview components, templates, skills, and nodes in the **Studio** (see Step 7):
-set `UNOVERSE_WORKBENCH=1` on the `unoverse` service, then open http://localhost:4105.
-Mock mode renders each component from its prop `default`s, and the state picker
-walks its states.
+| Folder | What you edit | Tutorial |
+|--------|---------------|----------|
+| `apps/unoverse/nodes/`   | **Logic** — custom workflow node packages | [Challenge 3](./03-create-your-first-node.md) |
+| `apps/unoverse/rx/`      | **Design** — components, templates, styles (JSON definitions) | [Challenge 5](./05-components-and-templates.md) |
+| `apps/unoverse/prompts/` | **Behavior** — agent skills + prompt blocks | [Challenge 2](./02-create-your-first-agent.md) |
 
 ---
 
@@ -190,7 +173,7 @@ walks its states.
 
 ```bash
 # Start your day
-cd ~/gravity
+cd ~/unoverse
 unoverse dev
 
 # Edit apps/unoverse/nodes (logic), apps/unoverse/rx (design), or apps/unoverse/prompts (behavior)
@@ -208,7 +191,7 @@ unoverse stop
 When a new platform version is released:
 
 ```bash
-cd ~/gravity
+cd ~/unoverse
 git fetch upstream
 git merge upstream/main  # Pull latest starter code from upstream
 unoverse update           # Pull latest images and restart
@@ -244,7 +227,7 @@ unoverse update           # Pull latest images and restart
 Run the doctor to diagnose issues:
 
 ```bash
-cd ~/gravity
+cd ~/unoverse
 unoverse doctor
 ```
 
@@ -307,7 +290,7 @@ After installing, restart Postgres and re-run `unoverse db-setup`.
 For local development, start Redis with Docker:
 
 ```bash
-docker run -d --name gravity-redis -p 6379:6379 redis:7-alpine
+docker run -d --name unoverse-redis -p 6379:6379 redis:7-alpine
 ```
 
 ### Clean restart

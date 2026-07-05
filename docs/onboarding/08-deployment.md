@@ -1,6 +1,6 @@
 # Challenge 8: Deployment
 
-Deploy Gravity Platform to production VMs.
+Deploy Unoverse to production VMs.
 
 ## Overview
 
@@ -86,4 +86,4 @@ For multi-VM setups (separate app VMs + ML VMs), use `ansible/inventory/producti
 
 ## ✅ Challenge Complete
 
-Your platform is deployed to production! Proceed to [Challenge 9: Update Gravity](./09-update-gravity.md).
+Your platform is deployed to production! Proceed to [Challenge 9: Update Unoverse](./09-update-unoverse.md).

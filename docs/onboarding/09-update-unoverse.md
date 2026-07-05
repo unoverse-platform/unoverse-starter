@@ -1,17 +1,17 @@
-# Challenge 9: Update Gravity
+# Challenge 9: Update Unoverse
 
 Keep your platform up to date when new versions are released.
 
 ## When to Update
 
-Your Gravity admin will notify you when a new platform version is available. Updates include bug fixes, new features, and performance improvements to the core services.
+Your Unoverse admin will notify you when a new platform version is available. Updates include bug fixes, new features, and performance improvements to the core services.
 
 ## Steps
 
 ### 1. Pull Latest Starter Code
 
 ```bash
-cd ~/gravity
+cd ~/unoverse
 git pull
 ```
 

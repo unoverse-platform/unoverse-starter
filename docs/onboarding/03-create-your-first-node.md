@@ -98,7 +98,7 @@ The complete node documentation is in `docs/nodes/`. Point your IDE's AI assista
 
 **Prompt your AI assistant:**
 
-> "I want to create a new Gravity node that [describe what it does].
+> "I want to create a new Unoverse node that [describe what it does].
 > Use the documentation in `docs/nodes/` and follow the patterns
 > from `apps/unoverse/nodes/openai/src/OpenAI/` as a reference.
 > Create the node definition, executor, and service files."
