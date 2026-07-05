@@ -2,7 +2,7 @@
  * Stream processor for Nova Speech output
  */
 
-import { getPlatformDependencies } from '@gravity-platform/plugin-base';
+import { getPlatformDependencies } from '@unoverse-platform/plugin-base';
 import { NovaSpeechSession } from '../streaming';
 
 const { createLogger } = getPlatformDependencies();

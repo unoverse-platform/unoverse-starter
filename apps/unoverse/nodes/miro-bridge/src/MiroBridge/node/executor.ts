@@ -1,7 +1,7 @@
 import {
   getPlatformDependencies,
   type NodeExecutionContext,
-} from "@gravity-platform/plugin-base";
+} from "@unoverse-platform/plugin-base";
 import type { MiroBridgeConfig, MiroBridgeOutput } from "../util/types";
 import { MiroBridgeMCPSchema } from "../service/mcpSchema";
 import {

@@ -3,7 +3,7 @@
  * Performs UMAP dimensionality reduction on high-dimensional vectors
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import UMAPExecutor from "./executor";
 
 // Export node type constant

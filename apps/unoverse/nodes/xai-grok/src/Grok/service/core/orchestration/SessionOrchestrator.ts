@@ -1,4 +1,4 @@
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { XAIGrokVoiceConfig, StreamUsageStats, StreamingMetadata } from "../../api/types";
 import { WsClient } from "../streaming/WsClient";
 import { SessionManager } from "../streaming/SessionManager";

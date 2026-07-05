@@ -1,4 +1,4 @@
-# @gravity-platform/email
+# @unoverse-platform/email
 
 ## 1.0.9
 
@@ -24,7 +24,7 @@
 
 - Publish all core marketplace nodes.
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.6
+  - @unoverse-platform/plugin-base@1.1.6
 
 ## 1.0.5
 
@@ -56,4 +56,4 @@
 
 - Initial npm publish - open source node packages for Gravity Platform
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.4
+  - @unoverse-platform/plugin-base@1.1.4

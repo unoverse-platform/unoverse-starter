@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { HunterEmailFinderConfig, HunterEmailFinderExecutorOutput } from "../util/types";
 import { PromiseNode, createLogger } from "../../shared/platform";
 import { hunterEmailFinder } from "../service/emailFinderService";

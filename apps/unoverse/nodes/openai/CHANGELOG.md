@@ -1,4 +1,4 @@
-# @gravity-platform/openai
+# @unoverse-platform/openai
 
 ## 1.1.21
 
@@ -29,7 +29,7 @@
 
 - Publish all core marketplace nodes.
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.6
+  - @unoverse-platform/plugin-base@1.1.6
 
 ## 1.1.14
 
@@ -79,4 +79,4 @@
 
 - Initial npm publish - open source node packages for Gravity Platform
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.4
+  - @unoverse-platform/plugin-base@1.1.4

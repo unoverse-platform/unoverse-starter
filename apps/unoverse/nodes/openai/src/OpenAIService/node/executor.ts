@@ -2,7 +2,7 @@
  * OpenAI Service Node Executor
  * Handles service calls for LLM operations
  */
-import { PromiseNode, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { queryChatGPT } from "../../OpenAI/service/queryChatGPT";
 import { OpenAIServiceConfig } from "../util/types";
 

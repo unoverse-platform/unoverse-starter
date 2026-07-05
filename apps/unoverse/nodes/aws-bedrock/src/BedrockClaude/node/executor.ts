@@ -3,7 +3,7 @@
  * Handles text generation using AWS Bedrock Claude models
  */
 
-import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 import { callBedrockClaude } from "../service/claude";
 import { BedrockClaudeConfig, BedrockClaudeOutput } from "../util/types";
 

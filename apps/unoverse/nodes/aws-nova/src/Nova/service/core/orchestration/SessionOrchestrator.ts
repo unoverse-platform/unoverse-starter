@@ -3,7 +3,7 @@
  * Coordinates the session lifecycle
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { NovaSpeechConfig, StreamUsageStats, StreamingMetadata } from "../../api/types";
 import { EventQueue, SessionManager, StreamHandler } from "../streaming";
 import { NovaSpeechResponseProcessor } from "../processing";

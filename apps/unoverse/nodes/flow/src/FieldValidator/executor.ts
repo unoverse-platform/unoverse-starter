@@ -9,7 +9,7 @@
  * 4. Calculate completion percentage
  */
 
-import { NodeExecutionContext, ValidationResult } from "@gravity-platform/plugin-base";
+import { NodeExecutionContext, ValidationResult } from "@unoverse-platform/plugin-base";
 import { PromiseNode } from "../shared/platform";
 import { FieldValidatorConfig, FieldValidatorOutput } from "./utils/types";
 

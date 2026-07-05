@@ -3,7 +3,7 @@
  * PromiseNode that handles structured extraction via GPT-5 Responses API
  */
 
-import { PromiseNode, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { extractStructuredOutput } from "../service/structuredOutput";
 import { OpenAICredentials } from "../../OpenAI/util/types";
 

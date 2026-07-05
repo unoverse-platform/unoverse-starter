@@ -1,4 +1,4 @@
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import PineconeQueryExecutor from "./executor";
 
 export const NODE_TYPE = "PineconeQuery";

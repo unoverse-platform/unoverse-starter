@@ -3,7 +3,7 @@
  * Upload images (base64 or URL) to Cloudinary
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import { CloudinaryUploadExecutor } from "./executor";
 
 export const NODE_TYPE = "CloudinaryUpload";

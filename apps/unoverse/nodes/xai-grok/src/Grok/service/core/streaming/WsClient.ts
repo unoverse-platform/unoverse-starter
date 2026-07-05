@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { GROK_WS_URL } from "../../../constants";
 
 const { createLogger } = getPlatformDependencies();

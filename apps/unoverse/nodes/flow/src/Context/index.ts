@@ -3,7 +3,7 @@
  * Extracts and returns workflow context information
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import { ContextExecutor } from "./executor";
 
 // Export node type constant

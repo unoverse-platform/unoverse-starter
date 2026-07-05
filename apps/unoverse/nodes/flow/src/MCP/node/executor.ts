@@ -1,4 +1,4 @@
-import { getPlatformDependencies, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { MCPServiceSchema } from "../util/types";
 
 // Get platform dependencies

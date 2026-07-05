@@ -3,7 +3,7 @@
  * Uploads a single vector to Pinecone
  */
 
-import { getPlatformDependencies, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { PineconeUploadConfig, PineconeUploadOutput } from "../util/types";
 import { executeUpload } from "../service/uploadService";
 

@@ -3,7 +3,7 @@
  * Provides AI text generation capabilities using AWS Bedrock Claude models
  */
 
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import BedrockClaudeExecutor from "./executor";
 
 export function createNodeDefinition(): EnhancedNodeDefinition {

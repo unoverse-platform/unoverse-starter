@@ -11,7 +11,7 @@
  * - Always available for service calls
  */
 
-import { type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import OpenAIServiceExecutor from "./executor";
 
 const definition: EnhancedNodeDefinition = {

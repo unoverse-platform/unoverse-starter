@@ -3,7 +3,7 @@
  * Handles document text extraction using Amazon Textract
  */
 
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { AmazonTextractConfig, S3FileInput, AmazonTextractOutput } from "../util/types";
 import { processS3FileWithTextract } from "../service/processTextract";
 import { PromiseNode, createLogger } from "../../shared/platform";

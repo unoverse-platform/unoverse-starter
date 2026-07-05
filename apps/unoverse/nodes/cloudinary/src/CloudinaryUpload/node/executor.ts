@@ -3,7 +3,7 @@
  * Handles uploading images to Cloudinary
  */
 
-import { getPlatformDependencies, type NodeExecutionContext, type ValidationResult } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 import { uploadImage } from "../service/uploadImage";
 import { CloudinaryUploadConfig, CloudinaryUploadOutput } from "../util/types";
 

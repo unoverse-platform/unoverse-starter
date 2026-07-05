@@ -3,7 +3,7 @@
  * Iterates over an array of items for downstream processing
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import LoopExecutor from "./executor";
 
 // Export node type constant

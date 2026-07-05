@@ -1,9 +1,9 @@
 /**
- * @gravity-platform/gce-imagegen
+ * @unoverse-platform/gce-imagegen
  * Google Gemini Image Generation integration for Gravity platform
  */
 
-import { createPlugin, type GravityPluginAPI } from "@gravity-platform/plugin-base";
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
 import packageJson from "../package.json";
 
 const plugin = createPlugin({
@@ -13,7 +13,7 @@ const plugin = createPlugin({
 
   async setup(api: GravityPluginAPI) {
     // First, set up platform dependencies
-    const { setPlatformDependencies } = await import("@gravity-platform/plugin-base");
+    const { setPlatformDependencies } = await import("@unoverse-platform/plugin-base");
     setPlatformDependencies({
       PromiseNode: api.classes.PromiseNode,
       CallbackNode: api.classes.CallbackNode,

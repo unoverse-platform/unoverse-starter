@@ -2,7 +2,7 @@
  * Handles control messages from WebSocket
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { EndEventBuilder } from "../../events/incoming/builders/EndEventBuilder";
 import { TIMING_DELAYS } from "../../../utils/timing";
 import { WebSocketAudioSession, ControlMessage } from "../types";

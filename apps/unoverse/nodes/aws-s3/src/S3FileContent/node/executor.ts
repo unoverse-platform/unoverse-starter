@@ -1,4 +1,4 @@
-import { getPlatformDependencies, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { S3FileContentConfig, S3FileContentExecutorOutput } from "../util/types";
 import { getS3FileContent } from "../service/s3FileContentService";
 

@@ -198,7 +198,7 @@ v1 uses Option A. No plan to adopt MemorySession.
 
 ```typescript
 // executor.ts
-import { getPlatformDependencies, type ValidationResult } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type ValidationResult } from "@unoverse-platform/plugin-base";
 import { runOpenAIAgent } from "../service";
 import type { OpenAIAgentConfig, OpenAIAgentState } from "../util/types";
 
@@ -378,7 +378,7 @@ Also uses existing shared modules:
 - `formatToolFeedback` — from `../../shared/toolFeedback`
 
 Platform:
-- `@gravity-platform/plugin-base` — CallbackNode via `getPlatformDependencies()`
+- `@unoverse-platform/plugin-base` — CallbackNode via `getPlatformDependencies()`
 
 ## Resolved: API Key Injection
 

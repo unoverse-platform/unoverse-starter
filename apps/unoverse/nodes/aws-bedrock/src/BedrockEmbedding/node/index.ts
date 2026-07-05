@@ -3,7 +3,7 @@
  * Generates vector embeddings using AWS Bedrock's Titan embedding models
  */
 
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import BedrockEmbeddingExecutor from "./executor";
 
 export function createNodeDefinition(): EnhancedNodeDefinition {

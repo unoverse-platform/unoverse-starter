@@ -3,7 +3,7 @@
  * Auto-generated from Unoverse definition
  */
 
-import { PromiseNode, type ValidationResult, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { PromiseNode, type ValidationResult, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { MarkdownRendererConfig, MarkdownRendererOutput } from "../util/types";
 import { loadDefaultTemplate } from "../service/templates";
 import { publishComponent } from "../service/publishComponent";

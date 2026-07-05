@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/pdf-render",
+  "name": "@unoverse-platform/pdf-render",
   "version": "1.0.8",
   "description": "PDF rendering node for Gravity workflow system - converts design system components to PDF",
   "main": "dist/index.js",
@@ -25,7 +25,7 @@
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   },
   "gravity": {
     "displayName": "PDF Render",

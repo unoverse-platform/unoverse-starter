@@ -1,4 +1,4 @@
-import { PromiseNode, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { S3UploadConfig, S3UploadExecutorOutput } from "../util/types";
 import { uploadToS3 } from "../service/s3UploadService";
 

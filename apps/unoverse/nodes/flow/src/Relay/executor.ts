@@ -3,7 +3,7 @@
  * Combines all inputs and immediately forwards them as a single output signal
  */
 
-import { NodeExecutionContext, ValidationResult } from "@gravity-platform/plugin-base";
+import { NodeExecutionContext, ValidationResult } from "@unoverse-platform/plugin-base";
 import { PromiseNode } from "../shared/platform";
 
 interface RelayConfig {

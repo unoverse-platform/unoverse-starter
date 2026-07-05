@@ -1,7 +1,7 @@
 import {
   getPlatformDependencies,
   type EnhancedNodeDefinition,
-} from "@gravity-platform/plugin-base";
+} from "@unoverse-platform/plugin-base";
 import SalesforceMCPExecutor from "./executor";
 
 export const NODE_TYPE = "SalesforceMCP";

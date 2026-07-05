@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/aws-medical",
+  "name": "@unoverse-platform/aws-medical",
   "version": "1.2.4",
   "description": "AWS Comprehend Medical integration for Gravity workflow system - extract medical entities and PHI from clinical text",
   "main": "dist/index.js",
@@ -73,6 +73,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

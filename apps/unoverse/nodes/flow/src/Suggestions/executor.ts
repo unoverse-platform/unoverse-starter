@@ -3,7 +3,7 @@
  * Publishes FAQs, Actions, and Recommendations to the client state via WebSocket
  */
 
-import { NodeExecutionContext, ValidationResult } from "@gravity-platform/plugin-base";
+import { NodeExecutionContext, ValidationResult } from "@unoverse-platform/plugin-base";
 import { PromiseNode } from "../shared/platform";
 
 interface SuggestionsConfig {

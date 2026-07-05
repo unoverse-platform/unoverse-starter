@@ -8,7 +8,7 @@ Every publishable Gravity package must include a `gravity` field with marketplac
 
 ```jsonc
 {
-  "name": "@gravity-platform/openai",
+  "name": "@unoverse-platform/openai",
   "version": "1.1.9",
   "description": "OpenAI integration for Gravity workflow system",
   "keywords": ["gravity", "openai", "workflow", "gpt", "embeddings", "ai"],
@@ -60,7 +60,7 @@ Every publishable Gravity package must include a `gravity` field with marketplac
       "https://res.cloudinary.com/sonik/image/upload/v.../openai-workflow-example.webp"
     ],
     "documentation": "https://docs.gravityai.dev/packages/openai",
-    "changelog": "https://github.com/gravity-platform/packages/blob/main/packages/openai/CHANGELOG.md",
+    "changelog": "https://github.com/unoverse-platform/packages/blob/main/packages/openai/CHANGELOG.md",
 
     // OPTIONAL — Credential requirements (what the user needs to configure)
     "credentials": [
@@ -83,7 +83,7 @@ Every publishable Gravity package must include a `gravity` field with marketplac
       "name": "Gravity Team",
       "url": "https://gravityai.dev"
     },
-    "support": "https://github.com/gravity-platform/packages/issues"
+    "support": "https://github.com/unoverse-platform/packages/issues"
   }
 }
 ```

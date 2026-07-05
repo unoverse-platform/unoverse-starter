@@ -2,7 +2,7 @@ import {
   getPlatformDependencies,
   type NodeExecutionContext,
   type ValidationResult,
-} from "@gravity-platform/plugin-base";
+} from "@unoverse-platform/plugin-base";
 import { runOpenAIAgent } from "../service";
 import type { OpenAIAgentConfig, OpenAIAgentState } from "../util/types";
 

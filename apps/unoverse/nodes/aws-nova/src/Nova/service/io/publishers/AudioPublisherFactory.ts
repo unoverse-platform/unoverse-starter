@@ -5,7 +5,7 @@
 import { AudioPublisherInterface } from "./AudioPublisherInterface";
 // RedisAudioPublisher removed - using WebSocket only
 import { WebSocketAudioPublisher } from "./WebSocketAudioPublisher";
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 
 const { createLogger } = getPlatformDependencies();
 const logger = createLogger("AudioPublisherFactory");

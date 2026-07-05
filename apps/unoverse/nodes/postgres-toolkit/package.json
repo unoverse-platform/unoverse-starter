@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/postgres-toolkit",
+  "name": "@unoverse-platform/postgres-toolkit",
   "version": "1.0.7",
   "description": "PostgreSQL batch INSERT node for GravityWorkflow — INSERT-only with table protection and optional vector embeddings",
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   },
   "gravity": {
     "displayName": "PostgreSQL",

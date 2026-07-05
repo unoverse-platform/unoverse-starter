@@ -3,7 +3,7 @@
  * Service node that provides vector database operations
  */
 
-import { getPlatformDependencies, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { PineconeServiceConfig, ServiceCallParams } from "../util/types";
 import { handleServiceCall } from "../service/serviceHandler";
 

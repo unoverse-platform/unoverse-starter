@@ -2,7 +2,7 @@ import {
   getPlatformDependencies,
   type NodeExecutionContext,
   type ValidationResult,
-} from "@gravity-platform/plugin-base";
+} from "@unoverse-platform/plugin-base";
 import { runChatGPTAgentCallback } from "../service";
 import type { ChatGPTAgentConfig, ChatGPTAgentState } from "../util/types";
 

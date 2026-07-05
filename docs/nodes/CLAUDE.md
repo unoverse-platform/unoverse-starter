@@ -185,7 +185,7 @@ capabilities: {
 - Only the **node author** reliably knows a node is an idempotent read, so the capability is the real gate — default off. `WORKFLOW_MEMOIZABLE_NODE_TYPES="TypeA,TypeB"` is a transitional env override for nodes whose definition can't be edited yet.
 - Memoization can never *fail* an execution — every step is wrapped; on any error the node just executes normally.
 
-Canonical examples: `SearchWeb` / `SearchNews` / `SearchVideos` / `SearchPlaces` (`@gravity-platform/search`), `HyperbrowserScrape` (`@gravity-platform/crawl`). Design rationale: `docs/unoverseCopilot/EXECUTION_EFFICIENCY.md` §3.2.
+Canonical examples: `SearchWeb` / `SearchNews` / `SearchVideos` / `SearchPlaces` (`@unoverse-platform/search`), `HyperbrowserScrape` (`@unoverse-platform/crawl`). Design rationale: `docs/unoverseCopilot/EXECUTION_EFFICIENCY.md` §3.2.
 
 ## Writing `whenToUse` (node discoverability)
 

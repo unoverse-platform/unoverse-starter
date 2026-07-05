@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/elevenlabs",
+  "name": "@unoverse-platform/elevenlabs",
   "version": "1.1.0",
   "description": "ElevenLabs audio AI for Gravity workflows — text-to-speech, multi-speaker dialogue, sound effects, and speech-to-text",
   "main": "dist/index.js",
@@ -86,6 +86,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

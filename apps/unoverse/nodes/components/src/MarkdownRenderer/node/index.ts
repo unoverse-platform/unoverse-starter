@@ -3,7 +3,7 @@
  * Auto-generated from Unoverse definition
  */
 
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import MarkdownRendererExecutor from "./executor";
 import { loadDefaultTemplate } from "../service/templates";
 

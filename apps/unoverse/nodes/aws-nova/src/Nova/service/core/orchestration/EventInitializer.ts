@@ -2,7 +2,7 @@
  * Event initializer for Nova Speech sessions
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { NovaSpeechConfig, StreamingMetadata } from "../../api/types";
 import { EventQueue } from "../streaming";
 import { EventMetadataProcessor, EventMetadata } from "../../io/events/metadata/EventMetadataProcessor";

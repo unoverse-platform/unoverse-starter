@@ -1,4 +1,4 @@
-import { type NodeExecutionContext, type ValidationResult } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 import { PlaidTransactionsConfig, PlaidTransactionsOutput } from "../util/types";
 import { PromiseNode, createLogger } from "../../shared/platform";
 import { getPlaidTransactions } from "../service/plaidService";

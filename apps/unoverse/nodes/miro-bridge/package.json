@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/miro-bridge",
+  "name": "@unoverse-platform/miro-bridge",
   "version": "0.2.4",
   "description": "MiroBridge node: LLM-driven Miro board manipulation via MCP tools. Dispatches commands to the MiroBridge browser component running in the Miro iframe; results return via USER_ACTION sendUserAction.",
   "main": "dist/index.js",
@@ -40,6 +40,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

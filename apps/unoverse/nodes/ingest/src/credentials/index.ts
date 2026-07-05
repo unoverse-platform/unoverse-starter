@@ -3,8 +3,8 @@
  * Following the package specification pattern
  */
 
-// NOTE: SearchAPICredential moved to the @gravity-platform/search package.
-// NOTE: ApifyCredential and HyperbrowserCredential moved to the @gravity-platform/crawl package.
+// NOTE: SearchAPICredential moved to the @unoverse-platform/search package.
+// NOTE: ApifyCredential and HyperbrowserCredential moved to the @unoverse-platform/crawl package.
 
 // Google API Credential for Google Sheets
 export const GoogleAPICredential = {
@@ -97,6 +97,6 @@ export const AirtableCredential = {
   ],
 };
 
-// NOTE: ApolloCredential and HunterCredential moved to the @gravity-platform/gtm package.
-// NOTE: ElevenLabsCredential moved to the @gravity-platform/elevenlabs package
+// NOTE: ApolloCredential and HunterCredential moved to the @unoverse-platform/gtm package.
+// NOTE: ElevenLabsCredential moved to the @unoverse-platform/elevenlabs package
 // (credential type "elevenlabsCredential" unchanged).

@@ -3,7 +3,7 @@
  * Generates AI-powered speech from text using AWS Nova Sonic
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import NovaSpeechExecutor from "./executor";
 
 // Export a function that creates the definition after platform deps are set

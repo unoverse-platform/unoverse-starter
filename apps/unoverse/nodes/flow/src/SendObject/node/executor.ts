@@ -1,4 +1,4 @@
-import { PromiseNode, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { SendObjectConfig, SendObjectOutput } from "../util/types";
 import { publishObject } from "../service/publishObject";
 

@@ -1,4 +1,4 @@
-import { type EnhancedNodeDefinition, NodeInputType } from "@gravity-platform/plugin-base";
+import { type EnhancedNodeDefinition, NodeInputType } from "@unoverse-platform/plugin-base";
 import SearchVideosExecutor from "./executor";
 
 function createNodeDefinition(): EnhancedNodeDefinition {

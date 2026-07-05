@@ -1,7 +1,7 @@
 import {
   getPlatformDependencies,
   type EnhancedNodeDefinition,
-} from "@gravity-platform/plugin-base";
+} from "@unoverse-platform/plugin-base";
 import SmartDocumentExecutor from "./executor";
 
 export const NODE_TYPE = "SmartDocument";

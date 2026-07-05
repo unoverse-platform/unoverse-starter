@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { GoogleSheetConfig, GoogleSheetState, GoogleSheetExecutorOutput } from "../util/types";
 import { CallbackNode, createLogger } from "../../shared/platform";
 import { readGoogleSheet } from "../service/googleSheetsService";

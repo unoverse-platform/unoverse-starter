@@ -9,7 +9,7 @@
  * Priority: 1) Fields in "required" array first, 2) Then schema property order
  */
 
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import FieldValidatorExecutor from "./executor";
 
 // Export node type constant

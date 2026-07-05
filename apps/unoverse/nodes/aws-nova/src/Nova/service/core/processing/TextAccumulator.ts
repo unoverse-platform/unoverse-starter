@@ -2,7 +2,7 @@
  * Text accumulator for Nova Speech text output
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { TextOutputEvent } from "../../io/events/outgoing/handlers";
 
 const { createLogger } = getPlatformDependencies();

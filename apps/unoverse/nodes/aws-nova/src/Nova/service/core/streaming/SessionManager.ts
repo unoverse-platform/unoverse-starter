@@ -3,7 +3,7 @@
  */
 
 import { randomUUID } from "crypto";
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { EventQueue } from "./EventQueue";
 import { NovaSpeechConfig, StreamingMetadata } from "../../api/types";
 import { StreamResponseProcessor } from "../processing/ResponseProcessor";

@@ -1,13 +1,13 @@
-import { createPlugin } from "@gravity-platform/plugin-base";
+import { createPlugin } from "@unoverse-platform/plugin-base";
 
 // Crawl package: Hyperbrowser scrape/crawl/extract + Apify actor runs.
 const plugin = createPlugin({
-  name: "@gravity-platform/crawl",
+  name: "@unoverse-platform/crawl",
   version: "1.0.0",
   description: "Web crawling nodes — Hyperbrowser scrape/crawl/extract and Apify actor runs",
 
   async setup(api) {
-    const { initializePlatformFromAPI } = await import("@gravity-platform/plugin-base");
+    const { initializePlatformFromAPI } = await import("@unoverse-platform/plugin-base");
     initializePlatformFromAPI(api);
 
     // Hyperbrowser nodes

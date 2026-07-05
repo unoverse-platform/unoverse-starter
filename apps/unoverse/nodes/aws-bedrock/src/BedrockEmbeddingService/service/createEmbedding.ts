@@ -3,7 +3,7 @@
  * These methods are exposed to other nodes via service calls
  */
 
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { generateEmbedding } from "../../BedrockEmbedding/service/embeddings";
 import {
   validateEmbeddingText,

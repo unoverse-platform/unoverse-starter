@@ -48,7 +48,7 @@
       shell: |
         set -e
         cd {{ gravity_dir }}
-        npm run build -w @gravity-platform/plugin-base 2>&1 | tail -3
+        npm run build -w @unoverse-platform/plugin-base 2>&1 | tail -3
         npm run build --workspaces --if-present 2>&1 | tail -5
       register: build_result
       timeout: 300

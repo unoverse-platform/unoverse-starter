@@ -1,4 +1,4 @@
-import { getPlatformDependencies, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { resolveCredentials } from "../../shared/elevenLabsClient";
 import { generateSoundEffect, type ElevenLabsSoundEffectsConfig } from "../service";
 

@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/email",
+  "name": "@unoverse-platform/email",
   "version": "1.0.9",
   "description": "Email nodes for GravityWorkflow — send emails via Microsoft 365 and other providers",
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   },
   "gravity": {
     "displayName": "Email",

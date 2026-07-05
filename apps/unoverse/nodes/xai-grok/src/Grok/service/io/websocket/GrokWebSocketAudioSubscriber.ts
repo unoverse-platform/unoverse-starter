@@ -1,4 +1,4 @@
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { WsClient } from "../../core/streaming/WsClient";
 import { AudioAppendBuilder } from "../events/incoming/builders/AudioAppendBuilder";
 

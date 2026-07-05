@@ -1,4 +1,4 @@
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 
 // Module-level platform calls cause startup freezes (docs-starter/nodes/CLAUDE.md
 // rule 5) — resolve the logger lazily instead

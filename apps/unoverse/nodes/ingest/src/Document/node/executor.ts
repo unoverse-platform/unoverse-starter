@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { DocumentConfig, DocumentInput, DocumentOutput, DocumentExecutorOutput, CachedDocument } from "../util/types";
 import { CallbackNode, createLogger } from "../../shared/platform";
 import { DocumentCacheService } from "../service/documentCache";

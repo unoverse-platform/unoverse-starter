@@ -2,7 +2,7 @@
  * Audio stream manager for Nova Speech sessions
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { NovaSpeechConfig, StreamingMetadata } from "../../api/types";
 import { NovaSpeechSession } from "../streaming";
 // Import WebSocket publisher for state events

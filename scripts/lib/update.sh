@@ -45,7 +45,7 @@ cmd_update() {
     # Recovery: download latest CLI script from GitHub, then force-sync
     printf "  ${DIM}●${NC} Downloading latest update script..."
     local temp_update=$(mktemp)
-    if curl -fsSL "https://raw.githubusercontent.com/gravity-platform/unoverse-starter/main/scripts/lib/update.sh" -o "$temp_update" 2>/dev/null; then
+    if curl -fsSL "https://raw.githubusercontent.com/unoverse-platform/unoverse-starter/main/scripts/lib/update.sh" -o "$temp_update" 2>/dev/null; then
       cp "$temp_update" "$GRAVITY_LIB/update.sh"
       rm -f "$temp_update"
       printf "\r\033[2K"
@@ -206,7 +206,7 @@ cmd_update_nodes() {
 
   # Step 2: Build
   printf "  ${DIM}●${NC} Building packages..."
-  (cd "$ROOT" && npm run build -w @gravity-platform/plugin-base >/dev/null 2>&1) || true
+  (cd "$ROOT" && npm run build -w @unoverse-platform/plugin-base >/dev/null 2>&1) || true
   local build_output
   build_output=$(cd "$ROOT" && npm run build --workspaces --if-present 2>&1) || true
   local pkg_count

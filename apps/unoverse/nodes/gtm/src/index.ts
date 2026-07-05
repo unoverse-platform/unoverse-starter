@@ -1,13 +1,13 @@
-import { createPlugin } from "@gravity-platform/plugin-base";
+import { createPlugin } from "@unoverse-platform/plugin-base";
 
 // GTM go-to-market package: Apollo.io + Hunter.io prospecting, enrichment and verification.
 const plugin = createPlugin({
-  name: "@gravity-platform/gtm",
+  name: "@unoverse-platform/gtm",
   version: "1.0.0",
   description: "Go-to-market nodes — Apollo.io & Hunter.io people/company search, enrichment and email verification",
 
   async setup(api) {
-    const { initializePlatformFromAPI } = await import("@gravity-platform/plugin-base");
+    const { initializePlatformFromAPI } = await import("@unoverse-platform/plugin-base");
     initializePlatformFromAPI(api);
 
     // Apollo.io nodes

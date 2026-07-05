@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { ApolloPeopleEnrichConfig, ApolloPeopleEnrichExecutorOutput } from "../util/types";
 import { PromiseNode, createLogger } from "../../shared/platform";
 import { enrichApolloPerson } from "../service/apolloPeopleEnrichService";

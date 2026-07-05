@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/gtm",
+  "name": "@unoverse-platform/gtm",
   "version": "1.0.2",
   "description": "Go-to-market nodes — Apollo.io & Hunter.io people/company search, enrichment and email verification",
   "main": "dist/index.js",
@@ -136,6 +136,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

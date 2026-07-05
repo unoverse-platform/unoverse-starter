@@ -3,7 +3,7 @@
  * Provides AI text generation capabilities using OpenAI's GPT models
  */
 
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import OpenAIExecutor from "./executor";
 
 // Export a function that creates the definition after platform deps are set

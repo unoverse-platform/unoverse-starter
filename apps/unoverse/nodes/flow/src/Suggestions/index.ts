@@ -3,7 +3,7 @@
  * Publishes FAQs, Actions, and Recommendations to the client state
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import SuggestionsExecutor from "./executor";
 
 // Export node type constant

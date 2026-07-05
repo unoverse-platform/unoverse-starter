@@ -7,7 +7,7 @@ This doc has two halves:
 1. **The `.ssi` source format** — what the bundle contains and how each piece maps onto a Gravity node.
 2. **Design decisions** — how to collapse hundreds of operations into a tight, agent-usable node.
 
-The reference conversion is the **Salesforce** bundle (`Salesforce_1.0.48.ssi`, 248 blocks). The `@gravity-platform/slack` package is the canonical *output* shape to mirror.
+The reference conversion is the **Salesforce** bundle (`Salesforce_1.0.48.ssi`, 248 blocks). The `@unoverse-platform/slack` package is the canonical *output* shape to mirror.
 
 ---
 

@@ -3,7 +3,7 @@
  * Extract text from documents in S3 using Amazon Textract
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import { AmazonTextractExecutor } from "./executor";
 
 export const NODE_TYPE = "AmazonTextract";

@@ -1,4 +1,4 @@
-import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 import { searchVideos, type SearchVideosConfig } from "../service";
 
 export default class SearchVideosExecutor extends PromiseNode {

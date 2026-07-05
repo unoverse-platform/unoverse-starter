@@ -1,4 +1,4 @@
-# @gravity-platform/search
+# @unoverse-platform/search
 
 ## 1.0.1
 

@@ -1,4 +1,4 @@
-import { createPlugin, type GravityPluginAPI } from "@gravity-platform/plugin-base";
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
 import packageJson from "../package.json";
 
 const plugin = createPlugin({
@@ -7,7 +7,7 @@ const plugin = createPlugin({
   description: packageJson.description,
 
   async setup(api: GravityPluginAPI) {
-    const { initializePlatformFromAPI } = await import("@gravity-platform/plugin-base");
+    const { initializePlatformFromAPI } = await import("@unoverse-platform/plugin-base");
     initializePlatformFromAPI(api);
 
     // Initialize WebSocket audio subscriber for mic → Grok audio

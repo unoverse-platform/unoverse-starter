@@ -4,7 +4,7 @@
  * Returns 3D UMAP coordinates (clustering should be done separately on full dataset)
  */
 
-import { NodeExecutionContext, ValidationResult } from "@gravity-platform/plugin-base";
+import { NodeExecutionContext, ValidationResult } from "@unoverse-platform/plugin-base";
 import { PromiseNode } from "../shared/platform";
 import { UMAP } from "umap-js";
 

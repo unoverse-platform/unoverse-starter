@@ -1,4 +1,4 @@
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import AirtableFetchExecutor from "./executor";
 
 export const NODE_TYPE = "AirtableFetch";

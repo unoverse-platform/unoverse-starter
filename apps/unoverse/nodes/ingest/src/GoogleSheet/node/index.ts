@@ -1,4 +1,4 @@
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import { GoogleSheetExecutor } from "./executor";
 
 export const NODE_TYPE = "GoogleSheet";

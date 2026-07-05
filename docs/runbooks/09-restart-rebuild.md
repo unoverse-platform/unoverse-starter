@@ -18,7 +18,7 @@ Rebuild packages, regenerate nodes, reload components, and restart services so t
 ./unoverse build
 
 # Build one package only
-./unoverse build @gravity-platform/my-package
+./unoverse build @unoverse-platform/my-package
 
 # Regenerate design system nodes only (after editing storybook components)
 ./unoverse gendesign
@@ -52,7 +52,7 @@ If you need full control, run each step individually:
 npm install
 
 # 2. Build plugin-base first (other packages depend on it)
-npm run build -w @gravity-platform/plugin-base
+npm run build -w @unoverse-platform/plugin-base
 
 # 3. Build all packages
 npm run build --workspaces --if-present
@@ -92,7 +92,7 @@ When things are truly stuck:
 
 # Rebuild from scratch
 npm install
-npm run build -w @gravity-platform/plugin-base
+npm run build -w @unoverse-platform/plugin-base
 npm run build --workspaces --if-present
 npm run gen:nodes
 
@@ -127,8 +127,8 @@ curl -s -o /dev/null -w '%{http_code}' http://localhost:4105/components/AIRespon
 | Node shows in Canvas but errors | Package not built | `./unoverse build` |
 | Component renders old version | Browser caching the bundle | `npm run gen:nodes`, then hard-refresh the browser |
 | `nodes: 0` in status | unoverse didn't load packages | Check `docker compose logs unoverse` |
-| Build fails | Missing plugin-base | `npm run build -w @gravity-platform/plugin-base` first |
-| gen:nodes fails | design-system not built | `npm run build -w @gravity-platform/design-system-dev` first |
+| Build fails | Missing plugin-base | `npm run build -w @unoverse-platform/plugin-base` first |
+| gen:nodes fails | design-system not built | `npm run build -w @unoverse-platform/design-system-dev` first |
 
 ## Related
 

@@ -3,7 +3,7 @@
  * Handles text generation using OpenAI's GPT models
  */
 
-import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 import { queryChatGPT } from "../service/queryChatGPT";
 import { validateOpenAIConfig } from "../util/validation";
 import { OpenAIConfig, OpenAIOutput } from "../util/types";

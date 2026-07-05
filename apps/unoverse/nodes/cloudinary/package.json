@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/cloudinary",
+  "name": "@unoverse-platform/cloudinary",
   "version": "1.1.8",
   "description": "Cloudinary media management for Gravity workflow system - includes file listing and content retrieval",
   "main": "dist/index.js",
@@ -84,6 +84,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

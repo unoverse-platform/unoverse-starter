@@ -3,7 +3,7 @@
  * OpenAI integration for Gravity platform
  */
 
-import { createPlugin, type GravityPluginAPI } from "@gravity-platform/plugin-base";
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
 import packageJson from "../package.json";
 
 const plugin = createPlugin({
@@ -13,7 +13,7 @@ const plugin = createPlugin({
 
   async setup(api: GravityPluginAPI) {
     // Set up platform dependencies using the standard initializer
-    const { initializePlatformFromAPI } = await import("@gravity-platform/plugin-base");
+    const { initializePlatformFromAPI } = await import("@unoverse-platform/plugin-base");
     initializePlatformFromAPI(api);
 
     // Import nodes after dependencies are set

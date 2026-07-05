@@ -1,4 +1,4 @@
-# @gravity-platform/zai
+# @unoverse-platform/zai
 
 Z.AI (GLM) integration for the Gravity workflow system.
 
@@ -46,6 +46,6 @@ Say **"reset conversation"** to clear the stored history.
 cd packages-marketplace
 npm install
 cp zai/.env.example zai/.env   # add your ZAI_API_KEY
-npm run build -w @gravity-platform/zai
-npm test -w @gravity-platform/zai   # skipped without ZAI_API_KEY
+npm run build -w @unoverse-platform/zai
+npm test -w @unoverse-platform/zai   # skipped without ZAI_API_KEY
 ```

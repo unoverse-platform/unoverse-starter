@@ -6,7 +6,7 @@ Set up your local development environment for building on Gravity.
 
 ## How It Works
 
-[`unoverse-starter`](https://github.com/gravity-platform/unoverse-starter) is an open-source starter kit. You **fork** it to your own GitHub account, then build your custom nodes, components, and workflows on top of the platform.
+[`unoverse-starter`](https://github.com/unoverse-platform/unoverse-starter) is an open-source starter kit. You **fork** it to your own GitHub account, then build your custom nodes, components, and workflows on top of the platform.
 
 The core platform runs as Docker images — you pull pre-built binaries and build ON TOP of them.
 
@@ -28,7 +28,7 @@ Install these on your machine:
 
 ## Step 1: Fork & Clone
 
-1. Fork [`gravity-platform/unoverse-starter`](https://github.com/gravity-platform/unoverse-starter) to your own GitHub account
+1. Fork [`unoverse-platform/unoverse-starter`](https://github.com/unoverse-platform/unoverse-starter) to your own GitHub account
 2. Clone your fork:
 
 ```bash
@@ -39,7 +39,7 @@ cd ~/gravity
 3. Add the upstream remote so you can pull future platform updates:
 
 ```bash
-git remote add upstream https://github.com/gravity-platform/unoverse-starter.git
+git remote add upstream https://github.com/unoverse-platform/unoverse-starter.git
 ```
 
 ---
@@ -158,7 +158,7 @@ All checks should pass:
 
 ```bash
 # Edit your node code in apps/unoverse/nodes/my-custom-node/
-unoverse build @gravity-platform/my-custom-node
+unoverse build @unoverse-platform/my-custom-node
 ```
 
 ### UI Components (Design System)
@@ -172,7 +172,7 @@ unoverse gendesign
 ### Storybook (Component Preview)
 
 ```bash
-npm run storybook -w @gravity-platform/design-system-dev
+npm run storybook -w @unoverse-platform/design-system-dev
 # Opens http://localhost:6006
 ```
 
@@ -187,7 +187,7 @@ unoverse dev
 
 # Edit apps/unoverse/nodes (logic), apps/unoverse/rx (design), or apps/unoverse/prompts (behavior)
 unoverse build               # Build all + restart
-unoverse build @gravity-platform/my-node  # Or build one node package
+unoverse build @unoverse-platform/my-node  # Or build one node package
 
 # End your day
 unoverse stop

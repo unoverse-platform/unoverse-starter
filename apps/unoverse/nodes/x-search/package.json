@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/x-search",
+  "name": "@unoverse-platform/x-search",
   "version": "1.1.5",
   "description": "X (Twitter) search node for Gravity workflow system",
   "main": "dist/index.js",
@@ -46,6 +46,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

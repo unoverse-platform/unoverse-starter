@@ -3,7 +3,7 @@
  * Converts base64 audio to text using AWS Transcribe
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import { TranscribeExecutor } from "./executor";
 
 export const NODE_TYPE = "Transcribe";

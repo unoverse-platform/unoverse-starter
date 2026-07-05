@@ -44,7 +44,7 @@ cmd_dev() {
   # Build all packages (plugin-base first as it's a dependency for others)
   echo ""
   echo "  Building packages..."
-  (cd "$ROOT" && npm run build -w @gravity-platform/plugin-base 2>/dev/null) || warn "plugin-base build failed"
+  (cd "$ROOT" && npm run build -w @unoverse-platform/plugin-base 2>/dev/null) || warn "plugin-base build failed"
   local dev_build_output
   dev_build_output=$(cd "$ROOT" && npm run build --workspaces --if-present 2>&1) || warn "some packages failed to build"
   local dev_pkg_count
@@ -78,6 +78,6 @@ cmd_dev() {
   echo ""
   info "After making changes:"
   info "  ./unoverse build                              # Build all + restart"
-  info "  ./unoverse build @gravity-platform/my-node    # Build one package + restart"
+  info "  ./unoverse build @unoverse-platform/my-node    # Build one package + restart"
   echo ""
 }

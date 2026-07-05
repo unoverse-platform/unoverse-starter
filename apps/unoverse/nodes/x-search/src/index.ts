@@ -1,4 +1,4 @@
-import { createPlugin, type GravityPluginAPI } from "@gravity-platform/plugin-base";
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
 import packageJson from "../package.json";
 
 const plugin = createPlugin({

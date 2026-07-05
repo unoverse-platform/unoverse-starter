@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/aws-bedrock",
+  "name": "@unoverse-platform/aws-bedrock",
   "version": "1.1.10",
   "description": "AWS Bedrock integration for Gravity workflow system",
   "main": "dist/index.js",
@@ -63,6 +63,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

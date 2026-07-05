@@ -1,4 +1,4 @@
-# @gravity-platform/salesforce
+# @unoverse-platform/salesforce
 
 ## 1.0.3
 

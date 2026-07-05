@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { ApolloSearchCompanyConfig, ApolloSearchCompanyExecutorOutput } from "../util/types";
 import { PromiseNode, createLogger } from "../../shared/platform";
 import { searchApolloCompanies } from "../service/apolloSearchCompanyService";

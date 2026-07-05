@@ -1,4 +1,4 @@
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { XAIGrokVoiceConfig } from "../../util/types";
 import { GROK_MODEL_ID } from "../constants";
 

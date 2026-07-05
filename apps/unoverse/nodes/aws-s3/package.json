@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/aws-s3",
+  "name": "@unoverse-platform/aws-s3",
   "version": "1.1.8",
   "description": "AWS S3 storage nodes for Gravity workflow system",
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   },
   "gravity": {
     "displayName": "AWS S3",

@@ -1,7 +1,7 @@
 /**
  * Shared platform dependencies for the Crawl package.
  */
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 
 // Get platform dependencies once
 const deps = getPlatformDependencies();

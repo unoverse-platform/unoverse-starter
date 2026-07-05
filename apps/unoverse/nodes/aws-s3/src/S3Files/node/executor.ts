@@ -2,7 +2,7 @@ import {
   getPlatformDependencies,
   type NodeExecutionContext,
   type ValidationResult,
-} from "@gravity-platform/plugin-base";
+} from "@unoverse-platform/plugin-base";
 import { S3FilesConfig, S3FilesExecutorOutput, S3FileObject } from "../util/types";
 import { listS3Files } from "../service/s3Service";
 import { createHash } from "crypto";

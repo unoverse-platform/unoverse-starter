@@ -1,4 +1,4 @@
-# @gravity-platform/gtm
+# @unoverse-platform/gtm
 
 ## 1.0.2
 
@@ -18,4 +18,4 @@
 
 - Publish all core marketplace nodes.
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.6
+  - @unoverse-platform/plugin-base@1.1.6

@@ -164,8 +164,8 @@ export async function myService(config: any, credentialContext: any, api?: any) 
 
 ## 🔗 Study Real Implementations
 
-- `@gravity-platform/openai` — `openaiClient.ts` — canonical pattern for reading from `context.credentials`
-- `@gravity-platform/miro-bridge` — `mcpHandlers.ts` — same pattern for bearer token auth
+- `@unoverse-platform/openai` — `openaiClient.ts` — canonical pattern for reading from `context.credentials`
+- `@unoverse-platform/miro-bridge` — `mcpHandlers.ts` — same pattern for bearer token auth
 
 ---
 

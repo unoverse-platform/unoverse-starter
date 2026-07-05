@@ -1,6 +1,6 @@
 /// <reference path="../util/pdf-parse.d.ts" />
 
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { DocumentParserConfig, DocumentParserOutput, DocumentParserExecutorOutput } from "../util/types";
 import { PromiseNode, createLogger } from "../../shared/platform";
 import { 

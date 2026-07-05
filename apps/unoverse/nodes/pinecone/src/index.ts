@@ -3,7 +3,7 @@
  * Provides vector database operations for knowledge management
  */
 
-import { createPlugin, type GravityPluginAPI } from "@gravity-platform/plugin-base";
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
 import packageJson from "../package.json";
 
 const plugin = createPlugin({
@@ -13,7 +13,7 @@ const plugin = createPlugin({
   
   async setup(api: GravityPluginAPI) {
     // Initialize platform dependencies
-    const { initializePlatformFromAPI } = await import("@gravity-platform/plugin-base");
+    const { initializePlatformFromAPI } = await import("@unoverse-platform/plugin-base");
     initializePlatformFromAPI(api);
 
     // Import and register PineconeQuery node

@@ -40,7 +40,7 @@ services:
   # api.{domain} back to :4100. Image still published by CI.
   # ═══════════════════════════════════════════════════════════════════════════
   # server:
-  #   image: registry.digitalocean.com/gravity-repo/gravity-server:latest
+  #   image: registry.digitalocean.com/gravity-repo/server:latest
   #   ports:
   #     - "4100:4100"
   #   volumes:
@@ -71,7 +71,7 @@ services:
   # gravity-workflow image is still published by CI for exactly this purpose.
   # ═══════════════════════════════════════════════════════════════════════════
   # workflow:
-  #   image: registry.digitalocean.com/gravity-repo/gravity-workflow:latest
+  #   image: registry.digitalocean.com/gravity-repo/workflow:latest
   #   ports:
   #     - "4101:4101"
   #   environment:
@@ -96,7 +96,7 @@ services:
   # Canvas UI - React frontend (lightweight - static files via nginx)
   # Runtime config injected via docker-entrypoint.sh at container start
   canvas:
-    image: registry.digitalocean.com/gravity-repo/gravity-canvas:latest
+    image: registry.digitalocean.com/gravity-repo/canvas:latest
     ports:
       - "3001:80"
     environment:
@@ -117,7 +117,7 @@ services:
 
   # UMAP Service - Python ML service
   umap:
-    image: registry.digitalocean.com/gravity-repo/gravity-umap:latest
+    image: registry.digitalocean.com/gravity-repo/umap:latest
     ports:
       - "5001:5001"
     volumes:
@@ -132,7 +132,7 @@ services:
   #           published. Only the Docker network reaches it; that isolation IS the
   #           trust boundary (workflow pulls its node catalog from here).
   unoverse:
-    image: registry.digitalocean.com/gravity-repo/gravity-unoverse:latest
+    image: registry.digitalocean.com/gravity-repo/unoverse:latest
     # For local development, build from source instead:
     # build:
     #   context: .
@@ -194,7 +194,7 @@ services:
 
   # MCP Server - OpenAI Apps integration (lightweight - HTTP server)
   mcp-server:
-    image: registry.digitalocean.com/gravity-repo/gravity-mcp-server:latest
+    image: registry.digitalocean.com/gravity-repo/mcp-server:latest
     ports:
       - "4103:4103"
     environment:
@@ -212,7 +212,7 @@ services:
 
   # Memory Server - Evidence-based user memory system (ambient pub/sub, Redis Streams)
   memory:
-    image: registry.digitalocean.com/gravity-repo/gravity-memory:${TAG:-latest}
+    image: registry.digitalocean.com/gravity-repo/memory:${TAG:-latest}
     ports:
       - "4104:4104"
     environment:

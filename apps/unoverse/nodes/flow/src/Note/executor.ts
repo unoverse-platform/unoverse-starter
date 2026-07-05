@@ -3,7 +3,7 @@
  * A simple pass-through node that serves as documentation
  */
 
-import { NodeExecutionContext, ValidationResult } from "@gravity-platform/plugin-base";
+import { NodeExecutionContext, ValidationResult } from "@unoverse-platform/plugin-base";
 import { PromiseNode } from "../shared/platform";
 
 interface NoteConfig {

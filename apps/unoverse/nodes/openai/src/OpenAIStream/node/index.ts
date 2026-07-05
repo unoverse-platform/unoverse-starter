@@ -3,7 +3,7 @@
  * Provides streaming text generation capabilities
  */
 
-import { type EnhancedNodeDefinition, NodeInputType } from "@gravity-platform/plugin-base";
+import { type EnhancedNodeDefinition, NodeInputType } from "@unoverse-platform/plugin-base";
 import OpenAIStreamExecutor from "./executor";
 
 const definition: EnhancedNodeDefinition = {

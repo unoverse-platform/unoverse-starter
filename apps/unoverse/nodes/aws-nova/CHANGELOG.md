@@ -1,4 +1,4 @@
-# @gravity-platform/aws-nova
+# @unoverse-platform/aws-nova
 
 ## 1.2.11
 
@@ -18,7 +18,7 @@
 
 - Publish all core marketplace nodes.
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.6
+  - @unoverse-platform/plugin-base@1.1.6
 
 ## 1.2.8
 
@@ -50,4 +50,4 @@
 
 - Initial npm publish - open source node packages for Gravity Platform
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.4
+  - @unoverse-platform/plugin-base@1.1.4

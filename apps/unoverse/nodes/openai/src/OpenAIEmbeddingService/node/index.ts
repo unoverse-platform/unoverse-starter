@@ -1,4 +1,4 @@
-import { type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import OpenAIEmbeddingServiceExecutor from "./executor";
 
 /**

@@ -2,7 +2,7 @@
  * BedrockEmbedding node executor
  */
 
-import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 import { generateEmbedding } from "../service/embeddings";
 
 export interface BedrockEmbeddingConfig {

@@ -109,7 +109,7 @@
       no_log: true
 
     - name: "[6/7] Enterprise — Pull UMAP image"
-      command: docker pull registry.digitalocean.com/gravity-repo/gravity-umap:{{ gravity_version | default('latest') }}
+      command: docker pull registry.digitalocean.com/gravity-repo/umap:{{ gravity_version | default('latest') }}
       when: not compose_file.stat.exists
 
     - name: "[7/7] Enterprise — Stop existing UMAP container"
@@ -131,7 +131,7 @@
         -v /opt/gravity-umap/models:/app/models
         --memory=2g
         --cpus=1.0
-        registry.digitalocean.com/gravity-repo/gravity-umap:{{ gravity_version | default('latest') }}
+        registry.digitalocean.com/gravity-repo/umap:{{ gravity_version | default('latest') }}
       when: not compose_file.stat.exists
 
   post_tasks:

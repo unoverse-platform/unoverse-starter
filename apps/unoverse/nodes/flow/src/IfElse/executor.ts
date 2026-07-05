@@ -3,7 +3,7 @@
  * Evaluates a condition and routes output to the appropriate connector
  */
 
-import { NodeExecutionContext, ValidationResult } from "@gravity-platform/plugin-base";
+import { NodeExecutionContext, ValidationResult } from "@unoverse-platform/plugin-base";
 import { PromiseNode } from "../shared/platform";
 
 interface IfElseConfig {

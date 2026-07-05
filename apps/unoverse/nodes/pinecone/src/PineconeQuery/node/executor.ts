@@ -3,7 +3,7 @@
  * Handles the execution of vector similarity search in Pinecone with optional reranking
  */
 
-import { getPlatformDependencies, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { PineconeQueryConfig, PineconeQueryOutput } from "../util/types";
 import { executeQuery } from "../service/queryService";
 

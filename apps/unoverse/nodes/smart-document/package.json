@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/smart-document",
+  "name": "@unoverse-platform/smart-document",
   "version": "0.2.9",
   "description": "SmartDocument node: agent-managed long-form markdown document with section-based MCP edit tools (outline / readSection / updateSection / appendToSection / replaceInSection / insertSection / deleteSection / moveSection / resetDoc). Stable section IDs and content hashes. Redis-backed state.",
   "main": "dist/index.js",
@@ -41,6 +41,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

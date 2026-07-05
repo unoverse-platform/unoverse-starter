@@ -3,7 +3,7 @@
  * A documentation node for adding notes and comments to workflows
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import NoteExecutor from "./executor";
 
 // Export node type constant

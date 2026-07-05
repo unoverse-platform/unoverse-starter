@@ -1,4 +1,4 @@
-import { PromiseNode, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { AirtableFetchConfig, AirtableFetchExecutorOutput } from "../util/types";
 import { fetchAirtableRecords } from "../service/airtableFetchService";
 

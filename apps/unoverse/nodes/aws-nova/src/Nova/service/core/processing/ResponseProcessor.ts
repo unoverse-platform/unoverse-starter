@@ -2,7 +2,7 @@
  * Response processor for Nova Speech streaming
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { StreamUsageStats, StreamingMetadata, NovaSpeechConfig } from "../../api/types";
 import { EventParser, CompletionStartEvent } from "./EventParser";
 import { TextAccumulator } from "./TextAccumulator";

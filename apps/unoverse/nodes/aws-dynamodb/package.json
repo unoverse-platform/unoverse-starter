@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/aws-dynamodb",
+  "name": "@unoverse-platform/aws-dynamodb",
   "version": "1.1.9",
   "description": "AWS DynamoDB integration for Gravity workflow system - includes put, fetch, and service operations",
   "main": "dist/index.js",
@@ -86,6 +86,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

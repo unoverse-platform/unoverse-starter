@@ -7,7 +7,7 @@ import {
   getPlatformDependencies,
   type NodeExecutionContext,
   type ValidationResult,
-} from "@gravity-platform/plugin-base";
+} from "@unoverse-platform/plugin-base";
 import { generateImages } from "../service";
 import { GeminiImageGenConfig, GeminiImageGenOutput } from "../util/types";
 

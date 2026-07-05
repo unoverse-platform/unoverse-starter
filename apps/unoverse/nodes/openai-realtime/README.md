@@ -1,4 +1,4 @@
-# @gravity-platform/openai-realtime
+# @unoverse-platform/openai-realtime
 
 OpenAI Realtime API integration for Gravity Platform — real-time voice conversations with gpt-realtime-2.
 
@@ -14,7 +14,7 @@ OpenAI Realtime API integration for Gravity Platform — real-time voice convers
 ## Installation
 
 ```bash
-npm install @gravity-platform/openai-realtime
+npm install @unoverse-platform/openai-realtime
 ```
 
 ## Node: OpenAI Realtime Voice

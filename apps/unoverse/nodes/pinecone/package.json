@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/pinecone",
+  "name": "@unoverse-platform/pinecone",
   "version": "1.1.9",
   "description": "Pinecone vector database nodes for GravityWorkflow - knowledge management and vector operations",
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   },
   "gravity": {
     "displayName": "Pinecone",

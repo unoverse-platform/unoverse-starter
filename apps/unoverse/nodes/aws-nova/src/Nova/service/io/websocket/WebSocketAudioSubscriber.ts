@@ -3,7 +3,7 @@
  * Manages WebSocket audio sessions and delegates to handlers
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { EventQueue } from "../../core/streaming/EventQueue";
 import { EventMetadata } from "../events/metadata/EventMetadataProcessor";
 import { WebSocketAudioSession } from "./types";

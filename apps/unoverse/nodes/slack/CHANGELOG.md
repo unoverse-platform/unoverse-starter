@@ -1,4 +1,4 @@
-# @gravity-platform/slack
+# @unoverse-platform/slack
 
 ## 1.1.5
 
@@ -29,7 +29,7 @@
 
 - Publish all core marketplace nodes.
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.6
+  - @unoverse-platform/plugin-base@1.1.6
 
 ## 1.1.1
 

@@ -1,4 +1,4 @@
-# @gravity-platform/gce-toolkit
+# @unoverse-platform/gce-toolkit
 
 ## 1.2.4
 
@@ -18,7 +18,7 @@
 
 - Publish all core marketplace nodes.
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.6
+  - @unoverse-platform/plugin-base@1.1.6
 
 ## 1.2.1
 
@@ -57,4 +57,4 @@
 
 - Initial npm publish - open source node packages for Gravity Platform
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.4
+  - @unoverse-platform/plugin-base@1.1.4

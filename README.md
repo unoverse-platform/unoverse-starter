@@ -59,7 +59,7 @@ locally, then `./unoverse build` to pick up changes:
 # ... write your node code ...
 
 # Build and restart
-./unoverse build @gravity-platform/my-custom-node
+./unoverse build @unoverse-platform/my-custom-node
 ```
 
 See `docs/nodes/` for the full node development guide.

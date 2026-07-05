@@ -38,7 +38,7 @@ The package supports the following credential types:
 
 - **Google**: For Google Sheets access
 
-> SearchWeb and web-search credentials moved to the `@gravity-platform/search` package.
+> SearchWeb and web-search credentials moved to the `@unoverse-platform/search` package.
 
 ## Development
 

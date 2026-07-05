@@ -3,7 +3,7 @@
  * Evaluates a condition and routes output to true or false connector
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import IfElseExecutor from "./executor";
 
 // Export node type constant

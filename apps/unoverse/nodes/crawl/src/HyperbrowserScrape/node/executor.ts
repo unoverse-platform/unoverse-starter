@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { PromiseNode } from "../../shared/platform";
 import { HyperbrowserScrapeConfig, HyperbrowserScrapeExecutorOutput } from "../util/types";
 import { scrapeUrl } from "../service/scrapeService";

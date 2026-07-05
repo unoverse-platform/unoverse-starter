@@ -2,7 +2,7 @@
  * Handles incoming audio data from WebSocket
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { AudioEventBuilder } from "../../events/incoming/builders/AudioEventBuilder";
 import { WebSocketAudioSession } from "../types";
 

@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { CloudinaryFileContentConfig, CloudinaryFileContentOutput } from "../util/types";
 import { getCloudinaryFileContent } from "../service/getFileContent";
 import { PromiseNode, createLogger } from "../../shared/platform";

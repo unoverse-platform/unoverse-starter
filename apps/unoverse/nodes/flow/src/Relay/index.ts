@@ -4,7 +4,7 @@
  * Acts as a "wire" that instantly relays whatever it receives
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import RelayExecutor from "./executor";
 
 // Export node type constant

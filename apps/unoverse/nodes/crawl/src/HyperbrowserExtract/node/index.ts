@@ -1,4 +1,4 @@
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import { HyperbrowserExtractExecutor } from "./executor";
 import { FETCH_SESSION_CONFIG_PROPERTIES } from "../../shared/hyperbrowser";
 

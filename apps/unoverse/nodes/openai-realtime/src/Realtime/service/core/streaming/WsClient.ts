@@ -1,5 +1,5 @@
 import WebSocket from "ws";
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { REALTIME_WS_URL, REALTIME_MODEL_ID } from "../../../constants";
 
 function getLogger() {

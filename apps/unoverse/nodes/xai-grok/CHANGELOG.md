@@ -1,4 +1,4 @@
-# @gravity-platform/xai-grok
+# @unoverse-platform/xai-grok
 
 ## 1.2.0
 
@@ -24,7 +24,7 @@
 
 - Publish all core marketplace nodes.
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.6
+  - @unoverse-platform/plugin-base@1.1.6
 
 ## 1.1.4
 
@@ -83,4 +83,4 @@
 
 - Initial npm publish - open source node packages for Gravity Platform
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.4
+  - @unoverse-platform/plugin-base@1.1.4

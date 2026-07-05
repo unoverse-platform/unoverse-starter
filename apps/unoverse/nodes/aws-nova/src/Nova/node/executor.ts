@@ -3,7 +3,7 @@
  * Handles speech generation using AWS Nova Sonic
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { AWSNovaSpeechConfig } from "../../util/types";
 import type { VoiceOption } from "../service";
 import { NOVA_MODEL_ID } from "../constants";

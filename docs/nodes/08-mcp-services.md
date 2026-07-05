@@ -42,7 +42,7 @@ The node exposes an MCP tool surface to agents **and** emits standard workflow o
 Obtain it from `getPlatformDependencies()` alongside `PromiseNode`, and call it from inside `handleServiceCall` for every method that should fire workflow outputs:
 
 ```typescript
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 
 const { PromiseNode, executeNodeWithRouting } = getPlatformDependencies();
 

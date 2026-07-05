@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/ingest",
+  "name": "@unoverse-platform/ingest",
   "version": "4.1.0",
   "description": "Data ingestion nodes for Gravity workflow system",
   "main": "dist/index.js",
@@ -106,6 +106,6 @@
     "credentials": []
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.0.0"
+    "@unoverse-platform/plugin-base": ">=1.0.0"
   }
 }

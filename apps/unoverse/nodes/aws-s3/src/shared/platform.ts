@@ -1,7 +1,7 @@
 /**
  * Shared platform dependencies for AWS S3 services
  */
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 
 // Get platform dependencies once
 const deps = getPlatformDependencies();

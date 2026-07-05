@@ -3,7 +3,7 @@
  * Executes custom JavaScript code with input data
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import CodeExecutor from "./executor";
 
 // Export node type constant

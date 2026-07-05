@@ -5,7 +5,7 @@
  * Waits for continue signals to advance through the array.
  */
 
-import { ValidationResult } from "@gravity-platform/plugin-base";
+import { ValidationResult } from "@unoverse-platform/plugin-base";
 import { CallbackNode } from "../shared/platform";
 import { LoopConfig } from "./utils/types";
 

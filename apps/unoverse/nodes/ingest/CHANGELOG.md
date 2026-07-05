@@ -1,10 +1,10 @@
-# @gravity-platform/ingest
+# @unoverse-platform/ingest
 
 ## 4.1.0
 
 ### Minor Changes
 
-- ElevenLabs moves out of `ingest` into its own `@gravity-platform/elevenlabs` package, and gains three new nodes.
+- ElevenLabs moves out of `ingest` into its own `@unoverse-platform/elevenlabs` package, and gains three new nodes.
 
   - **ElevenLabs TTS** — generalized to any voice via `voiceId` + model/format selection. Keeps a backward-compatible path: labelled `[DETECTIVE]:/[SUSPECT]:/[NARRATOR]:` scripts still route through the original voice-pool dialogue behavior (node type `ElevenLabs` and credential type `elevenlabsCredential` unchanged, so existing workflows keep working).
   - **ElevenLabs Dialogue** — multi-speaker scripts with explicit per-line voices via `/v1/text-to-dialogue`.
@@ -30,9 +30,9 @@
 
 ### Major Changes
 
-- Introduce the `@gravity-platform/crawl` package and move the web-crawling nodes out of `ingest`.
+- Introduce the `@unoverse-platform/crawl` package and move the web-crawling nodes out of `ingest`.
 
-  - New `@gravity-platform/crawl` package with HyperbrowserScrape, HyperbrowserCrawl and HyperbrowserExtract (split from the old single Hyperbrowser node), plus ApifyStarter and ApifyResults.
+  - New `@unoverse-platform/crawl` package with HyperbrowserScrape, HyperbrowserCrawl and HyperbrowserExtract (split from the old single Hyperbrowser node), plus ApifyStarter and ApifyResults.
   - Hyperbrowser nodes now expose the full create-new-session option set: stealth, ultra-stealth, residential proxies with country targeting, CAPTCHA solving, adblock and cookie-consent handling.
   - `ingest` no longer ships the `Hyperbrowser`, `ApifyStarter` or `ApifyResults` nodes, nor the `apifyCredential`/`hyperbrowserCredential` definitions (now in `crawl`).
 
@@ -66,4 +66,4 @@
 
 - Initial npm publish - open source node packages for Gravity Platform
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.4
+  - @unoverse-platform/plugin-base@1.1.4

@@ -112,7 +112,7 @@ unoverse update nodes
 Or build just your package:
 
 ```bash
-unoverse build @gravity-platform/my-node
+unoverse build @unoverse-platform/my-node
 ```
 
 > **Tip:** If you haven't run `unoverse dev` yet, do that first — it installs all workspace dependencies.

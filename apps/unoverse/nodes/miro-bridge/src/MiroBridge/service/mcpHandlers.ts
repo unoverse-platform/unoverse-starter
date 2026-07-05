@@ -1,5 +1,5 @@
 import type { MiroBridgeConfig } from "../util/types";
-import type { NodeExecutionContext } from "@gravity-platform/plugin-base";
+import type { NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import {
   keyFor,
   getBoard,

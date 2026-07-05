@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { AWSComprehendMedicalConfig, AWSComprehendMedicalOutput } from "../util/types";
 import { processComprehendMedicalText } from "../service/processText";
 import { PromiseNode, createLogger } from "../../shared/platform";

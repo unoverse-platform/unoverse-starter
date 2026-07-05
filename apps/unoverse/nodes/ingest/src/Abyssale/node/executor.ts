@@ -1,4 +1,4 @@
-import { PromiseNode, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { AbyssaleConfig, AbyssaleExecutorOutput } from "../util/types";
 import { renderTemplate, renderMultiPagePdf } from "../service/abyssaleService";
 

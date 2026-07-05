@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/search",
+  "name": "@unoverse-platform/search",
   "version": "1.0.1",
   "description": "SearchAPI.io search nodes (web, news, videos, places) for Gravity workflow system",
   "main": "dist/index.js",
@@ -79,6 +79,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

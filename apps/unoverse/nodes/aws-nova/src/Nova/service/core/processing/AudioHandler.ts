@@ -2,7 +2,7 @@
  * Audio handler for Nova Speech response processing
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { AudioState, StreamingMetadata } from "../../api/types";
 import { AudioPublisherFactory } from "../../io/publishers/AudioPublisherFactory";
 

@@ -10,7 +10,7 @@
  * - Returns parsed structured data
  */
 
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import OpenAIStructuredOutputExecutor from "./executor";
 
 const definition: EnhancedNodeDefinition = {

@@ -3,7 +3,7 @@
  */
 
 import { BedrockRuntimeClient, InvokeModelWithBidirectionalStreamCommand } from "@aws-sdk/client-bedrock-runtime";
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { EventQueue } from "./EventQueue";
 import { NovaSpeechSession } from "./SessionManager";
 import { NOVA_MODEL_ID } from "../../../constants";

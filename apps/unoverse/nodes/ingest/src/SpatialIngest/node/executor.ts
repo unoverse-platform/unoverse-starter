@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { PromiseNode, createLogger } from "../../shared/platform";
 import { SpatialIngestConfig, SpatialIngestOutput } from "../util/types";
 import { runSpatialIngestPipeline } from "../service/spatialIngestService";

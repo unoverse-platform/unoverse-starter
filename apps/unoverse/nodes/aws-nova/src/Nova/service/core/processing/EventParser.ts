@@ -2,7 +2,7 @@
  * Event parser for Nova Speech events
  */
 
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import {
   CompletionHandler,
   ContentHandler,

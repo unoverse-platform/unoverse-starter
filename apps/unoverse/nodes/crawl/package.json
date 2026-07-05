@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/crawl",
+  "name": "@unoverse-platform/crawl",
   "version": "1.3.1",
   "description": "Web crawling nodes — Hyperbrowser scrape/crawl/extract and Apify actor runs",
   "main": "dist/index.js",
@@ -123,6 +123,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

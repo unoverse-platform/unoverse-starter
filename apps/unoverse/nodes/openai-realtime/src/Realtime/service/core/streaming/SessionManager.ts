@@ -1,4 +1,4 @@
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { OpenAIRealtimeConfig, StreamingMetadata } from "../../../../util/types";
 import { WsClient } from "./WsClient";
 import { RealtimeResponseProcessor } from "../processing/ResponseProcessor";

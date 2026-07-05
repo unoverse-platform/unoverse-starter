@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/zai",
+  "name": "@unoverse-platform/zai",
   "version": "1.2.2",
   "description": "Z.AI (GLM) integration for Gravity workflow system",
   "main": "dist/index.js",
@@ -92,6 +92,6 @@
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

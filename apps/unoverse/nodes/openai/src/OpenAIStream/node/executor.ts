@@ -7,7 +7,7 @@ import {
   getPlatformDependencies,
   type NodeExecutionContext,
   type ValidationResult,
-} from "@gravity-platform/plugin-base";
+} from "@unoverse-platform/plugin-base";
 import { streamCompletionCallback } from "../service";
 import { OpenAIStreamConfig, OpenAIStreamState } from "../util/types";
 

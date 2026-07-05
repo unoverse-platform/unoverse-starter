@@ -1,5 +1,5 @@
 import { randomUUID } from "crypto";
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { WsClient } from "./WsClient";
 import { StreamingMetadata, XAIGrokVoiceConfig } from "../../api/types";
 

@@ -1,4 +1,4 @@
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 import { StreamingMetadata } from "../../api/types";
 import { WebSocketAudioPublisher } from "../../io/publishers/WebSocketAudioPublisher";
 

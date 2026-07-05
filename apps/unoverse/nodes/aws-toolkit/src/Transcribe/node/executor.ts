@@ -3,7 +3,7 @@
  * Handles audio-to-text conversion using AWS Transcribe
  */
 
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { TranscribeConfig, TranscribeOutput } from "../util/types";
 import { transcribeAudio } from "../service/transcribeAudio";
 import { PromiseNode, createLogger } from "../../shared/platform";

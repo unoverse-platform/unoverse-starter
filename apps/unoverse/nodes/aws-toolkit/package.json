@@ -1,5 +1,5 @@
 {
-  "name": "@gravity-platform/aws-toolkit",
+  "name": "@unoverse-platform/aws-toolkit",
   "version": "1.1.8",
   "description": "AWS services toolkit for Gravity workflow system - includes Transcribe and Textract",
   "main": "dist/index.js",
@@ -80,6 +80,6 @@
     ]
   },
   "peerDependencies": {
-    "@gravity-platform/plugin-base": ">=1.1.6"
+    "@unoverse-platform/plugin-base": ">=1.1.6"
   }
 }

@@ -1,4 +1,4 @@
-# @gravity-platform/crawl
+# @unoverse-platform/crawl
 
 ## 1.3.1
 
@@ -18,14 +18,14 @@
 
 - Publish all core marketplace nodes.
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.6
+  - @unoverse-platform/plugin-base@1.1.6
 
 ## 1.1.0
 
 ### Minor Changes
 
-- Introduce the `@gravity-platform/crawl` package and move the web-crawling nodes out of `ingest`.
+- Introduce the `@unoverse-platform/crawl` package and move the web-crawling nodes out of `ingest`.
 
-  - New `@gravity-platform/crawl` package with HyperbrowserScrape, HyperbrowserCrawl and HyperbrowserExtract (split from the old single Hyperbrowser node), plus ApifyStarter and ApifyResults.
+  - New `@unoverse-platform/crawl` package with HyperbrowserScrape, HyperbrowserCrawl and HyperbrowserExtract (split from the old single Hyperbrowser node), plus ApifyStarter and ApifyResults.
   - Hyperbrowser nodes now expose the full create-new-session option set: stealth, ultra-stealth, residential proxies with country targeting, CAPTCHA solving, adblock and cookie-consent handling.
   - `ingest` no longer ships the `Hyperbrowser`, `ApifyStarter` or `ApifyResults` nodes, nor the `apifyCredential`/`hyperbrowserCredential` definitions (now in `crawl`).

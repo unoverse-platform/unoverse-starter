@@ -5,7 +5,7 @@
 import { Subject } from "rxjs";
 import { take } from "rxjs/operators";
 import { firstValueFrom } from "rxjs";
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 
 const { createLogger } = getPlatformDependencies();
 const logger = createLogger("EventQueue");

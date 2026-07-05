@@ -4,16 +4,16 @@
  * Provides S3 storage nodes for file operations
  */
 
-import { createPlugin } from "@gravity-platform/plugin-base";
+import { createPlugin } from "@unoverse-platform/plugin-base";
 
 const plugin = createPlugin({
-  name: "@gravity-platform/aws-s3",
+  name: "@unoverse-platform/aws-s3",
   version: "1.0.0",
   description: "AWS S3 storage nodes for Gravity workflow system",
 
   async setup(api) {
     // Initialize platform dependencies
-    const { initializePlatformFromAPI } = await import("@gravity-platform/plugin-base");
+    const { initializePlatformFromAPI } = await import("@unoverse-platform/plugin-base");
     initializePlatformFromAPI(api);
 
     // Import and register S3Files node

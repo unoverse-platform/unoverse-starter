@@ -1,4 +1,4 @@
-import { PromiseNode, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { PostgresInsertConfig, PostgresInsertOutput } from "../util/types";
 import { executeInsert } from "../service/insertService";
 

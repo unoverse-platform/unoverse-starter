@@ -3,7 +3,7 @@
  * Provides AI image generation capabilities using Google's Gemini models
  */
 
-import { getPlatformDependencies, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import GeminiImageGenExecutor from "./executor";
 
 // Export a function that creates the definition after platform deps are set

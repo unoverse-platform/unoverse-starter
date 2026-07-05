@@ -1,4 +1,4 @@
-import { getPlatformDependencies, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { ElevenLabsConfig, ElevenLabsOutput } from "../util/types";
 import { resolveCredentials } from "../../shared/elevenLabsClient";
 import { generateTTS } from "../service";

@@ -1,4 +1,4 @@
-import { PromiseNode, type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { OpenAIEmbeddingServiceConfig } from "../util/types";
 
 export default class OpenAIEmbeddingServiceExecutor extends PromiseNode {

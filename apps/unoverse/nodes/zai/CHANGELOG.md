@@ -1,4 +1,4 @@
-# @gravity-platform/zai
+# @unoverse-platform/zai
 
 ## 1.2.2
 

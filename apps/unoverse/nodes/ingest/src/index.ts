@@ -1,14 +1,14 @@
-import { createPlugin } from "@gravity-platform/plugin-base";
+import { createPlugin } from "@unoverse-platform/plugin-base";
 
 // Create and export the plugin
 const plugin = createPlugin({
-  name: "@gravity-platform/ingest",
+  name: "@unoverse-platform/ingest",
   version: "1.0.0",
   description: "Data ingestion nodes for Gravity workflow system",
 
   async setup(api) {
     // Initialize platform dependencies
-    const { initializePlatformFromAPI } = await import("@gravity-platform/plugin-base");
+    const { initializePlatformFromAPI } = await import("@unoverse-platform/plugin-base");
     initializePlatformFromAPI(api);
 
     // Import and register DocumentParser node
@@ -19,8 +19,8 @@ const plugin = createPlugin({
     const { DocumentNode } = await import("./Document/node");
     api.registerNode(DocumentNode);
 
-    // NOTE: SearchWeb node moved to the @gravity-platform/search package (with SearchNews/Videos/Places).
-    // NOTE: Apify (Starter/Results) and Hyperbrowser nodes moved to the @gravity-platform/crawl package.
+    // NOTE: SearchWeb node moved to the @unoverse-platform/search package (with SearchNews/Videos/Places).
+    // NOTE: Apify (Starter/Results) and Hyperbrowser nodes moved to the @unoverse-platform/crawl package.
 
     // Import and register GoogleSheet node
     const { GoogleSheetNode } = await import("./GoogleSheet/node");
@@ -34,7 +34,7 @@ const plugin = createPlugin({
     const { AbyssaleNode } = await import("./Abyssale/node");
     api.registerNode(AbyssaleNode);
 
-    // NOTE: ElevenLabs (TTS) moved to the @gravity-platform/elevenlabs package
+    // NOTE: ElevenLabs (TTS) moved to the @unoverse-platform/elevenlabs package
     // (now also Dialogue / Sound Effects / Speech-to-Text). Credential type
     // "elevenlabsCredential" is unchanged there, so existing creds keep resolving.
 
@@ -42,10 +42,10 @@ const plugin = createPlugin({
     const { SpatialIngestNode } = await import("./SpatialIngest/node");
     api.registerNode(SpatialIngestNode);
 
-    // NOTE: Apollo.io and Hunter.io nodes moved to the @gravity-platform/gtm package.
+    // NOTE: Apollo.io and Hunter.io nodes moved to the @unoverse-platform/gtm package.
 
     // Import and register credentials
-    // NOTE: SearchAPICredential moved to the @gravity-platform/search package.
+    // NOTE: SearchAPICredential moved to the @unoverse-platform/search package.
     const {
       GoogleAPICredential,
       PlaidCredential,
@@ -54,7 +54,7 @@ const plugin = createPlugin({
     api.registerCredential(GoogleAPICredential);
     api.registerCredential(PlaidCredential);
     api.registerCredential(AbyssaleCredential);
-    // NOTE: ElevenLabsCredential moved to the @gravity-platform/elevenlabs package.
+    // NOTE: ElevenLabsCredential moved to the @unoverse-platform/elevenlabs package.
   },
 });
 

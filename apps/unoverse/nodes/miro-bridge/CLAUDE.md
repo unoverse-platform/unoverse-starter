@@ -50,7 +50,7 @@ miro-bridge/
 │       │   └── boardStore.ts             — Redis CRUD: getBoard / saveBoard / applyCreate / applyUpdate / applyDelete
 │       └── util/
 │           └── types.ts                  — MiroBridgeConfig, BoardState, BoardItem, MiroToolResult
-└── package.json                          — @gravity-platform/miro-bridge
+└── package.json                          — @unoverse-platform/miro-bridge
 ```
 
 ---

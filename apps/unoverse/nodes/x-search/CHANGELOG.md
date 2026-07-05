@@ -1,4 +1,4 @@
-# @gravity-platform/x-search
+# @unoverse-platform/x-search
 
 ## 1.1.5
 
@@ -18,7 +18,7 @@
 
 - Publish all core marketplace nodes.
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.6
+  - @unoverse-platform/plugin-base@1.1.6
 
 ## 1.1.1
 
@@ -57,4 +57,4 @@
 
 - Initial npm publish - open source node packages for Gravity Platform
 - Updated dependencies
-  - @gravity-platform/plugin-base@1.1.4
+  - @unoverse-platform/plugin-base@1.1.4

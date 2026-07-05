@@ -1,4 +1,4 @@
-import { type NodeExecutionContext } from "@gravity-platform/plugin-base";
+import { type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { DynamoDBConfig, DynamoDBOutput } from "../util/types";
 import { putDynamoDBRecordService } from "../service/putRecord";
 import { PromiseNode, createLogger } from "../../shared/platform";

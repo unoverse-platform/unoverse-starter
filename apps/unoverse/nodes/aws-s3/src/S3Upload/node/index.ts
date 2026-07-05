@@ -1,4 +1,4 @@
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravity-platform/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import { S3UploadExecutor } from "./executor";
 
 export const NODE_TYPE = "S3Upload";

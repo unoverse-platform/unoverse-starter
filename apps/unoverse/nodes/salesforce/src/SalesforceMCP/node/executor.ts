@@ -1,7 +1,7 @@
 import {
   getPlatformDependencies,
   type NodeExecutionContext,
-} from "@gravity-platform/plugin-base";
+} from "@unoverse-platform/plugin-base";
 import type { SalesforceCredentials } from "../../shared/salesforceClient";
 import {
   queryRecords,

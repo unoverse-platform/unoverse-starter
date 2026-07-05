@@ -9,7 +9,7 @@
  * - Memory limits
  */
 
-import { NodeExecutionContext, ValidationResult } from "@gravity-platform/plugin-base";
+import { NodeExecutionContext, ValidationResult } from "@unoverse-platform/plugin-base";
 import { PromiseNode, codeLogger } from "../shared/platform";
 import { createContentHash, createUniversalId } from "./utils/hashUtils";
 

@@ -3,7 +3,7 @@
  */
 
 import { AudioPublisherInterface, AudioPublishConfig, StatePublishConfig } from "./AudioPublisherInterface";
-import { getPlatformDependencies } from "@gravity-platform/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 
 const { createLogger, getAudioWebSocketManager } = getPlatformDependencies();
 const logger = createLogger("WebSocketAudioPublisher");
