@@ -3,7 +3,7 @@
 
 cmd_update() {
   echo ""
-  echo -e "  ${BOLD}Updating Gravity Platform${NC}"
+  echo -e "  ${BOLD}Updating Unoverse Platform${NC}"
   echo ""
   timer_start
 

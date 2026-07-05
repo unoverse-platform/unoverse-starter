@@ -2,7 +2,7 @@
 # unoverse doctor
 
 cmd_doctor() {
-  banner "Gravity Doctor"
+  banner "Unoverse Doctor"
   echo ""
 
   local issues=0

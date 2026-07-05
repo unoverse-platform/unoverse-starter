@@ -41,10 +41,10 @@ install_to_path() {
 check_first_run() {
   if [ ! -f "$ROOT/.env" ]; then
     echo ""
-    echo -e "  ${YELLOW}${BOLD}Welcome to Gravity Platform!${NC}"
+    echo -e "  ${YELLOW}${BOLD}Welcome to Unoverse!${NC}"
     echo ""
     echo -e "  Looks like this is your first time. Let's get you set up."
-    echo -e "  You'll need credentials from your Gravity admin."
+    echo -e "  You'll need credentials from your Unoverse admin."
     echo ""
     read -r -p "  Ready to start setup? [Y/n] " REPLY
     echo ""
@@ -80,7 +80,7 @@ cmd_login() {
 
 cmd_init() {
   echo ""
-  echo -e "  ${BOLD}${CYAN}⬡ Gravity Platform Setup${NC}"
+  echo -e "  ${BOLD}${CYAN}⬡ Unoverse Platform Setup${NC}"
   echo -e "  ${DIM}─────────────────────────────────${NC}"
   echo ""
   timer_start
@@ -124,7 +124,7 @@ cmd_init() {
 
   # DOCR Token
   while true; do
-    read -p "  DOCR Token (from your Gravity admin): " DOCR_TOKEN
+    read -p "  DOCR Token (from your Unoverse admin): " DOCR_TOKEN
     if [[ "$DOCR_TOKEN" == dop_v1_* ]]; then
       break
     fi
@@ -137,7 +137,7 @@ cmd_init() {
     if [ -n "$DATABASE_URL" ] && [[ "$DATABASE_URL" != *"user:password"* ]]; then
       break
     fi
-    fail "DATABASE_URL is required — get it from your Gravity admin"
+    fail "DATABASE_URL is required — get it from your Unoverse admin"
   done
 
   # Auto-add SSL params if missing
@@ -173,7 +173,7 @@ cmd_init() {
     if [ -n "$AUTH_ISSUER" ] && [[ "$AUTH_ISSUER" != *"your-tenant"* ]]; then
       break
     fi
-    fail "AUTH_ISSUER is required — get it from your Gravity admin"
+    fail "AUTH_ISSUER is required — get it from your Unoverse admin"
   done
 
   while true; do
@@ -181,7 +181,7 @@ cmd_init() {
     if [ -n "$AUTH_CLIENT_ID" ] && [[ "$AUTH_CLIENT_ID" != *"your-"* ]]; then
       break
     fi
-    fail "AUTH_CLIENT_ID is required — get it from your Gravity admin"
+    fail "AUTH_CLIENT_ID is required — get it from your Unoverse admin"
   done
 
   read -p "  AUTH_AUDIENCE [gravity-api]: " AUTH_AUDIENCE

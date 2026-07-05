@@ -43,7 +43,7 @@ cmd_start() {
 
   check_docker_file_sharing || exit 1
   check_first_run
-  banner "Starting Gravity Platform"
+  banner "Starting Unoverse Platform"
   timer_start
 
   # Ensure node_modules exists (required for package deps inside containers)

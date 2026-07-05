@@ -3,7 +3,7 @@
 
 cmd_dashboard() {
   echo ""
-  echo -e "  ${BOLD}${CYAN}⬡ Gravity Platform${NC} ${DIM}v${GRAVITY_VERSION}${NC}"
+  echo -e "  ${BOLD}${CYAN}⬡ Unoverse Platform${NC} ${DIM}v${GRAVITY_VERSION}${NC}"
   echo -e "  ${DIM}─────────────────────────────────${NC}"
 
   # Check if .env exists

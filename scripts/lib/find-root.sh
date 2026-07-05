@@ -21,7 +21,7 @@ find_root() {
   fi
 
   echo "Error: No docker-compose.yml found in current directory" >&2
-  echo "  Run this command from your gravity project folder." >&2
+  echo "  Run this command from your Unoverse project folder." >&2
   exit 1
 }
 

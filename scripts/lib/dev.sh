@@ -2,7 +2,7 @@
 # unoverse dev
 
 cmd_dev() {
-  banner "Gravity Dev Setup"
+  banner "Unoverse Dev Setup"
 
   # Check node/npm
   if ! command -v node &>/dev/null; then
