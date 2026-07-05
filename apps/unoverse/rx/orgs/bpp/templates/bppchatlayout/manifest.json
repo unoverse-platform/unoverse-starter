@@ -4,6 +4,7 @@
   "category": "Assistant",
   "version": "1.0.0",
   "mode": "template",
+  "width": "70vw",
   "inputSchema": {
     "type": "object",
     "properties": {

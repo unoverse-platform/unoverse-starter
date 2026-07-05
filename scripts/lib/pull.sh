@@ -11,11 +11,11 @@ cmd_pull() {
   fi
 
   local IMAGES=(
-    "registry.digitalocean.com/gravity-repo/gravity-canvas:latest"
-    "registry.digitalocean.com/gravity-repo/gravity-umap:latest"
-    "registry.digitalocean.com/gravity-repo/gravity-unoverse:latest"
-    "registry.digitalocean.com/gravity-repo/gravity-mcp-server:latest"
-    "registry.digitalocean.com/gravity-repo/gravity-memory:latest"
+    "registry.digitalocean.com/gravity-repo/canvas:latest"
+    "registry.digitalocean.com/gravity-repo/umap:latest"
+    "registry.digitalocean.com/gravity-repo/unoverse:latest"
+    "registry.digitalocean.com/gravity-repo/mcp-server:latest"
+    "registry.digitalocean.com/gravity-repo/memory:latest"
   )
 
   local total=${#IMAGES[@]}

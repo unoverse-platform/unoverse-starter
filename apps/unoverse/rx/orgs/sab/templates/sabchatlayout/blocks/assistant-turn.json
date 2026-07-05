@@ -10,7 +10,7 @@
     },
     {
       "type": "Box",
-      "style": { "direction": "column", "flex": 1, "gap": "sm", "minWidth": 0, "maxWidth": "65%" },
+      "style": { "direction": "column", "flex": 1, "gap": "sm", "minWidth": 0, "maxWidth": "70%" },
       "children": [
         {
           "type": "Box",
