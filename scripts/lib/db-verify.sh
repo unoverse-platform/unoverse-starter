@@ -183,13 +183,13 @@ cmd_db_verify() {
     # Local dev — run directly
     NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL="$db_url" node --no-warnings -e "$verify_script" 2>&1
   else
-    # Starter/Docker — exec into workflow container
-    if ! docker compose -f "$ROOT/docker-compose.yml" ps --status running workflow 2>/dev/null | grep -q workflow; then
-      fail "workflow service not running — start it first"
+    # Starter/Docker — exec into the unoverse container (engine runs in-process)
+    if ! docker compose -f "$ROOT/docker-compose.yml" ps --status running unoverse 2>/dev/null | grep -q unoverse; then
+      fail "unoverse service not running — start it first"
       exit 1
     fi
     docker compose -f "$ROOT/docker-compose.yml" exec -T \
-      -e NODE_TLS_REJECT_UNAUTHORIZED=0 workflow node --no-warnings -e "$verify_script" 2>&1
+      -e NODE_TLS_REJECT_UNAUTHORIZED=0 unoverse node --no-warnings -e "$verify_script" 2>&1
   fi
 
   local verify_exit=$?

@@ -39,7 +39,7 @@
 
     - name: "[3/5] Enable required PostgreSQL extensions"
       command: >
-        docker compose exec -T -e NODE_TLS_REJECT_UNAUTHORIZED=0 workflow node -e
+        docker compose exec -T -e NODE_TLS_REJECT_UNAUTHORIZED=0 unoverse node -e
         "const{Pool}=require('pg');
         const p=new Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}});
         (async()=>{
@@ -74,35 +74,17 @@
           See docs/runbooks/02-database.md for details.
       when: ext_result.rc != 0
 
-    - name: "[4/5] Initialize database tables via workflow service"
+    # Apply the .sql migrations with node-pg-migrate — same as `./unoverse db-setup`
+    # (scripts/lib/db-setup.sh). The old programmatic `require('./dist/db')` table
+    # setup is retired: the engine no longer ships a dist, and .sql migrations under
+    # apps/unoverse/engine/migrations are the single source of truth.
+    - name: "[4/5] Apply database migrations (node-pg-migrate)"
       shell: |
-        docker compose exec -T -e NODE_TLS_REJECT_UNAUTHORIZED=0 workflow node -e "
-        const db = require('./dist/db');
-        (async () => {
-          const steps = [
-            ['Workflows', () => db.createWorkflowTable ? db.createWorkflowTable() : Promise.resolve()],
-            ['Executions', () => db.createExecutionTables ? db.createExecutionTables() : Promise.resolve()],
-            ['Credentials', () => db.createCredentialsTable ? db.createCredentialsTable() : Promise.resolve()],
-            ['TokenUsage', () => db.createSimpleTokenUsageTable ? db.createSimpleTokenUsageTable() : Promise.resolve()],
-            ['GravityMemory', () => db.createGravityMemoryTables ? db.createGravityMemoryTables() : Promise.resolve()],
-          ];
-          let ok = 0, skip = 0;
-          for (const [name, fn] of steps) {
-            try { await fn(); console.log(name + ': OK'); ok++; }
-            catch (e) { console.error(name + ': FAILED - ' + e.message); }
-          }
-          // Dictionary tables
-          try {
-            const dict = require('./dist/db/dictionary');
-            if (dict.createAllTables) await dict.createAllTables();
-            console.log('Dictionary: OK'); ok++;
-          } catch (e) {
-            console.error('Dictionary: FAILED - ' + e.message);
-          }
-          console.log('Done: ' + ok + ' OK, ' + skip + ' skipped');
-          process.exit(0);
-        })().catch(e => { console.error(e); process.exit(1); });
-        "
+        docker compose exec -T -e NODE_TLS_REJECT_UNAUTHORIZED=0 unoverse \
+          npx node-pg-migrate up \
+          --migrations-dir /app/apps/unoverse/engine/migrations \
+          --migration-file-language sql \
+          --no-lock
       args:
         chdir: /opt/gravity
       register: migrate_result

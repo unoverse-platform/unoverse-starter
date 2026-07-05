@@ -11,8 +11,6 @@ cmd_pull() {
   fi
 
   local IMAGES=(
-    "registry.digitalocean.com/gravity-repo/gravity-server:latest"
-    "registry.digitalocean.com/gravity-repo/gravity-workflow:latest"
     "registry.digitalocean.com/gravity-repo/gravity-canvas:latest"
     "registry.digitalocean.com/gravity-repo/gravity-umap:latest"
     "registry.digitalocean.com/gravity-repo/gravity-unoverse:latest"
