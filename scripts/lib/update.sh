@@ -125,7 +125,12 @@ cmd_update() {
     fi
     # Turbo handles build dependencies, no need to build plugin-base separately
     npm run build --workspaces --if-present >> "$build_log" 2>&1 || true
-    npm run gen:nodes >> "$build_log" 2>&1 || true
+    # Regenerate component nodes from rx/ — only where the nodegen tool is present
+    # (platform repo). Customer starters ship pre-generated nodes/components and
+    # have no tools/, so this is skipped there.
+    if [ -d "apps/unoverse/tools/nodegen" ]; then
+      (cd apps/unoverse && npm run nodegen:local) >> "$build_log" 2>&1 || true
+    fi
   ) &
   local build_pid=$!
   local build_start=$(date +%s)

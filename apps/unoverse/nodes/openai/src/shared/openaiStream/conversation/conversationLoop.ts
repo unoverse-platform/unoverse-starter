@@ -15,7 +15,7 @@ import { initializeStreamState, StreamState } from "../streaming/streamProcessor
 import { ConversationConfig, ConversationResult, MCPResult } from "./types";
 import { processStream } from "./streamHandler";
 import { handleToolCalls, hasWorkflowMCP } from "./toolHandler";
-import { toolDefFromDiscoveredMCP } from "@gravity-platform/plugin-base/agent-mcp";
+import { toolDefFromDiscoveredMCP, pinDiscoveredTool, type ToolSchemaPins } from "@gravity-platform/plugin-base/agent-mcp";
 
 // Loop safety constants
 const DEFAULT_MAX_ITERATIONS = 10;
@@ -110,6 +110,10 @@ export async function runConversationLoop(config: ConversationConfig): Promise<C
   let lastWorkflowSignature = "";
   let repeatedWorkflowCount = 0;
 
+  // Session pins for discovered tool schemas (anti-rug-pull): the schema the model first
+  // saw for a tool is frozen for this loop; a re-discovery that mutates it is refused.
+  const schemaPins: ToolSchemaPins = new Map();
+
   let streamState: StreamState = initializeStreamState();
   // Use previousResponseId from config if provided (for multi-turn across executions)
   let previousResponseId: string | null = config.previousResponseId || null;
@@ -203,11 +207,19 @@ export async function runConversationLoop(config: ConversationConfig): Promise<C
         // description. Never rebuild the tool def inline (that fork is what the harness exists
         // to prevent); the model sees `def.name`, the dispatch closure calls the REAL method.
         const def = toolDefFromDiscoveredMCP(mcp);
-        if (!streamParams.tools.some((t: any) => t.name === def.name)) {
+        // Anti-rug-pull: pin the schema on first sighting; the pin map is the dedup AND the
+        // change detector. A re-discovery that mutates an already-shown tool is refused.
+        const pin = pinDiscoveredTool(schemaPins, def);
+        if (pin.status === "mutated") {
+          logger.warn(`🚫 Discovered tool schema changed after first use (rug-pull guard): ${def.name} — keeping pinned schema`);
+          continue;
+        }
+        if (pin.status === "new") {
           streamParams.tools.push({ type: "function", name: def.name, description: def.description, parameters: def.parameters });
           (mcpService as any)[def.name] = async (input: any) => api.callService(mcp.methodName, input);
           logger.info(`🔧 Added MCP tool: ${def.name} → ${mcp.methodName}`);
         }
+        // "unchanged" → already added this session; nothing to do.
       }
     }
 
