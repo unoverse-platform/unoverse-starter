@@ -34,6 +34,13 @@ npm install
 - **Canvas** (Workflow Builder): http://localhost:3001
 - **API**: http://localhost:4105
 
+### Optional
+
+- **Studio** (Unoverse Studio — components, templates, skills, nodes): http://localhost:4105
+  — enable by setting `UNOVERSE_WORKBENCH=1` on the `unoverse` service in `docker-compose.yml`
+- **Analytics & logs** (Dozzle — live container logs, stores nothing): http://localhost:8080
+  — start with `docker compose --profile observability up -d dozzle`
+
 ## Development
 
 ### Custom Nodes
