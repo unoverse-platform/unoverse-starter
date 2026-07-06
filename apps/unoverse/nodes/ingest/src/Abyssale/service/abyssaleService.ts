@@ -88,7 +88,7 @@ export async function renderTemplate(
   });
 
   if (syncResponse.ok) {
-    return await syncResponse.json();
+    return (await syncResponse.json()) as AbyssaleOutput;
   }
 
   // Check if it's a "not static" error - need async endpoint
@@ -126,7 +126,7 @@ async function renderTemplateAsync(
     throw new Error(`Abyssale async API error (${asyncResponse.status}): ${errorText}`);
   }
 
-  const asyncResult = await asyncResponse.json();
+  const asyncResult: any = await asyncResponse.json();
   const generationRequestId = asyncResult.generation_request_id;
   console.log("[Abyssale] Async generation started, request ID:", generationRequestId);
 
@@ -152,7 +152,7 @@ async function renderTemplateAsync(
       throw new Error(`Abyssale status check error (${statusResponse.status}): ${errorText}`);
     }
 
-    const statusResult = await statusResponse.json();
+    const statusResult: any = await statusResponse.json();
     console.log(
       `[Abyssale] Poll result: is_finalized=${statusResult.is_finalized}`,
       JSON.stringify(statusResult, null, 2),
@@ -222,7 +222,7 @@ export async function getDesignDetails(templateId: string, apiKey: string): Prom
     throw new Error(`Failed to get design details (${response.status}): ${errorText}`);
   }
 
-  const data = await response.json();
+  const data: any = await response.json();
 
   // Extract unique page keys from elements if present
   const pageSet = new Set<string>();
@@ -325,7 +325,7 @@ export async function renderMultiPagePdf(
     throw new Error(`Abyssale multi-page API error (${response.status}): ${errorText}`);
   }
 
-  const result = await response.json();
+  const result: any = await response.json();
 
   // Multi-page printer templates return generation_request_id for async polling
   if (result.generation_request_id) {
@@ -363,7 +363,7 @@ async function pollForCompletion(
       throw new Error(`Abyssale status check error (${statusResponse.status}): ${errorText}`);
     }
 
-    const statusResult = await statusResponse.json();
+    const statusResult: any = await statusResponse.json();
 
     if (statusResult.is_finalized) {
       if (statusResult.errors?.length > 0 && (!statusResult.banners || statusResult.banners.length === 0)) {

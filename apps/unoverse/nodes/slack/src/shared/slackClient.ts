@@ -54,7 +54,7 @@ export async function slackApi(
   delete (fetchOptions as any).__url;
 
   const response = await fetch(finalUrl, fetchOptions);
-  const data = await response.json();
+  const data: any = await response.json();
 
   if (!data.ok) {
     throw new Error(`Slack API error: ${data.error ?? JSON.stringify(data)}`);

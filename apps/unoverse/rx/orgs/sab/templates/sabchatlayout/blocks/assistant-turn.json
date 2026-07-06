@@ -12,16 +12,7 @@
       "type": "Box",
       "style": { "direction": "column", "flex": 1, "gap": "sm", "minWidth": 0 },
       "children": [
-        {
-          "type": "Box",
-          "visibleWhen": { "field": "empty", "eq": false },
-          "style": { "background": "surface.sunken", "radius": "2xl", "radiusTopLeft": "0", "padding": ["sm", "md"], "width": "fit-content", "maxWidth": "70%" },
-          "children": [{ "type": "ComponentSlot", "select": { "type": ["AIResponse", "MarkdownRenderer"] } }]
-        },
-        {
-          "type": "ComponentSlot",
-          "select": { "type": ["Card"] }
-        },
+        { "type": "ComponentSlot", "select": {} },
         {
           "type": "Box",
           "visibleWhen": "streaming",

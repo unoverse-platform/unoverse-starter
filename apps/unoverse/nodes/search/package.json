@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/search",
   "version": "1.0.1",
-  "description": "SearchAPI.io search nodes (web, news, videos, places) for Gravity workflow system",
+  "description": "SearchAPI.io search nodes (web, news, videos, places) for Unoverse platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -9,10 +9,11 @@
   ],
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "search",
     "searchapi",
     "google",
@@ -20,7 +21,7 @@
     "youtube",
     "maps"
   ],
-  "author": "Gravity Team",
+  "author": "Unoverse Team",
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.0.0"

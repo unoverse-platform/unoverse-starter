@@ -32,7 +32,7 @@
     "testTimeout": 60000
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "crawl",
     "web-scraping",
     "hyperbrowser",
@@ -42,7 +42,7 @@
     "workflow",
     "nodes"
   ],
-  "author": "Gravity Team",
+  "author": "Unoverse Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

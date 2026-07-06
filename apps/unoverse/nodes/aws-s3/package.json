@@ -1,22 +1,23 @@
 {
   "name": "@unoverse-platform/aws-s3",
   "version": "1.1.8",
-  "description": "AWS S3 storage nodes for Gravity workflow system",
+  "description": "AWS S3 storage nodes for Unoverse platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "workflow",
     "aws",
     "s3",
     "storage"
   ],
-  "author": "Gravity AI",
+  "author": "Unoverse AI",
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.0.0",
@@ -70,5 +71,14 @@
         "description": "AWS access key + secret with S3 permissions"
       }
     ]
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }

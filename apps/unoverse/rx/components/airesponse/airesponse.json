@@ -121,15 +121,31 @@
     ]
    },
    {
-    "type": "Markdown",
+    "type": "Box",
     "visibleWhen": "text",
-    "bind": {
-     "value": "text"
-    },
     "style": {
-     "font": "body.md",
-     "color": "text.primary"
-    }
+     "background": "surface.sunken",
+     "radius": "2xl",
+     "radiusTopLeft": "0",
+     "padding": [
+      "sm",
+      "md"
+     ],
+     "width": "fit-content",
+     "maxWidth": "78%"
+    },
+    "children": [
+     {
+      "type": "Markdown",
+      "bind": {
+       "value": "text"
+      },
+      "style": {
+       "font": "body.md",
+       "color": "text.primary"
+      }
+     }
+    ]
    },
    {
     "type": "Each",

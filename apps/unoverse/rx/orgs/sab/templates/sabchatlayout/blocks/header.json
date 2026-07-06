@@ -1,12 +1,13 @@
 {
   "type": "Box",
-  "style": { "direction": "row", "align": "center", "padding": "md", "background": "surface.base", "borderBottom": "subtle" },
+  "style": { "direction": "row", "align": "center", "justify": "space-between", "padding": "md", "background": "surface.base", "borderBottom": "subtle" },
   "children": [
     {
       "type": "Image",
       "visibleWhen": "logoUrl",
       "bind": { "src": "logoUrl", "alt": "brandName" },
       "style": { "height": "7", "fit": "contain" }
-    }
+    },
+    { "type": "Ref", "ref": "close-button", "action": "close" }
   ]
 }

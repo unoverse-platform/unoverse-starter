@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/elevenlabs",
   "version": "1.1.0",
-  "description": "ElevenLabs audio AI for Gravity workflows — text-to-speech, multi-speaker dialogue, sound effects, and speech-to-text",
+  "description": "ElevenLabs audio AI for Unoverse workflows — text-to-speech, multi-speaker dialogue, sound effects, and speech-to-text",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -9,10 +9,11 @@
   ],
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "elevenlabs",
     "tts",
     "text-to-speech",

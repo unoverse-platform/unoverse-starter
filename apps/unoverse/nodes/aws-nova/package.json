@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/aws-nova",
   "version": "1.2.11",
-  "description": "AWS Nova integration for Gravity workflow system",
+  "description": "AWS Nova integration for Unoverse platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.0.0",

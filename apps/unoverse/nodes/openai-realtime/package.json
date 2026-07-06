@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/openai-realtime",
   "version": "1.0.1",
-  "description": "OpenAI Realtime API (gpt-realtime-2) integration for Gravity workflow system",
+  "description": "OpenAI Realtime API (gpt-realtime-2) integration for Unoverse platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "pino": "^10.1.0",

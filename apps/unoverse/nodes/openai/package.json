@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/openai",
   "version": "1.1.21",
-  "description": "OpenAI integration for Gravity workflow system",
+  "description": "OpenAI integration for Unoverse platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -19,7 +19,7 @@
     "clean": "rm -rf dist"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "openai",
     "workflow",
     "nodes",
@@ -99,7 +99,7 @@
       }
     ]
   },
-  "author": "Gravity Team",
+  "author": "Unoverse Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

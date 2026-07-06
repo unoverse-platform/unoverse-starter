@@ -1,23 +1,24 @@
 {
   "name": "@unoverse-platform/postgres-toolkit",
   "version": "1.0.7",
-  "description": "PostgreSQL batch INSERT node for GravityWorkflow — INSERT-only with table protection and optional vector embeddings",
+  "description": "PostgreSQL batch INSERT node for Unoverse — INSERT-only with table protection and optional vector embeddings",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "workflow",
     "postgres",
     "database",
     "insert",
     "batch"
   ],
-  "author": "GravityAI",
+  "author": "Unoverse",
   "license": "MIT",
   "dependencies": {
     "pg": "^8.13.0"
@@ -63,5 +64,14 @@
         "description": "Connection string or host/port/database/user/password"
       }
     ]
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }

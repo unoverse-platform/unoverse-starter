@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/aws-toolkit",
   "version": "1.1.8",
-  "description": "AWS services toolkit for Gravity workflow system - includes Transcribe and Textract",
+  "description": "AWS services toolkit for Unoverse platform - includes Transcribe and Textract",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -17,7 +17,7 @@
     "clean": "rm -rf dist"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "aws",
     "workflow",
     "nodes",
@@ -25,7 +25,7 @@
     "textract",
     "toolkit"
   ],
-  "author": "Gravity Team",
+  "author": "Unoverse Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

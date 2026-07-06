@@ -18,7 +18,7 @@
     "clean": "rm -rf dist"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "gtm",
     "go-to-market",
     "apollo",
@@ -29,7 +29,7 @@
     "workflow",
     "nodes"
   ],
-  "author": "Gravity Team",
+  "author": "Unoverse Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

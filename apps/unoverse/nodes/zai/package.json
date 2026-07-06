@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/zai",
   "version": "1.2.2",
-  "description": "Z.AI (GLM) integration for Gravity workflow system",
+  "description": "Z.AI (GLM) integration for Unoverse platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -19,7 +19,7 @@
     "clean": "rm -rf dist"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "zai",
     "z.ai",
     "glm",
@@ -58,7 +58,7 @@
       }
     ]
   },
-  "author": "Gravity Team",
+  "author": "Unoverse Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

@@ -31,55 +31,8 @@
       },
       "children": [
         {
-          "type": "Box",
-          "style": {
-            "direction": "column",
-            "background": "surface.sunken",
-            "border": "subtle",
-            "radius": "2xl",
-            "radiusTopLeft": "0",
-            "width": "fit-content",
-            "maxWidth": "70%",
-            "padding": "0",
-            "radiusTopRight": "0"
-          },
-          "children": [
-            {
-              "type": "Box",
-              "style": {
-                "width": "full",
-                "height": "1",
-                "background": "brand.bpp.yellow",
-                "flex": "0 0 auto",
-                "radiusTopLeft": "0",
-                "radiusTopRight": "0"
-              }
-            },
-            {
-              "type": "Box",
-              "style": {
-                "direction": "column",
-                "padding": [
-                  "sm",
-                  "md"
-                ]
-              },
-              "children": [
-                {
-                  "type": "ComponentSlot",
-                  "select": { "type": ["AIResponse", "MarkdownRenderer"] }
-                }
-              ]
-            }
-          ],
-          "visibleWhen": {
-            "field": "empty",
-            "eq": false
-          }
-        },
-        {
           "type": "ComponentSlot",
-          "select": { "type": ["Card"] }
+          "select": {}
         },
         {
           "type": "Box",

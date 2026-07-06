@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/ingest",
   "version": "4.1.0",
-  "description": "Data ingestion nodes for Gravity workflow system",
+  "description": "Data ingestion nodes for Unoverse platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -19,7 +19,7 @@
     "clean": "rm -rf dist"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "ingest",
     "workflow",
     "nodes",
@@ -27,7 +27,7 @@
     "web-scraping",
     "data-extraction"
   ],
-  "author": "Gravity Team",
+  "author": "Unoverse Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

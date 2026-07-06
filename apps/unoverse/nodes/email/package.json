@@ -1,23 +1,24 @@
 {
   "name": "@unoverse-platform/email",
   "version": "1.0.9",
-  "description": "Email nodes for GravityWorkflow — send emails via Microsoft 365 and other providers",
+  "description": "Email nodes for Unoverse — send emails via Microsoft 365 and other providers",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "workflow",
     "email",
     "smtp",
     "microsoft365",
     "nodemailer"
   ],
-  "author": "GravityAI",
+  "author": "Unoverse",
   "license": "MIT",
   "dependencies": {
     "nodemailer": "^6.9.16"
@@ -56,5 +57,14 @@
         "description": "SMTP host, port, username, and password"
       }
     ]
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }

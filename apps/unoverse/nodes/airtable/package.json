@@ -1,23 +1,24 @@
 {
   "name": "@unoverse-platform/airtable",
   "version": "1.0.7",
-  "description": "Airtable nodes for GravityWorkflow — fetch and insert records",
+  "description": "Airtable nodes for Unoverse — fetch and insert records",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "workflow",
     "airtable",
     "database",
     "fetch",
     "insert"
   ],
-  "author": "GravityAI",
+  "author": "Unoverse",
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.0.0"
@@ -66,5 +67,14 @@
         "description": "Personal access token from airtable.com/create/tokens"
       }
     ]
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }

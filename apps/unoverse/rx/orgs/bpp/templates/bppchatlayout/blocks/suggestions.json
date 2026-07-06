@@ -1,6 +1,6 @@
 {
   "type": "Box",
-  "visibleWhen": "faqs",
+  "visibleWhen": "hasMessages",
   "style": {
     "width": "full",
     "position": "relative",
@@ -72,7 +72,7 @@
           },
           "template": {
             "type": "Button",
-            "action": "sendMessage",
+            "action": { "type": "sendMessage", "then": { "type": "setTemplateValue", "values": [{ "key": "openPanel", "value": null }] } },
             "style": {
               "direction": "row",
               "align": "center",

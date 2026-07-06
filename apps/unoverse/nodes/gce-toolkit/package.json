@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/gce-toolkit",
   "version": "1.2.4",
-  "description": "Google Gemini Image Generation integration for Gravity workflow system",
+  "description": "Google Gemini Image Generation integration for Unoverse platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -18,14 +18,14 @@
     "clean": "rm -rf dist"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "google",
     "gemini",
     "image-generation",
     "workflow",
     "nodes"
   ],
-  "author": "Gravity Team",
+  "author": "Unoverse Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

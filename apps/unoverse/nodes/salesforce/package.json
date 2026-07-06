@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/salesforce",
   "version": "1.0.3",
-  "description": "Salesforce integration for Gravity workflow system — query, read, create, and update records via MCP tools",
+  "description": "Salesforce integration for Unoverse platform — query, read, create, and update records via MCP tools",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -9,10 +9,11 @@
   ],
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "salesforce",
     "crm",
     "mcp",

@@ -1,22 +1,23 @@
 {
   "name": "@unoverse-platform/pdf-render",
   "version": "1.0.8",
-  "description": "PDF rendering node for Gravity workflow system - converts design system components to PDF",
+  "description": "PDF rendering node for Unoverse platform - converts design system components to PDF",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "workflow",
     "pdf",
     "render",
     "puppeteer"
   ],
-  "author": "Gravity AI",
+  "author": "Unoverse AI",
   "license": "MIT",
   "dependencies": {
     "puppeteer-core": "^24.0.0"
@@ -46,5 +47,14 @@
       "Custom page layouts",
       "Puppeteer-powered"
     ]
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }

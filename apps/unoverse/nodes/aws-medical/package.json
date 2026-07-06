@@ -1,7 +1,7 @@
 {
   "name": "@unoverse-platform/aws-medical",
   "version": "1.2.4",
-  "description": "AWS Comprehend Medical integration for Gravity workflow system - extract medical entities and PHI from clinical text",
+  "description": "AWS Comprehend Medical integration for Unoverse platform - extract medical entities and PHI from clinical text",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -17,7 +17,7 @@
     "LICENSE"
   ],
   "keywords": [
-    "gravity",
+    "unoverse",
     "workflow",
     "aws",
     "comprehend",
@@ -26,7 +26,7 @@
     "nlp",
     "phi"
   ],
-  "author": "Gravity Team",
+  "author": "Unoverse Team",
   "license": "MIT",
   "publishConfig": {
     "access": "public"

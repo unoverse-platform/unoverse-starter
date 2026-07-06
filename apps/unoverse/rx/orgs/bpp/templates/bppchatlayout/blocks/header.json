@@ -3,6 +3,7 @@
   "style": {
     "direction": "row",
     "align": "center",
+    "justify": "space-between",
     "padding": "md",
     "background": "transparent"
   },
@@ -18,6 +19,7 @@
         "height": "8",
         "fit": "contain"
       }
-    }
+    },
+    { "type": "Ref", "ref": "close-button", "action": "close" }
   ]
 }

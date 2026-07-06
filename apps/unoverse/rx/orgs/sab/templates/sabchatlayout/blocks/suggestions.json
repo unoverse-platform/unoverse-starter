@@ -21,7 +21,7 @@
           "style": { "direction": "row", "wrap": "wrap", "align": "start", "gap": "sm", "width": "full" },
           "template": {
             "type": "Button",
-            "action": "sendMessage",
+            "action": { "type": "sendMessage", "then": { "type": "setTemplateValue", "values": [{ "key": "openPanel", "value": null }] } },
             "style": {
               "direction": "row", "align": "center", "flex": "0 0 auto", "maxWidth": "full", "padding": ["sm", "4"],
               "background": "surface.base", "border": "subtle", "outline": "none", "radius": "full", "shadow": "sm",

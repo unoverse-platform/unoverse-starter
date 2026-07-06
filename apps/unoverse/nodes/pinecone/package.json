@@ -1,16 +1,17 @@
 {
   "name": "@unoverse-platform/pinecone",
   "version": "1.1.9",
-  "description": "Pinecone vector database nodes for GravityWorkflow - knowledge management and vector operations",
+  "description": "Pinecone vector database nodes for Unoverse - knowledge management and vector operations",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "gravity",
+    "unoverse",
     "workflow",
     "pinecone",
     "vector",
@@ -18,7 +19,7 @@
     "knowledge",
     "embeddings"
   ],
-  "author": "GravityAI",
+  "author": "Unoverse",
   "license": "MIT",
   "dependencies": {
     "@pinecone-database/pinecone": "^6.1.0"
@@ -71,5 +72,14 @@
         "description": "API key from app.pinecone.io"
       }
     ]
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }
