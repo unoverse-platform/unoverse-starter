@@ -34,8 +34,9 @@ print_access_urls() {
   echo -e "  ${WHITE}${BOLD}unoverse${NC} ${DIM}— the experience layer for AI${NC}"
   echo -e "  ${DIM}Use the Unoverse MCP to build agents. Somewhere, Skynet is taking notes. 🤖${NC}"
   echo ""
-  echo -e "  ${CYAN}Canvas${NC}  ${DIM}(build workflows)${NC}   ${UNDERLINE}http://localhost:3001${NC}"
-  echo -e "  ${CYAN}API${NC}     ${DIM}(REST + MCP)${NC}       ${UNDERLINE}http://localhost:4105${NC}"
+  echo -e "  ${CYAN}Canvas${NC}  ${DIM}(build workflows)${NC}    ${UNDERLINE}http://localhost:3001${NC}"
+  echo -e "  ${CYAN}Studio${NC}  ${DIM}(build components)${NC}   ${UNDERLINE}http://localhost:4105${NC}"
+  echo -e "  ${CYAN}API${NC}     ${DIM}(REST + MCP)${NC}         ${UNDERLINE}http://localhost:4105${NC}"
   echo ""
   echo -e "  ${DIM}▶ Next:${NC} open this repo in ${BOLD}Claude Code${NC} and ask it to build an agent"
 }

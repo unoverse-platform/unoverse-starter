@@ -126,6 +126,15 @@
         owner: "{{ ansible_user }}"
         mode: "0644"
 
+    # Studio (the dev workbench) is ON in the local compose. Production NEVER runs it:
+    # force UNOVERSE_WORKBENCH=0 in the deployed compose. This is the structural off-switch
+    # — it always runs on deploy, so Studio can't reach production regardless of the source.
+    - name: "[7b/12] Force Studio (workbench) OFF for production"
+      ansible.builtin.replace:
+        path: "{{ gravity_dir }}/docker-compose.yml"
+        regexp: '^\s*-\s*UNOVERSE_WORKBENCH=1\s*$'
+        replace: '      - UNOVERSE_WORKBENCH=0'
+
     - name: "[8/12] Copy .env file"
       copy:
         src: "{{ env_file | default('../../.env.production') }}"
