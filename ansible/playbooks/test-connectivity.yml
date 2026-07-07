@@ -40,7 +40,6 @@
         - { name: "Canvas", port: 3001 }
         - { name: "Engine", port: 4101 }
         - { name: "Unoverse", port: 4105 }
-        - { name: "MCP Server", port: 4103 }
         - { name: "Memory", port: 4104 }
         - { name: "UMAP", port: 5001 }
       register: port_checks
@@ -83,7 +82,6 @@
       loop:
         - { name: "Engine", port: 4101 }
         - { name: "Unoverse", port: 4105 }
-        - { name: "MCP Server", port: 4103 }
         - { name: "Memory", port: 4104 }
         - { name: "UMAP", port: 5001 }
       register: health_checks
@@ -203,7 +201,6 @@
       loop:
         - { name: "Canvas", sub: "", path: "/" }
         - { name: "API Server", sub: "api.", path: "/health" }
-        - { name: "MCP Server", sub: "mcp.", path: "/health" }
         - { name: "Unoverse", sub: "unoverse.", path: "/health" }
       register: domain_checks
       ignore_errors: yes

@@ -61,8 +61,7 @@
           Configure your load balancer to route (by hostname):
             - Port 443 → Canvas (3001)
             - Port 443 → API (unoverse, 4105)
-            - Port 443 → MCP (4103)
-            - Port 443 → Unoverse (4105)
+            - Port 443 → Unoverse + native MCP (4105)
           Notes: SAB is CDN-deployed (no platform route). The memory
           dashboard (4104) stays internal (SSH tunnel only); route only
           the root-domain /mem-api/* rewrite if the client app needs it.
