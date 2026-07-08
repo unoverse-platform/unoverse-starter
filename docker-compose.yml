@@ -191,8 +191,12 @@ services:
       # workflow image). This volume persists installs across restarts.
       - PLUGINS_DIR=/app/plugins
       # Dev-editable folders are mounted over the image below; NODE_PATH resolves
-      # their hoisted deps from the local workspace node_modules.
-      - NODE_PATH=/app/host_node_modules
+      # their hoisted deps from the local workspace node_modules. The plugins dir is
+      # also on NODE_PATH so locally-built component nodes (apps/unoverse/nodes/*, which
+      # live OUTSIDE /app/plugins) can resolve @unoverse-platform/plugin-base — the only
+      # copy carrying a built dist. Without this the runtime hits MODULE_NOT_FOUND and
+      # the nodes show "Package not installed".
+      - NODE_PATH=/app/host_node_modules:/app/plugins/node_modules
     volumes:
       - unoverse_plugins:/app/plugins
       # ── Dev carve-out: the three developer-editable asset folders. Mounted over

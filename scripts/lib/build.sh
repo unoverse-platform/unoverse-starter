@@ -51,10 +51,19 @@ cmd_gendesign() {
   # nodegen emits TypeScript SOURCE; the runtime imports the compiled dist/. The
   # generated package is NOT a workspace (root globs are apps/* + plugin-base), so
   # neither `npm run build -w` nor `turbo run build` compiles it — its own `tsc` must
-  # run in its own dir. Build in-container (deps resolve up to /app/node_modules); the
-  # dist/ lands in the mounted host folder and rides to prod via the nodes/ rsync.
+  # run in its own dir. tsc ignores NODE_PATH, and the pruned image has no linked
+  # @unoverse-platform/plugin-base — the only built copy lives in the plugins volume.
+  # Symlink it into node_modules so tsc resolves it, then compile. The dist/ lands in
+  # the mounted host folder and rides to prod via the nodes/ rsync.
   echo "  Building component nodes (tsc → dist)..."
-  if docker compose -f "$ROOT/docker-compose.yml" exec -T -w /app/apps/unoverse/nodes/components unoverse npm run build; then
+  if docker compose -f "$ROOT/docker-compose.yml" exec -T unoverse sh -c '
+    if [ ! -d /app/plugins/node_modules/@unoverse-platform/plugin-base ]; then
+      echo "  ✗ @unoverse-platform/plugin-base not installed in the plugins volume"; exit 1
+    fi
+    mkdir -p /app/node_modules/@unoverse-platform
+    ln -sfn /app/plugins/node_modules/@unoverse-platform/plugin-base /app/node_modules/@unoverse-platform/plugin-base
+    cd /app/apps/unoverse/nodes/components && npm run build
+  '; then
     ok "Component nodes built → apps/unoverse/nodes/components/dist"
   else
     fail "component build (tsc) failed — check the output above"
