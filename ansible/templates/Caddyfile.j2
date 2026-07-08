@@ -64,14 +64,10 @@ api.{{ caddy_domain }} {
     reverse_proxy localhost:4105
 }
 
-# Unoverse listener — also serves MCP natively at /mcp (the retired mcp-server's
-# mcp.<domain> → :4103 route is gone; use unoverse.<domain> for external MCP clients)
-unoverse.{{ caddy_domain }} {
-    reverse_proxy localhost:4105
-}
-
-# Unoverse node plane (MCP defs + plugin management) — JWT-gated in-app (:4105).
-# The internal :4106 node runtime is Docker-network-only and is NEVER proxied.
+# Unoverse listener — serves MCP natively at /mcp AND the node plane (plugin mgmt),
+# all on :4105 (JWT-gated in-app). The retired mcp-server's mcp.<domain> → :4103 route
+# is gone; use unoverse.<domain> for external MCP clients. The internal :4106 node
+# runtime is Docker-network-only and is NEVER proxied.
 unoverse.{{ caddy_domain }} {
     reverse_proxy localhost:4105
 }
