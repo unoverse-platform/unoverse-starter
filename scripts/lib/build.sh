@@ -48,6 +48,19 @@ cmd_gendesign() {
     return
   fi
 
+  # nodegen emits TypeScript SOURCE; the runtime imports the compiled dist/. The
+  # generated package is NOT a workspace (root globs are apps/* + plugin-base), so
+  # neither `npm run build -w` nor `turbo run build` compiles it — its own `tsc` must
+  # run in its own dir. Build in-container (deps resolve up to /app/node_modules); the
+  # dist/ lands in the mounted host folder and rides to prod via the nodes/ rsync.
+  echo "  Building component nodes (tsc → dist)..."
+  if docker compose -f "$ROOT/docker-compose.yml" exec -T -w /app/apps/unoverse/nodes/components unoverse npm run build; then
+    ok "Component nodes built → apps/unoverse/nodes/components/dist"
+  else
+    fail "component build (tsc) failed — check the output above"
+    return
+  fi
+
   echo "  Restarting unoverse..."
   docker compose -f "$ROOT/docker-compose.yml" restart unoverse 2>/dev/null || true
   ok "Restarted — changes are live"
