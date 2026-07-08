@@ -69,15 +69,30 @@ EOF
 
   case "$subcommand" in
     packages|pkg)
-      info "Deploying packages only..."
+      # Carve-out (nodes/rx/prompts) + generate the component nodes from rx/ — the two
+      # always go together, so deploying assets naturally produces their component nodes.
+      # (gendesign needs plugin-base in the plugins volume; if it's missing it says so —
+      # run a full `deploy` or `deploy marketplace` first.)
+      info "Deploying packages (carve-out) + generating component nodes..."
       echo ""
       ansible-playbook \
         -i "$tmp_inventory" \
         "$ansible_dir/playbooks/deploy-packages.yml" \
         -e "env_file=$env_prod"
+
+      echo ""
+      ansible-playbook \
+        -i "$tmp_inventory" \
+        "$ansible_dir/playbooks/gendesign.yml"
       ;;
     full|"")
-      info "Running full deployment (install + packages)..."
+      # One command deploys EVERYTHING, in dependency order:
+      #   install        → base host + services
+      #   deploy-packages→ rsync the carve-out (nodes, rx, prompts) + build
+      #   marketplace    → reconcile npm nodes from the DB (also installs plugin-base,
+      #                    which gendesign needs to compile)
+      #   gendesign      → generate + build the component nodes from the deployed rx/
+      info "Running full deployment (install + packages + marketplace + component nodes)..."
       echo ""
       ansible-playbook \
         -i "$tmp_inventory" \
@@ -89,6 +104,17 @@ EOF
         -i "$tmp_inventory" \
         "$ansible_dir/playbooks/deploy-packages.yml" \
         -e "env_file=$env_prod"
+
+      echo ""
+      ansible-playbook \
+        -i "$tmp_inventory" \
+        "$ansible_dir/playbooks/install-marketplace.yml" \
+        -e "env_file=$env_prod"
+
+      echo ""
+      ansible-playbook \
+        -i "$tmp_inventory" \
+        "$ansible_dir/playbooks/gendesign.yml"
       ;;
     db)
       info "Running database setup..."
@@ -148,16 +174,6 @@ EOF
         "$ansible_dir/playbooks/install-marketplace.yml" \
         -e "env_file=$env_prod"
       ;;
-    gendesign|nodegen)
-      # Generate + build component nodes ON the server (mirror of the local
-      # `unoverse gendesign`). Reads the already-deployed rx/ defs — run `deploy` or
-      # `deploy packages` first so rx/ is on the box.
-      info "Generating + building component nodes on the server..."
-      echo ""
-      ansible-playbook \
-        -i "$tmp_inventory" \
-        "$ansible_dir/playbooks/gendesign.yml"
-      ;;
     test|check)
       info "Running connectivity test..."
       echo ""
@@ -170,14 +186,13 @@ EOF
       echo "Usage: unoverse deploy [command]"
       echo ""
       echo "Commands:"
-      echo "  (none)       Full deployment (install + packages)"
-      echo "  packages     Deploy packages only (rsync + build)"
+      echo "  (none)       Full deploy: install + carve-out + marketplace + component nodes"
+      echo "  packages     Deploy carve-out (nodes/rx/prompts) + generate component nodes"
       echo "  marketplace  Reconcile prod's marketplace nodes against the DB"
       echo "  db           Run database setup"
       echo "  caddy        Install Caddy TLS reverse proxy"
       echo "  caddy-uninstall  Remove Caddy (revert to direct host ports)"
       echo "  umap         Install UMAP AI service"
-      echo "  gendesign    Generate + build component nodes on the server (from deployed rx/)"
       echo "  test         Run connectivity test"
       rm -f "$tmp_inventory"
       exit 1

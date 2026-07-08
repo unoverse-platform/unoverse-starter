@@ -76,7 +76,6 @@ case "${1:-}" in
   db-verify) cmd_db_verify ;;
   deploy)    cmd_deploy "${2:-}" ;;
   build)     cmd_build "${2:-}" ;;
-  gendesign) cmd_gendesign ;;
   open)      cmd_open "${2:-}" ;;
   help|--help|-h) cmd_help ;;
   "")        cmd_dashboard ;;
