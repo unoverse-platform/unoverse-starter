@@ -12,7 +12,7 @@
 
 ```typescript
 // For PromiseNode:
-import { PromiseNode, type NodeExecutionContext } from "@gravityai-dev/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 
 export default class MyExecutor extends PromiseNode {
   constructor() {
@@ -21,7 +21,7 @@ export default class MyExecutor extends PromiseNode {
 }
 
 // For CallbackNode:
-import { getPlatformDependencies } from "@gravityai-dev/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 const { CallbackNode } = getPlatformDependencies();
 
 export default class MyCallbackExecutor extends CallbackNode {
@@ -40,7 +40,7 @@ export default class MyCallbackExecutor extends CallbackNode {
 **✅ Correct:**
 
 ```typescript
-import { PromiseNode, type NodeExecutionContext } from "@gravityai-dev/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 
 export default class MyExecutor extends PromiseNode {
   constructor() {
@@ -56,7 +56,7 @@ export default class MyExecutor extends PromiseNode {
 **✅ Correct - Use Direct Imports:**
 
 ```typescript
-import { PromiseNode, type NodeExecutionContext } from "@gravityai-dev/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { myService } from "./service";
 
 export default class MyExecutor extends PromiseNode {
@@ -94,7 +94,7 @@ export default class MyExecutor extends PromiseNode<Config> {
 export { MyExecutor };
 ```
 
-### "Cannot find module '@gravityai-dev/plugin-base'"
+### "Cannot find module '@unoverse-platform/plugin-base'"
 
 **Cause**: Missing dependency in package.json
 
@@ -103,7 +103,7 @@ export { MyExecutor };
 ```json
 {
   "dependencies": {
-    "@gravityai-dev/plugin-base": "^1.0.0"
+    "@unoverse-platform/plugin-base": "^1.0.0"
   }
 }
 ```
@@ -119,7 +119,7 @@ export { MyExecutor };
 **✅ Correct Types:**
 
 ```typescript
-import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@gravityai-dev/plugin-base";
+import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 
 export default class MyExecutor extends PromiseNode {
   protected async validateConfig(config: MyConfig): Promise<ValidationResult> {
@@ -226,7 +226,7 @@ export async function myService(config: any, credentialContext: CredentialContex
 **✅ Correct CallbackNode Pattern:**
 
 ```typescript
-import { getPlatformDependencies } from "@gravityai-dev/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 
 const { CallbackNode } = getPlatformDependencies();
 
@@ -312,8 +312,8 @@ npm start
 **3. Debug Execution:**
 
 ```bash
-# Use debug resolver to test node
-curl -X POST http://localhost:4000/api/debug/execute-node \
+# Execute the node directly via the runtime (internal port, local dev)
+curl -X POST http://localhost:4106/execute \
   -H "Content-Type: application/json" \
   -d '{
     "nodeType": "MyNode",
@@ -368,13 +368,13 @@ protected async executeNode(inputs, config, context) {
 
 **PromiseNode Issues:**
 
-- Compare with `@gravityai-dev/aws-bedrock`
-- Check `@gravityai-dev/openai` implementation
+- Compare with `@unoverse-platform/aws-bedrock`
+- Check `@unoverse-platform/openai` implementation
 
 **CallbackNode Issues:**
 
-- Compare with `@gravityai-dev/ingest`
-- Check `@gravityai-dev/flow` implementation
+- Compare with `@unoverse-platform/ingest`
+- Check `@unoverse-platform/flow` implementation
 
 **Credential Issues:**
 

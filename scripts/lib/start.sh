@@ -124,6 +124,10 @@ cmd_start() {
     echo ""
     echo -e "  ${GREEN}${BOLD}All $running services running${NC} ${DIM}($(timer_elapsed))${NC}"
     echo ""
+    # Auto-compile component (design) nodes from rx/ — same step prod's deploy runs.
+    # Generates + tsc-builds nodes/components, then reloads unoverse so they load.
+    # Non-fatal: cmd_gendesign returns (doesn't exit) if it can't run, so start still finishes.
+    cmd_gendesign
     print_access_urls
     echo ""
     info "Run ${BOLD}unoverse open${NC}    to open Canvas in your browser"

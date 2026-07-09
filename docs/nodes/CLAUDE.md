@@ -4,14 +4,14 @@ Authoritative guide for creating nodes in the GravityAI plugin system. Synthesiz
 
 ## Core architecture
 
-Nodes are distributed as **npm packages** (`@gravityai-dev/<name>`) that register themselves with the platform via a plugin `setup()` hook. Each node splits responsibility across three layers:
+Nodes are distributed as **npm packages** (`@unoverse-platform/<name>`) that register themselves with the platform via a plugin `setup()` hook. Each node splits responsibility across three layers:
 
 - **Node definition** (`node/index.ts`) — metadata, inputs/outputs, configSchema, serviceConnectors, credentials
 - **Executor** (`node/executor.ts`) — workflow-level glue; extends `PromiseNode` or `CallbackNode`
 - **Service** (`service/index.ts`) — business logic, external API calls, credential fetching
 
 ```
-@gravityai-dev/my-node/
+@unoverse-platform/my-node/
 ├── src/
 │   ├── index.ts                 # createPlugin({ setup })
 │   ├── MyNode/
@@ -32,13 +32,13 @@ Nodes are distributed as **npm packages** (`@gravityai-dev/<name>`) that registe
 | One input → one output (API call, transform, DB op, file op) | `PromiseNode` |
 | Streaming, iteration, collections, long-running, waits for signals | `CallbackNode` |
 
-PromiseNode can be imported directly from `@gravityai-dev/plugin-base`. CallbackNode **must** be obtained via `getPlatformDependencies()` — importing it directly causes runtime validation errors.
+PromiseNode can be imported directly from `@unoverse-platform/plugin-base`. CallbackNode **must** be obtained via `getPlatformDependencies()` — importing it directly causes runtime validation errors.
 
 ## PromiseNode template
 
 ```typescript
 // executor.ts
-import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@gravityai-dev/plugin-base";
+import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 import { myService } from "../service";
 
 export default class MyNodeExecutor extends PromiseNode {
@@ -73,7 +73,7 @@ export default class MyNodeExecutor extends PromiseNode {
 ## CallbackNode template
 
 ```typescript
-import { getPlatformDependencies, type ValidationResult } from "@gravityai-dev/plugin-base";
+import { getPlatformDependencies, type ValidationResult } from "@unoverse-platform/plugin-base";
 const { CallbackNode } = getPlatformDependencies();
 
 export default class MyCallbackExecutor extends CallbackNode<MyConfig, MyState> {
@@ -125,7 +125,7 @@ export default class MyCallbackExecutor extends CallbackNode<MyConfig, MyState> 
 ## Node definition essentials
 
 ```typescript
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravityai-dev/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 
 function createNodeDefinition(): EnhancedNodeDefinition {
   return {
@@ -284,7 +284,7 @@ Signal types: `EXECUTE` (default trigger), `CONTINUE` (next iteration), `SPAWN` 
 
 ```typescript
 // src/index.ts
-import { createPlugin, type GravityPluginAPI } from "@gravityai-dev/plugin-base";
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
 import packageJson from "../package.json";
 
 export default createPlugin({
@@ -355,9 +355,9 @@ Every package must include a rich `gravity` field in `package.json` for the mark
 6. Register in `src/index.ts`.
 7. **Populate `gravity` field in package.json** with marketplace metadata (displayName, category, features, nodes as objects, credentials).
 8. **Write a per-node integration test** in `src/MyNode/test/MyNode.test.ts` — real API, credential passed in from a gitignored `.env`, skipped without the key. See `13-testing-nodes.md`.
-9. `npm run build`, then `npm test` (or a quick check via the debug resolver):
+9. `npm run build`, then `npm test` (or a quick check via the runtime's execute endpoint on the internal port):
    ```bash
-   curl -X POST http://localhost:4000/api/debug/execute-node \
+   curl -X POST http://localhost:4106/execute \
      -H "Content-Type: application/json" \
      -d '{"nodeType":"MyNode","config":{...},"inputs":{...}}'
    ```
@@ -379,8 +379,8 @@ Every package must include a rich `gravity` field in `package.json` for the mark
 
 Study these published packages when a pattern is unclear:
 
-- **PromiseNode:** `@gravityai-dev/aws-bedrock`, `@gravityai-dev/openai`, `@gravityai-dev/aws-s3`
-- **CallbackNode:** `@gravityai-dev/ingest` (ApifyResults), `@gravityai-dev/flow` (Loop), `@gravityai-dev/openai` (OpenAIStream)
+- **PromiseNode:** `@unoverse-platform/aws-bedrock`, `@unoverse-platform/openai`, `@unoverse-platform/aws-s3`
+- **CallbackNode:** `@unoverse-platform/ingest` (ApifyResults), `@unoverse-platform/flow` (Loop), `@unoverse-platform/openai` (OpenAIStream)
 - **MCP provider:** SpatialSearch (hybrid workflow + MCP search tools), MCPgetNeeds (workflow-triggering MCP)
 - **MCP consumer:** Nova
 

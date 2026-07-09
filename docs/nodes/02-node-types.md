@@ -47,9 +47,9 @@ protected async executeNode(
 
 ### Real Examples
 
-- **`@gravityai-dev/aws-bedrock`** - BedrockClaude executor
-- **`@gravityai-dev/openai`** - OpenAI completion
-- **`@gravityai-dev/aws-s3`** - S3 file operations
+- **`@unoverse-platform/aws-bedrock`** - BedrockClaude executor
+- **`@unoverse-platform/openai`** - OpenAI completion
+- **`@unoverse-platform/aws-s3`** - S3 file operations
 
 ## 🔄 CallbackNode - Multiple Outputs
 
@@ -238,9 +238,9 @@ class OpenAIStreamExecutor extends CallbackNode<Config, State> {
 
 ### Real Examples
 
-- **`@gravityai-dev/openai`** - OpenAIStream executor (streaming with emit + return)
-- **`@gravityai-dev/ingest`** - ApifyResults executor (processes items one by one)
-- **`@gravityai-dev/flow`** - Loop executor (iterates through collections)
+- **`@unoverse-platform/openai`** - OpenAIStream executor (streaming with emit + return)
+- **`@unoverse-platform/ingest`** - ApifyResults executor (processes items one by one)
+- **`@unoverse-platform/flow`** - Loop executor (iterates through collections)
 
 ## 🔍 Detailed Comparison
 
@@ -420,11 +420,11 @@ See [Signal Routing](./09-signal-routing.md) for complete details.
 
 | Type         | Package                      | File                             |
 | ------------ | ---------------------------- | -------------------------------- |
-| PromiseNode  | `@gravityai-dev/aws-bedrock` | `BedrockClaude/node/executor.ts` |
-| PromiseNode  | `@gravityai-dev/openai`      | `OpenAI/node/executor.ts`        |
-| CallbackNode | `@gravityai-dev/ingest`      | `ApifyResults/node/executor.ts`  |
-| CallbackNode | `@gravityai-dev/flow`        | `Loop/node/executor.ts`          |
-| CallbackNode | `@gravityai-dev/openai`      | `OpenAIStream/node/executor.ts`  |
+| PromiseNode  | `@unoverse-platform/aws-bedrock` | `BedrockClaude/node/executor.ts` |
+| PromiseNode  | `@unoverse-platform/openai`      | `OpenAI/node/executor.ts`        |
+| CallbackNode | `@unoverse-platform/ingest`      | `ApifyResults/node/executor.ts`  |
+| CallbackNode | `@unoverse-platform/flow`        | `Loop/node/executor.ts`          |
+| CallbackNode | `@unoverse-platform/openai`      | `OpenAIStream/node/executor.ts`  |
 
 ---
 

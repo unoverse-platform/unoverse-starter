@@ -9,7 +9,7 @@
 ### ✅ CORRECT Pattern - Dependency Injection
 
 ```typescript
-import { PromiseNode, type NodeExecutionContext } from "@gravityai-dev/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 
 export default class MyExecutor extends PromiseNode {
   constructor() {
@@ -32,7 +32,7 @@ export default class MyExecutor extends PromiseNode {
 ### CallbackNode Pattern
 
 ````typescript
-import { getPlatformDependencies, type NodeExecutionContext } from "@gravityai-dev/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 
 const { CallbackNode } = getPlatformDependencies();
 
@@ -51,7 +51,7 @@ export default class MyCallbackExecutor extends CallbackNode {
 ### 1. Plugin Definition Pattern
 ```typescript
 // src/index.ts
-import { createPlugin, type GravityPluginAPI } from "@gravityai-dev/plugin-base";
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
 
 const plugin = createPlugin({
   name: packageJson.name,
@@ -76,7 +76,7 @@ export default plugin;
 
 ```typescript
 // src/MyNode/node/index.ts
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravityai-dev/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import MyNodeExecutor from "./executor";
 
 function createNodeDefinition(): EnhancedNodeDefinition {
@@ -109,7 +109,7 @@ export const MyNode = {
 
 ```typescript
 // src/MyNode/node/executor.ts
-import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@gravityai-dev/plugin-base";
+import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 
 export default class MyExecutor extends PromiseNode {
   constructor() {
@@ -376,17 +376,17 @@ protected async executeNode(inputs, config, context) {
 
 | Package                      | Pattern                             |
 | ---------------------------- | ----------------------------------- |
-| `@gravityai-dev/aws-bedrock` | Complete PromiseNode implementation |
-| `@gravityai-dev/openai`      | API integration pattern             |
-| `@gravityai-dev/aws-s3`      | AWS service pattern                 |
+| `@unoverse-platform/aws-bedrock` | Complete PromiseNode implementation |
+| `@unoverse-platform/openai`      | API integration pattern             |
+| `@unoverse-platform/aws-s3`      | AWS service pattern                 |
 
 ### CallbackNode Patterns
 
 | Package                 | Pattern                                  |
 | ----------------------- | ---------------------------------------- |
-| `@gravityai-dev/ingest` | ApifyResults executor (state management) |
-| `@gravityai-dev/flow`   | Loop executor (iteration pattern)        |
-| `@gravityai-dev/openai` | OpenAIStream (streaming pattern)         |
+| `@unoverse-platform/ingest` | ApifyResults executor (state management) |
+| `@unoverse-platform/flow`   | Loop executor (iteration pattern)        |
+| `@unoverse-platform/openai` | OpenAIStream (streaming pattern)         |
 
 ---
 

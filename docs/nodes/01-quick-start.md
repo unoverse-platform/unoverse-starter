@@ -12,7 +12,7 @@ Need help deciding? See [Node Types](./02-node-types.md)
 ## 📦 Package Structure Template
 
 ```
-@gravityai-dev/my-node/
+@unoverse-platform/my-node/
 ├── package.json
 ├── tsconfig.json
 ├── src/
@@ -36,7 +36,7 @@ Need help deciding? See [Node Types](./02-node-types.md)
 ### 1. Plugin Definition (`src/index.ts`)
 
 ```typescript
-import { createPlugin, type GravityPluginAPI } from "@gravityai-dev/plugin-base";
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
 import packageJson from "../package.json";
 
 const plugin = createPlugin({
@@ -61,7 +61,7 @@ export default plugin;
 ### 2. Node Definition (`src/MyNode/node/index.ts`)
 
 ```typescript
-import { NodeInputType, type EnhancedNodeDefinition } from "@gravityai-dev/plugin-base";
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
 import MyNodeExecutor from "./executor";
 
 function createNodeDefinition(): EnhancedNodeDefinition {
@@ -161,7 +161,7 @@ export { createNodeDefinition };
 ### 3. Node Executor (`src/MyNode/node/executor.ts`)
 
 ```typescript
-import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@gravityai-dev/plugin-base";
+import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 import { MyNodeConfig, MyNodeOutput } from "../util/types";
 import { myService } from "../service";
 
@@ -272,7 +272,7 @@ export interface MyNodeOutput {
 
 ```typescript
 // Only needed if you have CallbackNode executors
-import { getPlatformDependencies } from "@gravityai-dev/plugin-base";
+import { getPlatformDependencies } from "@unoverse-platform/plugin-base";
 
 const deps = getPlatformDependencies();
 
@@ -283,7 +283,7 @@ export const CallbackNode = deps.CallbackNode;
 
 ```typescript
 // Import shared credentials from plugin-base
-import { OpenAICredential } from "@gravityai-dev/plugin-base";
+import { OpenAICredential } from "@unoverse-platform/plugin-base";
 
 // Re-export for this package
 export { OpenAICredential as MyCredential };
@@ -309,7 +309,7 @@ export const MyCredential = {
 For CallbackNode (streaming/iterative), replace the executor with:
 
 ```typescript
-import { getPlatformDependencies, type NodeExecutionContext, type ValidationResult } from "@gravityai-dev/plugin-base";
+import { getPlatformDependencies, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
 
 const { CallbackNode } = getPlatformDependencies();
 
@@ -462,10 +462,10 @@ For complete details on all config schema options including:
 
 | Type         | Package                      | Description            |
 | ------------ | ---------------------------- | ---------------------- |
-| PromiseNode  | `@gravityai-dev/aws-bedrock` | BedrockClaude executor |
-| PromiseNode  | `@gravityai-dev/openai`      | OpenAI completion      |
-| CallbackNode | `@gravityai-dev/ingest`      | ApifyResults executor  |
-| CallbackNode | `@gravityai-dev/flow`        | Loop executor          |
+| PromiseNode  | `@unoverse-platform/aws-bedrock` | BedrockClaude executor |
+| PromiseNode  | `@unoverse-platform/openai`      | OpenAI completion      |
+| CallbackNode | `@unoverse-platform/ingest`      | ApifyResults executor  |
+| CallbackNode | `@unoverse-platform/flow`        | Loop executor          |
 
 ---
 

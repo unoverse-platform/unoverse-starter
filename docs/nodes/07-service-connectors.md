@@ -67,7 +67,7 @@ async handleServiceCall(method: string, params: any, context: any) {
 ### 2. Service Consumer (isService: false)
 ```typescript
 // In your executor
-import { callService } from "@gravityai-dev/plugin-base";
+import { callService } from "@unoverse-platform/plugin-base";
 
 const result = await callService("methodName", params, context);
 ```

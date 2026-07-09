@@ -34,7 +34,7 @@
 GravityAI uses a **plugin-based architecture** where nodes are distributed as npm packages:
 
 ```
-@gravityai-dev/your-node/
+@unoverse-platform/your-node/
 ├── src/
 │   ├── index.ts              # Plugin definition
 │   ├── YourNode/
@@ -76,7 +76,7 @@ GravityAI uses a **plugin-based architecture** where nodes are distributed as np
 
 ```typescript
 // ✅ CORRECT: Dependency injection pattern
-import { PromiseNode, type NodeExecutionContext } from "@gravityai-dev/plugin-base";
+import { PromiseNode, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 
 export default class MyNodeExecutor extends PromiseNode {
   constructor() {
@@ -104,17 +104,17 @@ Reference these published packages for complete implementations:
 
 | Package                      | Description            |
 | ---------------------------- | ---------------------- |
-| `@gravityai-dev/aws-bedrock` | BedrockClaude executor |
-| `@gravityai-dev/openai`      | OpenAI completion      |
-| `@gravityai-dev/aws-s3`      | S3 file operations     |
+| `@unoverse-platform/aws-bedrock` | BedrockClaude executor |
+| `@unoverse-platform/openai`      | OpenAI completion      |
+| `@unoverse-platform/aws-s3`      | S3 file operations     |
 
 ### CallbackNode Examples
 
 | Package                 | Description           |
 | ----------------------- | --------------------- |
-| `@gravityai-dev/ingest` | ApifyResults executor |
-| `@gravityai-dev/flow`   | Loop executor         |
-| `@gravityai-dev/openai` | OpenAIStream executor |
+| `@unoverse-platform/ingest` | ApifyResults executor |
+| `@unoverse-platform/flow`   | Loop executor         |
+| `@unoverse-platform/openai` | OpenAIStream executor |
 
 ### Service Connector Examples
 
