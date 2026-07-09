@@ -52,7 +52,6 @@ Docker: OK
 
 Containers:
   gravity-unoverse running Up 2 hours
-  gravity-mcp-server running Up 2 hours
   gravity-memory running Up 2 hours
   gravity-canvas running Up 2 hours
   gravity-umap running Up 2 hours
@@ -63,7 +62,6 @@ Restarting: NONE
   - Canvas (3001): OK
   - Unoverse (4105): OK
   - Engine (4101, served by unoverse): OK
-  - MCP Server (4103): OK
   - Memory (4104): OK
 
 ── External Dependencies ──
@@ -75,7 +73,6 @@ Database: REACHABLE
 ── Health Endpoints ──
   - Unoverse: OK
   - Workflow engine: OK
-  - MCP Server: OK
   - Memory: OK
 
 ── API Endpoints (read) ──
@@ -102,7 +99,6 @@ No recent errors
 Domain: yourdomain.com
   - https://yourdomain.com/: HTTP 200
   - https://api.yourdomain.com/health: HTTP 200
-  - https://mcp.yourdomain.com/health: HTTP 200
 ============================================
 ```
 
@@ -114,7 +110,6 @@ Domain: yourdomain.com
 | ------------ | ------------------------------ | -------- |
 | Unoverse     | `http://localhost:4105/health` | 200 OK   |
 | Workflow engine (in-process on unoverse) | `http://localhost:4101/health` | 200 OK   |
-| MCP Server   | `http://localhost:4103/health` | 200 OK   |
 | Memory       | `http://localhost:4104/health` | 200 OK   |
 | UMAP         | `http://localhost:5001/health` | 200 OK   |
 
@@ -157,7 +152,7 @@ echo ""
 
 # 1. Services running
 echo "1. Services"
-for svc in unoverse canvas umap mcp-server memory; do
+for svc in unoverse canvas umap memory; do
   status=$(docker compose ps --format '{{.Status}}' $svc 2>/dev/null | head -1)
   if echo "$status" | grep -q "Up"; then
     echo "   ✓ $svc — $status"
@@ -240,7 +235,6 @@ echo "=== Done ==="
    ✓ unoverse — Up 2 minutes
    ✓ canvas — Up 2 minutes
    ✓ umap — Up 2 minutes
-   ✓ mcp-server — Up 2 minutes
    ✓ memory — Up 2 minutes
 
 2. Health Endpoints

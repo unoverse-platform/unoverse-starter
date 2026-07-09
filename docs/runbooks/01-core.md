@@ -6,8 +6,7 @@ Deploy the core Gravity Platform services to a VM.
 
 | Service          | Port | Description                         |
 | ---------------- | ---- | ----------------------------------- |
-| **unoverse**     | 4105 | Platform runtime — workflow engine (in-process), node plane, `/api`, MCP, data plane |
-| **mcp-server**   | 4103 | MCP (Model Context Protocol) server |
+| **unoverse**     | 4105 | Platform runtime — workflow engine (in-process), node plane, `/api`, native MCP (`/mcp`), data plane |
 | **memory**       | 4104 | Evidence-based user memory          |
 | **canvas**       | 3001 | Web UI                              |
 
@@ -76,7 +75,7 @@ cd ansible
 ansible-playbook -i inventory/production.yml playbooks/install.yml
 ```
 
-This installs Docker, Node.js, pulls DOCR images, and starts **core platform** (unoverse, mcp-server, memory, canvas).
+This installs Docker, Node.js, pulls DOCR images, and starts **core platform** (unoverse, memory, canvas).
 
 ### 3. Deploy Customer Packages
 
@@ -115,7 +114,6 @@ Host: gravity-prod (<YOUR_VM_IP>)
 
 Service Health:
   - Unoverse:      OK
-  - MCP Server:    OK
   - Memory:        OK
   - Canvas:        OK
 

@@ -124,7 +124,6 @@ All checks should pass:
   ✓ unoverse
   ✓ canvas
   ✓ umap
-  ✓ mcp-server
   ✓ memory
 
   ✓ unoverse health :4105

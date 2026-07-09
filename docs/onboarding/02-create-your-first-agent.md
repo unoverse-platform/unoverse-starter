@@ -46,7 +46,7 @@ Click on the OpenAI node to open the **Config Panel** on the right.
 
 **Configuration tab:**
 
-- **Model**: gpt-5
+- **Model**: gpt-5.2
 - **System Prompt**: "You are a helpful assistant....."
 - **User Prompt**: `{{{signal.inputtrigger1.output.message}}}`
 

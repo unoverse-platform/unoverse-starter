@@ -3,6 +3,7 @@
 
 cmd_dev() {
   banner "Unoverse Dev Setup"
+  local dev_cold_start=0
 
   # Check node/npm
   if ! command -v node &>/dev/null; then
@@ -24,6 +25,7 @@ cmd_dev() {
   if [ "$running_count" -eq 0 ] 2>/dev/null; then
     warn "Platform is not running. Starting it first..."
     cmd_start
+    dev_cold_start=1   # cmd_start already compiled the component nodes
   else
     ok "Platform is running ($running_count services)"
   fi
@@ -51,17 +53,22 @@ cmd_dev() {
   dev_pkg_count=$(echo "$dev_build_output" | grep -c '> .* build$' || echo "0")
   ok "Packages built ${DIM}(${dev_pkg_count} packages)${NC}"
 
-  # Restart unoverse (the node plane) to pick up newly built packages
+  # Compile component (design) nodes + restart unoverse to pick up the built packages.
+  # On a cold start, cmd_start already compiled the component nodes → just restart.
+  # Otherwise run gendesign, which generates + tsc-builds them AND restarts unoverse
+  # (so it also loads the workspace packages we just built).
   echo ""
-  echo "  Restarting unoverse..."
   local ns_status
   ns_status=$(docker compose -f "$ROOT/docker-compose.yml" ps --format '{{.Status}}' unoverse 2>/dev/null | head -1)
-  if echo "$ns_status" | grep -qi "up"; then
+  if ! echo "$ns_status" | grep -qi "up"; then
+    warn "unoverse is not running (status: ${ns_status:-unknown}) — skipping restart"
+    info "Run ${BOLD}unoverse doctor${NC} to diagnose"
+  elif [ "$dev_cold_start" = "1" ]; then
+    echo "  Restarting unoverse..."
     docker compose -f "$ROOT/docker-compose.yml" restart unoverse 2>/dev/null || true
     ok "unoverse restarted"
   else
-    warn "unoverse is not running (status: ${ns_status:-unknown}) — skipping restart"
-    info "Run ${BOLD}unoverse doctor${NC} to diagnose"
+    cmd_gendesign
   fi
 
   # Final status check
