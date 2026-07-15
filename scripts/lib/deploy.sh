@@ -69,40 +69,40 @@ EOF
 
   case "$subcommand" in
     packages|pkg)
-      # Carve-out (nodes/rx/prompts) + generate the component nodes from rx/ — the two
-      # always go together, so deploying assets naturally produces their component nodes.
-      # (gendesign needs plugin-base in the plugins volume; if it's missing it says so —
-      # run a full `deploy` or `deploy marketplace` first.)
-      info "Deploying packages (carve-out) + generating component nodes..."
+      # Carve-out (nodes/rx/prompts): rsync + build (including the universal
+      # component-node package, in-container) + restart. Component nodes are
+      # definition-backed — they synthesize from the deployed rx/ at boot.
+      # (The component build needs plugin-base in the plugins volume; if it's
+      # missing it says so — run a full `deploy` or `deploy marketplace` first.)
+      info "Deploying packages (carve-out)..."
       echo ""
       ansible-playbook \
         -i "$tmp_inventory" \
         "$ansible_dir/playbooks/deploy-packages.yml" \
         -e "env_file=$env_prod"
-
+      ;;
+    design|rx)
+      # Design fast lane: rsync rx/ only + restart. No build — definitions
+      # synthesize into component nodes at boot; restyles apply live.
+      info "Deploying design (rx/ definitions)..."
       echo ""
       ansible-playbook \
         -i "$tmp_inventory" \
-        "$ansible_dir/playbooks/gendesign.yml"
+        "$ansible_dir/playbooks/deploy-design.yml"
       ;;
     full|"")
       # One command deploys EVERYTHING, in dependency order:
       #   install        → base host + services
-      #   deploy-packages→ rsync the carve-out (nodes, rx, prompts) + build
       #   marketplace    → reconcile npm nodes from the DB (also installs plugin-base,
-      #                    which gendesign needs to compile)
-      #   gendesign      → build the definition-backed component-node package + restart (nodes synthesize from the deployed rx/ at boot)
-      info "Running full deployment (install + packages + marketplace + component nodes)..."
+      #                    which the component-node package build needs to compile)
+      #   deploy-packages→ rsync the carve-out (nodes, rx, prompts) + build (incl. the
+      #                    universal component-node package) + restart (nodes synthesize
+      #                    from the deployed rx/ at boot)
+      info "Running full deployment (install + marketplace + packages)..."
       echo ""
       ansible-playbook \
         -i "$tmp_inventory" \
         "$ansible_dir/playbooks/install.yml" \
-        -e "env_file=$env_prod"
-
-      echo ""
-      ansible-playbook \
-        -i "$tmp_inventory" \
-        "$ansible_dir/playbooks/deploy-packages.yml" \
         -e "env_file=$env_prod"
 
       echo ""
@@ -114,7 +114,8 @@ EOF
       echo ""
       ansible-playbook \
         -i "$tmp_inventory" \
-        "$ansible_dir/playbooks/gendesign.yml"
+        "$ansible_dir/playbooks/deploy-packages.yml" \
+        -e "env_file=$env_prod"
       ;;
     db)
       info "Running database setup..."
@@ -186,8 +187,9 @@ EOF
       echo "Usage: unoverse deploy [command]"
       echo ""
       echo "Commands:"
-      echo "  (none)       Full deploy: install + carve-out + marketplace + component nodes"
-      echo "  packages     Deploy carve-out (nodes/rx/prompts) + generate component nodes"
+      echo "  (none)       Full deploy: install + marketplace + carve-out"
+      echo "  packages     Deploy carve-out (nodes/rx/prompts): rsync + build + restart"
+      echo "  design       Deploy rx/ design definitions only: rsync + restart (no build)"
       echo "  marketplace  Reconcile prod's marketplace nodes against the DB"
       echo "  db           Run database setup"
       echo "  caddy        Install Caddy TLS reverse proxy"

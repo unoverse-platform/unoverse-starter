@@ -44,7 +44,7 @@ every component from its prop `default`s; the state picker walks its states.
 
 ```bash
 # Then generate its workflow node and restart:
-unoverse gendesign
+docker compose restart unoverse
 ```
 
 Your component now appears in the Studio and as a node on the Canvas, ready for a

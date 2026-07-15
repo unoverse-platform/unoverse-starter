@@ -52,7 +52,7 @@ Arrival `defaultState` lives in the **manifest**, not the state block.
 1. Read the matching journey doc ([03](./03-components.md) component / [05](./05-templates.md) template / [06](./06-styles-and-tokens.md) styles); study the exemplars: `journeyfinder`/`cardfinder` (components), `bppchatlayout` (template).
 2. Author to the anatomy in §2; put every shown thing in its ONE home (§3).
 3. **`./unoverse lint` — 0 errors required**; it enforces §2–§5 with doc-cited messages. Justify any warning.
-4. Deploy: `./unoverse gendesign`; then Studio — mock (prop defaults + state picker + Inline/Focused toggle), then live. Debug order: stream log → state inspector → definition. Never edit on a guess.
+4. Restart: `docker compose restart unoverse`; then Studio — mock (prop defaults + state picker + Inline/Focused toggle), then live. Debug order: stream log → state inspector → definition. Never edit on a guess.
 
 ## 7. Error → fix quick table
 
@@ -64,7 +64,7 @@ Arrival `defaultState` lives in the **manifest**, not the state block.
 | Focus won't close | the component's ✕ must `setValue { defaultState: "inline" }` on ITS OWN slice |
 | Component invisible in a template | unknown state name + no matching surface = inline is where it went — check the flow slot exists |
 | Style ignored / element auto-sizes | raw value, unknown style key, or off-scale step — lint tells you which |
-| Edit does nothing | node contract changed → `./unoverse gendesign` |
+| Edit does nothing | node contract changed → `docker compose restart unoverse` |
 | AI never picks it | manifest `whenToUse` is selector-shaped or missing — write the user's words |
 
 Full table: [09 — Troubleshooting](./09-troubleshooting.md).

@@ -97,10 +97,10 @@ Two mechanisms, both already in your file:
 
 ```bash
 ./unoverse lint         # authoring-time checks: schema rules, tokens, state rules — with doc-cited messages
-./unoverse gendesign    # restart — nodes synthesize from your definitions
+docker compose restart unoverse    # nodes synthesize from your definitions at boot
 ```
 
-Component nodes are **definition-backed**: one universal executor serves every component, and the platform synthesizes a node per definition at boot — there is no code generation. `gendesign` just restarts so your new definition is picked up. Your `PriceCard` is now:
+Component nodes are **definition-backed**: one universal executor serves every component, and the platform synthesizes a node per definition at boot — there is no code generation. The restart just picks up your new definition. Your `PriceCard` is now:
 
 - a **node** any workflow can use — copy it from Studio (**⧉ Copy for Canvas**) and paste (`Cmd+V`) onto the canvas, wire data into its props — and
 - an **MCP resource** every channel (web, native, Studio) renders natively.
@@ -126,7 +126,7 @@ If it looks right in Studio, it looks right in production — Studio is just ano
 - [ ] Every `bind` has a matching prop **with a default**, workflow-fed props marked `input: true`
 - [ ] Zero raw values — token names only in every `style`
 - [ ] Prop defaults realistic (they ARE the mock); multi-layer components enumerate `states/`
-- [ ] `./unoverse lint` clean, then `./unoverse gendesign`
+- [ ] `./unoverse lint` clean, then `docker compose restart unoverse`
 - [ ] Previewed in Studio (mock states, then live)
 
 ---

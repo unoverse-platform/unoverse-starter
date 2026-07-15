@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# unoverse build + unoverse gendesign (definition-backed component nodes)
+# unoverse build + the internal component-node package build (definition-backed)
 
 cmd_build() {
   local package="$1"
@@ -21,7 +21,11 @@ cmd_build() {
   echo ""
 }
 
-cmd_gendesign() {
+# Internal helper (called by start/dev — not a user-facing command): builds the
+# universal component-node package in-container and restarts unoverse. Design
+# DEFINITION changes never need this — they synthesize from rx/ at boot; a plain
+# restart suffices. This exists for the PACKAGE-source / stale-dist case.
+build_component_nodes() {
   banner "Component Nodes (definition-backed)"
 
   # Component nodes are DEFINITION-BACKED: one universal executor serves every

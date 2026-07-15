@@ -55,7 +55,7 @@ cmd_dev() {
 
   # Compile component (design) nodes + restart unoverse to pick up the built packages.
   # On a cold start, cmd_start already compiled the component nodes → just restart.
-  # Otherwise run gendesign, which generates + tsc-builds them AND restarts unoverse
+  # Otherwise run build_component_nodes, which tsc-builds them AND restarts unoverse
   # (so it also loads the workspace packages we just built).
   echo ""
   local ns_status
@@ -68,7 +68,7 @@ cmd_dev() {
     docker compose -f "$ROOT/docker-compose.yml" restart unoverse 2>/dev/null || true
     ok "unoverse restarted"
   else
-    cmd_gendesign
+    build_component_nodes
   fi
 
   # Final status check

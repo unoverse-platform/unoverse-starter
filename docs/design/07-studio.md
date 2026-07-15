@@ -46,7 +46,7 @@ So "viewable states" is not extra work — it falls straight out of organizing a
 
 ### 📋 Copy for Canvas — drop a component onto a workflow
 
-When a component is selected, Studio shows a **`⧉ Copy for Canvas`** button. It copies the component as a **canvas node** to your clipboard; then **`Cmd+V` on any workflow canvas** pastes it in, sized to the component's `nodeSize`. This is **how a design component reaches a workflow** — the canvas palette no longer lists components, so you preview it here, copy it, and paste it where the workflow needs it. (No file edit, no `gendesign`; it's just placing the node.)
+When a component is selected, Studio shows a **`⧉ Copy for Canvas`** button. It copies the component as a **canvas node** to your clipboard; then **`Cmd+V` on any workflow canvas** pastes it in, sized to the component's `nodeSize`. This is **how a design component reaches a workflow** — the canvas palette no longer lists components, so you preview it here, copy it, and paste it where the workflow needs it. (No file edit, no restart; it's just placing the node.)
 
 ---
 
@@ -78,12 +78,12 @@ Debugging order, always: **stream log** (did it arrive?) → **state inspector**
 
 ```bash
 vi rx/components/pricecard/pricecard.json   # 1. edit (schema validates as you type)
-./unoverse gendesign                         # 2. restart — the node re-synthesizes from the definition
+docker compose restart unoverse              # 2. the node re-synthesizes from the definition at boot
 # 3. Studio: mock states → looks right
 # 4. Studio: live mode → streams right
 ```
 
-For pure definition edits (layouts, styles, copy), the resource subscription refreshes the preview live — no restart at all. A restart (`gendesign`) is only needed when the component's **node** must change (new props, a new component, discovery meta), because node definitions synthesize from your JSON at boot — there is no code generation step, ever.
+For pure definition edits (layouts, styles, copy), the resource subscription refreshes the preview live — no restart at all. A restart is only needed when the component's **node** must change (new props, a new component, discovery meta), because node definitions synthesize from your JSON at boot — there is no code generation step, ever.
 
 ---
 

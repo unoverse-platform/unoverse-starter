@@ -327,7 +327,7 @@
             },
             {
               "type": "Input",
-              "placeholder": "Enter your business email address",
+              "placeholder": "Enter your email address",
               "bind": {
                 "value": "email"
               },

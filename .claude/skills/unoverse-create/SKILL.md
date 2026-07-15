@@ -66,7 +66,7 @@ required; justify any warning).
 
 | Artifact | To see it live |
 |---|---|
-| Component / atom / template / style | `./unoverse lint`, then `./unoverse gendesign` — restarts; nodes SYNTHESIZE from definitions (no codegen) |
+| Component / atom / template / style | `./unoverse lint`, then restart unoverse — nodes SYNTHESIZE from definitions (no codegen); deploy with `unoverse deploy design` |
 | Existing component restyle/edit only | takes effect live (SDK reads `rx/` directly) |
 | Agent skill / prompt block | `docker compose restart unoverse` |
 | Node | `./unoverse build @unoverse-platform/<pkg>` (or `./unoverse update nodes` for all) |

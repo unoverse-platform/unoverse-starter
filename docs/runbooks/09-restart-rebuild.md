@@ -1,6 +1,6 @@
 # Runbook: Restart & Rebuild
 
-Rebuild packages and restart services so the platform picks up your latest changes. Component nodes are definition-backed — they re-synthesize from `rx/` at boot, no generation step.
+Rebuild packages and restart services so the platform picks up your latest changes. Component nodes are definition-backed — they re-synthesize from `rx/` at boot; there is no generation step, ever.
 
 ## When To Use
 
@@ -20,18 +20,21 @@ Rebuild packages and restart services so the platform picks up your latest chang
 # Build one package only
 ./unoverse build @unoverse-platform/my-package
 
-# Restart — component nodes re-synthesize from rx/ definitions (no codegen)
-./unoverse gendesign
+# Restart only — component nodes re-synthesize from rx/ definitions at boot
+docker compose restart unoverse
 
 # Full dev setup — install deps, build, restart
 ./unoverse dev
 ```
 
-### Production Server (via Ansible)
+### Production Server
 
 ```bash
-cd ansible
-ansible-playbook -i inventory/production.yml playbooks/deploy-packages.yml
+# Design only (rx/): rsync + restart, no build — see 10-deploy-design.md
+unoverse deploy design
+
+# Full carve-out (nodes, rx, prompts): rsync + build + restart
+unoverse deploy packages
 ```
 
 ## What Each Step Does
@@ -40,8 +43,7 @@ ansible-playbook -i inventory/production.yml playbooks/deploy-packages.yml
 |------|---------|-------------|
 | **1. Install deps** | `npm install` | Installs workspace dependencies |
 | **2. Build packages** | `npm run build` | Compiles node packages (TypeScript → `dist/`) |
-| **3. Generate component nodes** | `./unoverse gendesign` | Runs the generator **inside the unoverse container**: reads your mounted `rx/` definitions, writes loadable component nodes to `apps/unoverse/nodes/components`, restarts |
-| **4. Restart unoverse** | `docker compose restart unoverse` | Reloads built packages and node definitions into the engine — the node catalog is loaded **at boot**, so a rebuild without a restart appears to do nothing |
+| **3. Restart unoverse** | `docker compose restart unoverse` | Reloads built packages, and re-synthesizes component nodes from `rx/` definitions — the node catalog is loaded **at boot**, so a rebuild without a restart appears to do nothing |
 
 ## Which change needs which step?
 
@@ -49,7 +51,7 @@ ansible-playbook -i inventory/production.yml playbooks/deploy-packages.yml
 |---|---|
 | A node package (`apps/unoverse/nodes/<pkg>/`) | `./unoverse build @unoverse-platform/<pkg>` |
 | An **existing** component/template's look (`rx/`) | nothing — definitions are read live; hard-refresh the client |
-| A **new** component, or props/structure changes (`rx/`) | `./unoverse gendesign` |
+| A **new** component, or props/structure changes (`rx/`) | `docker compose restart unoverse` |
 | A skill or prompt block (`prompts/`) | `docker compose restart unoverse` |
 
 ## Manual Step-by-Step (when CLI commands aren't enough)
@@ -61,14 +63,12 @@ npm install
 # 2. Build all node packages
 npm run build
 
-# 3. Restart so component nodes re-synthesize from rx/ (requires unoverse running)
-./unoverse gendesign
-
-# 4. Restart the service that loads packages (the workflow engine runs
-#    in-process in unoverse, so one restart covers everything)
+# 3. Restart the service that loads packages (the workflow engine runs
+#    in-process in unoverse, so one restart covers everything — component
+#    nodes re-synthesize from rx/ at this boot)
 docker compose restart unoverse
 
-# 5. Verify
+# 4. Verify
 ./unoverse status
 ```
 
@@ -81,8 +81,9 @@ When things are truly stuck:
 npm install
 npm run build
 ./unoverse start
-./unoverse gendesign
 ```
+
+`unoverse start` also rebuilds the universal component-node package in-container, so a cold start always runs fresh executor code.
 
 ## Verify
 
@@ -103,15 +104,15 @@ docker compose exec -T unoverse node -e \
 
 | Issue | Cause | Fix |
 |-------|-------|-----|
-| New component not in Canvas | component node not generated | `./unoverse gendesign` |
+| New component not in Canvas | unoverse not restarted since the definition was added | `docker compose restart unoverse` |
 | Node shows in Canvas but errors | Package not built | `./unoverse build` |
 | Component renders old version | Client caching | hard-refresh the browser |
 | `nodes: 0` in status | unoverse didn't load packages | Check `docker compose logs unoverse` |
 | Build fails | Dependencies missing | `npm install`, then `./unoverse build` |
-| gendesign fails | unoverse not running (the generator runs inside the container) | `./unoverse start` first |
 
 ## Related
 
 - [01-core.md](./01-core.md) — Initial deployment
-- [08-deploy-packages.md](./08-deploy-packages.md) — Deploy packages to production
+- [08-deploy-packages.md](./08-deploy-packages.md) — Deploy the full carve-out to production
+- [10-deploy-design.md](./10-deploy-design.md) — Deploy design (rx/) only to production
 - [06-test.md](./06-test.md) — Full health check

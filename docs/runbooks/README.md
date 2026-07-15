@@ -43,6 +43,8 @@ Modular runbooks for deploying and managing Gravity Platform VMs.
 | [06-test](./06-test.md)                                                                                              | Verify connectivity and health                                                   | `test-connectivity.yml`     |
 | [07-observability](./07-observability.md)                                                                            | Dozzle log viewer (POC only)                                                     | `install-observability.yml` |
 | [08-deploy-packages](./08-deploy-packages.md)                                                                        | Deploy customer packages to server                                               | `deploy-packages.yml`       |
+| [09-restart-rebuild](./09-restart-rebuild.md)                                                                        | Local restart & rebuild decision table                                           | —                           |
+| [10-deploy-design](./10-deploy-design.md)                                                                            | Deploy design (rx/) only: rsync + restart, no build                              | `deploy-design.yml`         |
 | [Architecture Diagrams](https://unoverse-platform.github.io/unoverse-starter/docs/runbooks/architecture-diagrams.html) | Interactive system architecture diagrams ([local](./architecture-diagrams.html)) | —                           |
 
 ---

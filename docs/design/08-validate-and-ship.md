@@ -8,7 +8,7 @@ The one command to remember:
 ./unoverse lint
 ```
 
-It runs the schema rules, the token law, and the state/structure rules over every definition, with each message citing the doc that owns the rule. Errors fail; warnings flag judgment calls (e.g. an untyped global slot); hints suggest niceties (a missing states fixture). Run it before every `gendesign`.
+It runs the schema rules, the token law, and the state/structure rules over every definition, with each message citing the doc that owns the rule. Errors fail; warnings flag judgment calls (e.g. an untyped global slot); hints suggest niceties (a missing states fixture). Run it before every restart/deploy.
 
 ---
 
@@ -90,7 +90,7 @@ What no linter can decide — audit every artifact against this before calling i
 
 ```bash
 ./unoverse lint          # clean?
-./unoverse gendesign     # restart — component nodes re-synthesize from rx/ (no codegen)
+docker compose restart unoverse    # component nodes re-synthesize from rx/ (no codegen)
 ./unoverse check         # health check: services, endpoints, node catalog
 ```
 

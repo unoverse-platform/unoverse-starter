@@ -78,7 +78,7 @@ apps `unoverse://apps/<org>/<name>`, themes `unoverse://theme/<org>/<theme>`.
 
 1. `./unoverse lint` — 0 errors (manifest layout/stateOrder, reaction rules, tokens, steps —
    all enforced with doc-cited messages).
-2. `./unoverse gendesign` to regenerate + restart.
+2. Restart unoverse (`docker compose restart unoverse`) — the node re-synthesizes.
 3. **See it**: Studio — the state picker walks the `states/` layers; then run it live and
    verify the bound workflow streams components into the flow, and reaction surfaces frame
    them, end-to-end.

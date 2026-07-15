@@ -57,5 +57,5 @@ no folders. Structure is EARNED; start flat.
 1. Study the closest exemplar; copy its folder shape.
 2. Write the envelope + manifest + layouts; put every shown thing in its ONE home.
 3. `./unoverse lint` — 0 errors (it cites the doc for every rule).
-4. `./unoverse gendesign` → Studio: mock (prop defaults + state picker + Inline/Focused
+4. Restart unoverse → Studio: mock (prop defaults + state picker + Inline/Focused
    toggle), then live. Debug: stream log → state inspector → definition; never guess.

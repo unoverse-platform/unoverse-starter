@@ -3,6 +3,8 @@
 # Rsyncs the three developer-editable folders (apps/unoverse/{nodes,rx,prompts})
 # from the local machine to the server, builds them, and restarts unoverse.
 #
+# For rx/-only design changes, use the faster deploy-design.yml (no build).
+#
 # Usage (via CLI — recommended):
 #   unoverse deploy packages
 #
@@ -69,6 +71,30 @@
       debug:
         msg: "{{ build_result.stdout_lines[-10:] | default(['done']) }}"
 
+    # nodes/components is NOT a root workspace (root globs are apps/* + plugin-base),
+    # so the turbo build above never compiles it — and the rsync excludes dist/
+    # (--delete never removes excluded dest files), so a stale dist can survive a
+    # deploy. ALWAYS build it in-container: a skip-if-present would silently run
+    # old executor code. It's a small tsc (seconds). tsc ignores NODE_PATH and the
+    # pruned image links no plugin-base — the only built copy is in the plugins
+    # volume, so symlink it into node_modules first.
+    - name: "[3b/4] Build the universal component-node package (tsc, in-container)"
+      shell: |
+        cd {{ gravity_dir }}
+        docker compose exec -T unoverse sh -c '
+          if [ ! -d /app/plugins/node_modules/@unoverse-platform/plugin-base ]; then
+            echo "plugin-base not installed in the plugins volume — run: unoverse deploy marketplace"; exit 1
+          fi
+          mkdir -p /app/node_modules/@unoverse-platform
+          ln -sfn /app/plugins/node_modules/@unoverse-platform/plugin-base /app/node_modules/@unoverse-platform/plugin-base
+          cd /app/apps/unoverse/nodes/components && npm run build
+        ' 2>&1 | tail -15
+      register: component_build_result
+
+    - name: "[3b/4] Component-node package build output"
+      debug:
+        msg: "{{ component_build_result.stdout_lines[-15:] | default(['done']) }}"
+
     - name: "[4/4] Restart unoverse (reloads customer node packages)"
       shell: |
         cd {{ gravity_dir }}
@@ -82,6 +108,7 @@
           ============================================
           DEVELOPER CARVE-OUT DEPLOYED (nodes, rx, prompts)
           ============================================
-          Build:   {{ 'OK' if build_result.rc == 0 else 'FAILED' }}
-          Restart: {{ 'OK' if restart_result.rc == 0 else 'FAILED' }}
+          Build:      {{ 'OK' if build_result.rc == 0 else 'FAILED' }}
+          Components: {{ 'OK' if component_build_result.rc == 0 else 'FAILED' }}
+          Restart:    {{ 'OK' if restart_result.rc == 0 else 'FAILED' }}
           ============================================

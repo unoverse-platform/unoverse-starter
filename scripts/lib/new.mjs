@@ -78,7 +78,7 @@ Next:
      (a Switch), enumerate them as states/<layer>.json — the folder IS Studio's state
      picker (docs/design/07).
   3. ./unoverse lint            # authoring-time checks
-  4. ./unoverse gendesign       # regenerate the component node + restart
+  4. docker compose restart unoverse   # the node synthesizes from the definition at boot
   5. Preview in Studio: mock (prop defaults + state picker), then live.   (docs/design/01)`);
 } else {
   const dir = join(RX, "orgs", org, "templates", slug);
@@ -126,5 +126,5 @@ Next:
   1. Fill the TODOs — especially binding.workflow + binding.trigger (the app OWNS its workflow).
   2. Build the surface in layouts/main.json + states/ (mirror rx/orgs/bpp/templates/bppchatlayout).
      Reaction surfaces select by STATE: where:{field:"defaultState",eq:"focused"} — never by type.
-  3. ./unoverse lint, then ./unoverse gendesign, then preview in Studio.`);
+  3. ./unoverse lint, then restart unoverse, then preview in Studio.`);
 }

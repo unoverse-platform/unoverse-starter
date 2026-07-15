@@ -128,7 +128,7 @@ cmd_update() {
     # NOTE: component nodes are DEFINITION-BACKED (no generation): the universal
     # node package (nodes/components, shipped pre-built) synthesizes one node per
     # rx/components/* definition at boot. Component changes need only a restart —
-    # `unoverse gendesign` does that (and builds the package if dist is missing).
+    # a restart does that (start/dev also rebuild the package if dist is stale).
   ) &
   local build_pid=$!
   local build_start=$(date +%s)
@@ -219,7 +219,7 @@ cmd_update_nodes() {
 
   # Step 3 (retired): component nodes are DEFINITION-BACKED — no generation step.
   # They synthesize from rx/components at boot; the universal package is built
-  # in-container by `unoverse gendesign` when its source changes.
+  # in-container on start/dev (and by `unoverse deploy packages` on the server).
 
   # Step 4: Restart
   printf "  ${DIM}●${NC} Restarting unoverse..."
