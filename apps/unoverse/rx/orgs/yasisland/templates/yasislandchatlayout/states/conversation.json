@@ -1,0 +1,35 @@
+{
+  "type": "Box",
+  "visibleWhen": "hasMessages",
+  "autoScroll": true,
+  "style": {
+    "flex": 1,
+    "minHeight": "0",
+    "direction": "column",
+    "overflow": "auto",
+    "padding": [
+      "6",
+      "8"
+    ]
+  },
+  "children": [
+    {
+      "type": "Timeline",
+      "style": {
+        "direction": "column",
+        "gap": "md",
+        "margin": ["auto", "0", "0", "0"]
+      },
+      "assistantData": {
+        "avatarUrl": "https://res.cloudinary.com/sonik/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1783842460/gravity/avatar2.avif",
+        "thinkingText": "Thinking…"
+      },
+      "user": {
+        "$include": "components/user-turn"
+      },
+      "assistant": {
+        "$include": "components/assistant-turn"
+      }
+    }
+  ]
+}

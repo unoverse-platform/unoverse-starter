@@ -1,0 +1,26 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "row",
+    "align": "center",
+    "justify": "space-between",
+    "padding": "md",
+    "background": "transparent"
+  },
+  "children": [
+    {
+      "type": "Image",
+      "style": {
+        "height": "8",
+        "fit": "contain"
+      },
+      "src": "https://res.cloudinary.com/sonik/image/upload/v1784044604/gravity/yasLogo.avif",
+      "alt": "Yas Island Assistant"
+    },
+    {
+      "type": "Ref",
+      "ref": "close-button",
+      "action": "close"
+    }
+  ]
+}

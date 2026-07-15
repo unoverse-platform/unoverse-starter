@@ -5,7 +5,8 @@
   "category": "Assistant",
   "version": "1.0.0",
   "defaultState": "template",
-  "width": "70vw",
+  "width": "55vw",
+  "focusWidth": "90vw",
   "inputSchema": {
     "type": "object",
     "properties": {
@@ -15,6 +16,7 @@
       }
     }
   },
+  "stateOrder": ["welcome", "conversation", "focus", "course", "apply"],
   "autoTrigger": false,
   "expose": {
     "openaiApps": false
@@ -23,7 +25,5 @@
     "workflow": "wf-8koixv",
     "trigger": "inputtrigger1"
   },
-  "previewComponents": [
-    "MarkdownRenderer"
-  ]
+  "layout": "main"
 }

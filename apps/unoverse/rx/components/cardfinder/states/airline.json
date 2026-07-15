@@ -16,9 +16,6 @@
     },
     {
       "type": "Each",
-      "bind": {
-        "items": "airlineOptions"
-      },
       "style": {
         "direction": "column",
         "gap": "2",
@@ -52,7 +49,24 @@
             }
           ]
         }
-      }
+      },
+      "items": [
+        {
+          "value": "emirates",
+          "label": "Emirates",
+          "description": "Earn Skywards miles"
+        },
+        {
+          "value": "saudia",
+          "label": "SAUDIA",
+          "description": "Earn AlFursan miles"
+        },
+        {
+          "value": "none",
+          "label": "No preference",
+          "description": "Flexible rewards across airlines"
+        }
+      ]
     }
   ]
 }

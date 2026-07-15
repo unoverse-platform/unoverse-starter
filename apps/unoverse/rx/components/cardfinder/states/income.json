@@ -16,9 +16,6 @@
     },
     {
       "type": "Each",
-      "bind": {
-        "items": "incomeOptions"
-      },
       "style": {
         "direction": "column",
         "gap": "2",
@@ -52,7 +49,25 @@
             }
           ]
         }
-      }
+      },
+      "items": [
+        {
+          "value": "<7000",
+          "label": "Less than 7,000 SAR"
+        },
+        {
+          "value": "7000-12000",
+          "label": "7,000 \u2013 12,000 SAR"
+        },
+        {
+          "value": "12000-20000",
+          "label": "12,000 \u2013 20,000 SAR"
+        },
+        {
+          "value": "20000+",
+          "label": "20,000+ SAR"
+        }
+      ]
     }
   ]
 }

@@ -3,7 +3,7 @@
 > **Status**: 🟢 Guide (June 2026) — the single source of truth for *writing definitions*.
 > **Audience**: anyone creating or reviewing `apps/unoverse/rx/**` definitions.
 > **Companions**: [`UNOVERSE_STATE_MODEL.md`](./UNOVERSE_STATE_MODEL.md) (where state lives),
-> [`UNOVERSE_LAYERS.md`](./UNOVERSE_LAYERS.md) (how state organizes UI — `blocks/` + `states/`),
+> [`UNOVERSE_LAYERS.md`](./UNOVERSE_LAYERS.md) (how state organizes UI — `layouts/` + `states/` + `components/`),
 > [`UNOVERSE_CONFORMANCE.md`](./UNOVERSE_CONFORMANCE.md) (how these rules are **enforced** — the
 > editor JSON Schema + guard tests), [`UNOVERSE_SPEC.md`](./UNOVERSE_SPEC.md) (rendering), and the
 > SDK's `FRAMEWORK.md` (the laws the engine obeys).
@@ -32,7 +32,7 @@ never *how to move between states* (that's just `setValue` writing a field, then
 | re-render on change | the store notifies → the renderer **redraws the whole tree** |
 | `{cond && <X/>}` | **`visibleWhen`** |
 | `switch (x) { case … }` | the **`Switch`** node (`on` + `cases`) |
-| `items.map(...)` | **`Each`** (`bind.items` + `template`) |
+| `items.map(...)` | **`Each`** (`template` + literal `items: []`, or `bind.items` for workflow-fed lists) |
 | `<Button/>` (a shared component) | a **`Ref`** to an atom |
 | extracting `<StepX/>` to a file | `{ "$include": "step-x" }` |
 | a conditional `className` | **`style.when`** |
@@ -50,7 +50,7 @@ Every component, template, and atom is one JSON file with the same envelope:
   "name": "Card",               // display name (independent of the filename)
   "category": "Content",        // grouping in the palette
   "description": "…",           // what it is
-  "whenToUse": "…",             // when an author/agent should pick it (REQUIRED for components)
+  "whenToUse": "…",             // selection text — lives in manifest.json when discoverable (envelope form only for flat, manifest-less components)
   "props": { /* see §3 */ },
   "root": { /* the primitive tree — the UI */ }
 }
@@ -63,30 +63,54 @@ Every component, template, and atom is one JSON file with the same envelope:
 
   | Kind | Lives in | Form |
   |---|---|---|
-  | component | `rx/components/<name>/<name>.json` (or flat `rx/components/<name>.json`) | folder form unlocks `$include` |
-  | template | `rx/orgs/<org>/templates/<name>/<name>.json` (+ `manifest.json`) | org-scoped; folder form for apps |
+  | component | `rx/components/<name>/<name>.json` + optional `manifest.json` (render contract + discovery) + `layouts/` (faces, filename = state name) + `states/` + `components/` | flat `rx/components/<name>.json` for a simple one-face card |
+  | template | `rx/orgs/<org>/templates/<name>/` — **manifest-only**: `manifest.json` IS the envelope; root = `layouts/<manifest.layout>.json` (+ `states/`, `components/`) | org-scoped; no `<name>.json` |
   | atom | `rx/atoms/<name>.json` | shared partials, never served standalone |
 
 ---
 
 ## 3. Props & `bind` — the data contract
 
+> **The discipline (July 2026): components are CONTAINED MICROAPPS.** A component is a
+> light, self-contained app. Everything it shows has exactly ONE of three homes —
+> anything else is **slop**:
+>
+> 1. **Hardcoded content** — copy, titles, option lists, images are LITERALS in the
+>    layout (`value` on Text, `items` on Each, `src`/`alt` on Image). Never props,
+>    **never the `state` block.**
+> 2. **`state` block — SCALAR internal view-state ONLY** — the mutable keys the
+>    component's own actions write (`step`, `phase`, `progressPct`, `questionLabel`),
+>    with their initial values. It is **NOT a content home**: an **array** (a finder's
+>    `courses`), an **object**, a **URL** (`heroImage`), or any **workflow-fed data**
+>    sitting in `state` is slop — move it out (→ #1 or #3). Merged into the render scope
+>    beneath the live slice.
+> 3. **`props` (`input: true`)** — the EXTERNAL contract: the workflow-fed data a run
+>    streams in (a finder's matched `courses`, the user's real accounts), each with a
+>    mock `default` for preview. A component with no workflow feed has an empty/absent
+>    props block.
+>
+> The **arrival `defaultState` is NOT in the `state` block** — it's the render contract,
+> declared in the component **manifest** (an open name, default `"inline"`; §3a).
+>
+> The audit is mechanical: static content → hardcode in the layout; a **scalar** the
+> component mutates → `state`; data the workflow feeds → `props` (`input: true`); the
+> arrival face → the **manifest**. **An array / object / URL in `state` is the tell for
+> #1 or #3 slop.** (CardFinder went from ~60 props to ZERO props + a lean scalar `state`.)
+
 `props` declares every field the UI reads, with a `type` and a **`default`** (the mock value
 the workbench renders):
 
 ```jsonc
 "props": {
-  "title":        { "type": "string", "default": "Lightsaber Combat Training" },
-  "defaultState": { "type": "string", "default": "inline" },     // a view-state field
-  "step":         { "type": "string", "default": "source" },     // a discriminant
-  "accounts":     { "type": "array",  "input": true, "default": [ /* mock rows */ ] }
+  "accounts": { "type": "array", "input": true, "default": [ /* mock rows for preview */ ] }
 }
 ```
 
-- **`default`** is the value shown in Mock mode (and the fallback). **Every bound field must
-  have a prop** with a `default`, or the workbench shows nothing.
-- **`input: true`** marks a field **fed by the workflow at runtime** (the `default` is just the
-  mock). Plain props are static config/content.
+- **Every prop is `input: true`** — the external workflow feed, nothing else. Static content is
+  hardcoded in the layout; view-state initials live in the `state` block; the arrival
+  `defaultState` lives in the manifest. (A *flat, manifest-less* card streamed with simple
+  fields may still declare them as `input: true` props — its whole surface IS the feed.)
+- **`default`** is the mock value Studio renders — realistic content, not empty strings.
 
 A node reads a prop with **`bind`** (`targetProp → dataField`):
 
@@ -97,6 +121,58 @@ A node reads a prop with **`bind`** (`targetProp → dataField`):
 { "type": "Each",   "bind": { "items": "accounts" }, "template": { /* per-row */ } }
 { "type": "Icon",   "bind": { "name": "iconField" } }   // or literal "icon": "expand"
 ```
+
+---
+
+## 3a. Spatial discovery — the OPTIONAL component `manifest.json`
+
+A basic component needs **no manifest** — a workflow **streams** it in (path **D**),
+it renders, it's done. Add a `manifest.json` to the component folder **only when the
+component should be discoverable in Spatial** (indexed into the 3D knowledge map,
+ranked against user intent by findIntent). The manifest's **presence IS the
+capability** — there is no flag inside it, and nothing else grants it.
+
+> **What "discoverable" means, precisely (native MCP — see `UNOVERSE_MCP_TEMPLATE_PROTOCOL.md`
+> §0.1 paths B/C).** A discoverable component is published as a standard **MCP app**: it
+> registers a tool whose `_meta.ui.resourceUri` is a `ui://` shell that renders this
+> component. When findIntent surfaces it, the LLM does an ordinary `tools/call`, the result
+> carries the UI, and **the SDK renders the card into the chat** — *no workflow, no
+> `COMPONENT_INIT` emit, no "the LLM renders a component."* This is **additive to** streaming,
+> not a replacement: a self-contained component (path **B**) carries its own data in its
+> `state` block; a **node-hydrated** card (path **C**) is a shell a spatial data node fills.
+> A component being *streamed by a workflow* (path **D**, e.g. AIResponse) is unchanged and
+> remains the standard runtime paint path. The manifest here is what turns a plain component
+> into a path-B app; a path-C card is a normal component whose data arrives from a node.
+
+The manifest carries only discovery meta:
+
+```jsonc
+// rx/components/cardfinder/manifest.json
+{
+  "title": "Card Finder",                       // display name (falls back to the def name)
+  "description": "A guided card-finder quiz: a few eligibility and preference questions ending in a best-fit card recommendation.",
+  "whenToUse": "Find the right card for me — which card should I get, what card is best for travel or rewards, am I eligible? A few quick questions end in one personalised best-fit recommendation with the reasons why it fits.",
+  "category": "Input",
+  "version": "1.0.0"
+}
+```
+
+- **`description`** — what it IS: the listing subtitle, **one short line (≤120 chars,
+  guard-enforced)**. No "use when…" inside it — detail belongs in `whenToUse`.
+- **`whenToUse`** — the **selection text** findIntent ranks against the user's OWN
+  message, so write it **utterance-shaped** — the words the user would actually say
+  ("Find the right card for me — which card should I get…") — never selector-shaped
+  dev framing ("Pick when the user asks to…", guard-rejected). When present it
+  replaces `description` in the embedded text. Full contract:
+  `docs-starter/nodes/14-node-discoverability.md` (the templates/skills section
+  applies to components verbatim).
+- The manifest is the **single home** for this meta — the envelope must not
+  duplicate `description`/`whenToUse` (guard-enforced). The server merges the
+  manifest over the def, so every consumer reads one shape.
+- Exposure is **two toggles, both off by default**: the manifest makes the Studio
+  "Spatial" toggle appear on the component (Level 1 — workbench eligibility); the
+  Content Engine then opts it onto a specific workflow's map (Level 2 — presence),
+  where it's indexed and trained like any skill or template.
 
 ---
 

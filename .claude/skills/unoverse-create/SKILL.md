@@ -66,7 +66,7 @@ required; justify any warning).
 
 | Artifact | To see it live |
 |---|---|
-| Component / atom / template / style | `./unoverse lint`, then `./unoverse gendesign` — regenerates component nodes + restarts |
+| Component / atom / template / style | `./unoverse lint`, then `./unoverse gendesign` — restarts; nodes SYNTHESIZE from definitions (no codegen) |
 | Existing component restyle/edit only | takes effect live (SDK reads `rx/` directly) |
 | Agent skill / prompt block | `docker compose restart unoverse` |
 | Node | `./unoverse build @unoverse-platform/<pkg>` (or `./unoverse update nodes` for all) |
@@ -76,4 +76,4 @@ the Studio: set `UNOVERSE_WORKBENCH=1` on the `unoverse` service, open the API p
 
 > In the platform monorepo (not the starter), the node docs live at
 > `docs-starter/nodes/`, the design journey at `docs-starter/design/`, and the dev loop
-> is `npm run dev` + `npm run nodegen:local`.
+> is just `npm run dev` — component nodes synthesize from rx/ definitions at boot.

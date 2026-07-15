@@ -5,7 +5,7 @@
 > §9 = the concrete as-built SDK surface (store API, wire messages, action verbs).
 > **Companion to**: [`UNOVERSE_SPEC.md`](./UNOVERSE_SPEC.md) (rendering),
 > [`UNOVERSE_MCP_TEMPLATE_PROTOCOL.md`](./UNOVERSE_MCP_TEMPLATE_PROTOCOL.md) (transport),
-> [`UNOVERSE_LAYERS.md`](./UNOVERSE_LAYERS.md) (how state organizes UI — `blocks/` + `states/`).
+> [`UNOVERSE_LAYERS.md`](./UNOVERSE_LAYERS.md) (how state organizes UI — `layouts/` + `states/` + `components/`).
 >
 > **One line:** the client holds **three buckets — conversation, component state, template
 > state** — written by **two generic paths** (merge into a component, or into template state).
@@ -126,7 +126,23 @@ concept, which is exactly what this model forbids.)
 | A widget's own focused/inline look | its slice via `setValue { defaultState }` | `visibleWhen: { field: "defaultState", … }` |
 | A screen-wide focus surface (hide input, etc.) | template state via `setTemplateValue { defaultState: "focus" }` | `visibleWhen: { field: "defaultState", eq: "focus" }` |
 
+> **⚠️ Superseded (July 2026) — see §5b.** The second row (a component chaining
+> `setTemplateValue { defaultState: "focus" }` to open the template's surface) is the
+> OLD bridge. Under the reaction contract, a component writes **only its own slice**
+> (`setValue { defaultState: "focused" }`) and the template *reacts* via a state
+> selector — template-focus is derived, not stored. The `setTemplateValue` verb
+> remains for state that is genuinely the template's own (panels, draft).
+
 ### 5a. Focus rendering is **template-local** — same `defaultState`, different surface per template
+
+> **⚠️ Mechanics superseded (July 2026) — see §5b.** What SURVIVES from this section:
+> the surface is each template's own business (the table below), arrival states are open
+> names, unknown names are inert. What CHANGES: the signal is no longer a template-state
+> key written via `TEMPLATE_DATA` / `setTemplateValue` — the component's state lives in
+> **its own slice** (arrival data or `setValue`), and the template surface **selects on
+> it** (`ComponentSlot.select.where`). The `TEMPLATE_DATA { defaultState }` emit and the
+> user-action `setTemplateValue` writes described below are the old bridge, to be swept
+> as templates migrate to selectors.
 
 The screen-wide signal is a single template-state key, **`defaultState`** (a *value*, not a per-feature
 boolean — so future modes branch with zero protocol change). *How* a mode looks is **each
@@ -143,18 +159,122 @@ Same `defaultState: "focus"`, two completely different renderings — because th
 template definition, not the SDK. A new template (or a new mode value) can present any way it
 likes (modal, sheet, split) with zero SDK change.
 
-**Who sets it, on load.** The **component's own node** does — derived from its meta. A widget
-that declares `defaultState` default `"focused"` is a focus widget; nodegen reads that
-(`metadata.defaultState` — declared in the definition, `defaultState` derivation as legacy fallback) and the generated node emits `TEMPLATE_DATA { defaultState: "focus" }` **on publish**,
-alongside its `COMPONENT_INIT`. So the active template opens its focus surface the instant the
-widget streams in — the load-time equivalent of a user expanding it. The user's own
-expand/close actions write the same key (`setTemplateValue { defaultState: "focus" }` / `{ defaultState: null }`).
+**Who sets it, on load.** The **component's own node** does — declared in its definition
+envelope: `defaultState: "<name>"` (an OPEN name; the legacy derivation — a `defaultState`
+prop defaulting `"focused"` ⇒ `"focus"` — remains as fallback). The universal component node passes it through
+(`metadata.defaultState`) and the generated node emits `TEMPLATE_DATA { defaultState: "<name>" }`
+**on publish**, alongside its `COMPONENT_INIT`. So the active template reacts the instant the
+widget streams in. The name is the contract, not an enum:
+- a wizard declares `"focus"` → the template opens its focus surface (the load-time
+  equivalent of a user expanding it);
+- a CourseCard declares `"course"` → a template that defines a `course` state frames the
+  arriving cards its own way (a rail, a grid, anything); one that doesn't simply renders
+  them inline in the flow — unknown names are inert, so new arrival states ship with zero
+  protocol change.
+The user's own expand/close actions write the same key (`setTemplateValue { defaultState:
+"focus" }` / back to the arrival name, e.g. `{ defaultState: "course" }`).
 The **component stays fit-to-content** (its own card); the **template** decides the framing.
 
 This pairs with the **app**-level `defaultState` (manifest, formerly `mode` — still read as fallback; `template` = fluid surface · `focus` = fit
 content — [`UNOVERSE_MCP_TEMPLATE_PROTOCOL.md`](./UNOVERSE_MCP_TEMPLATE_PROTOCOL.md) §4b): the
 manifest `defaultState` sets the app's height/routing, the streamed component's node sets the live
 `defaultState` template-state value the surface reads. Same vocabulary, both layers.
+
+### 5b. The reaction contract — components write themselves, templates react (July 2026, FINAL)
+
+> Think **Redux**: ONE store; a component dispatches only to **its own slice**;
+> templates are **pure views with selectors** over that store. Every write goes one
+> direction — a component writes itself; everything else only reads.
+
+**Component state is the single driver.** A component's state lives in its slice
+(`chatId:nodeId`) and changes exactly two ways — both the same write:
+
+- **Arrival**: the component streams in with its state already set (e.g.
+  `defaultState: "focused"` in its initial data).
+- **Interaction**: the user clicks it into a state (`setValue { defaultState: "focused" }`),
+  now or ten turns later — the selector doesn't care when a component arrived, only
+  what state it's in.
+
+**Templates react via selectors — never by type, never by id.** A template surface
+declares *what state it reacts to*:
+
+```jsonc
+{ "type": "ComponentSlot",
+  "select": { "where": { "field": "defaultState", "eq": "focused" }, "limit": 1 } }
+```
+
+- Component enters a state the template has a surface for → the surface renders it.
+- State the template doesn't know → no selector matches → **nothing happens; the
+  component stays inline.** No error, no registry of valid states.
+- "Which component?" is **intrinsic** — the one that changed state is the one selected.
+- **Conflicts: most recent wins** (`limit: 1`, recency-ordered) — plain last-writer-wins.
+- **One instance → one placeholder.** Every view has a placeholder: the conversation
+  **flow** is the placeholder for `inline`; a **reaction surface** is the placeholder for
+  a named view. While a component's view matches a surface, it renders **there** — the SDK
+  *lifts it out of the flow* into the surface, so the same instance never paints in two
+  places (a surface beside the flow does not double-render — authors never hide a flow
+  copy with `hideBelow` or a covering overlay). A view no surface claims stays in the flow
+  (the fallback). Its data lives in the conversation history throughout. **Close = the
+  component sets its own view back** (its expanded face includes its own ✕; template chrome
+  never writes a component's slice) → the surface releases it → it's back in the flow.
+  *(SDK: the timeline renders only the turn's un-claimed instances — `template.tsx`
+  `collectSurfacedViews` + the per-turn `shown` filter.)*
+- **State is local; the view is the interface.** A component's internal state (`step`,
+  `phase`) is private. Only the **view** (`defaultState`) crosses to the template — a
+  surface selects on `defaultState`, never on an internal key (lint-enforced).
+- **Many instances are fine** — the one-placeholder rule is *per instance*. A source may
+  stream many cards; the **template owns how a placeholder lays them out** (a flow list, a
+  single focus via `limit: 1`, a rail/grid) via its `select`.
+
+**Template-focus is DERIVED, not stored** (same principle as `lifecycle`, §3): "am I
+in focus mode?" = "does any component match my focus selector?". Template state remains
+only for things that are genuinely the template's own (its panels, its draft).
+
+**Most components are flat — one state (inline).** States are never required; a simple
+card or chart just is its inline rendering. Studio shows every component's states as
+standard (a flat component shows its single "Inline" chip; a stateful one shows a
+clickable chip per state) — visibility is universal, multiplicity is earned. Component
+states are **private**: designed and stepped in Studio, managed by the component at
+runtime, read by nobody except a template selector matching on them.
+
+**Components are contained microapps — light, self-contained, state-driven.** All
+static content is hardcoded in the def; internal state + initial values live in the
+def's **`state` block** (never props); **`props` remain only for the rare
+`input: true` workflow feed** — a contained microapp has an empty props block.
+
+**The two MASTER states — `inline` / `focused` — pick the face.** Every component has
+two master faces (`layouts/inline` + `layouts/focused` — the layout FILENAME is the state name; a custom state gets `layouts/<name>`), and the root picks between
+them with a `Switch on defaultState` (`focused` → full; `inline` and the default case
+→ compact — inline is the universal default). The face is a **state decision, not a
+width decision**: the same `defaultState` write that makes a template's focus selector
+match also flips the component to its full face — one key drives both. Container
+queries (`hideBelow`/`hideAbove`) remain for fine responsive adjustments *inside* a
+face (e.g. hiding a side image when narrow), never for picking the face. The master
+states are universal chrome (Studio shows them apart from the component's own states);
+a component's *own* states (`states/`, ordered by `stateOrder`) are its private steps.
+Full discipline: [`UNOVERSE_AUTHORING.md`](./UNOVERSE_AUTHORING.md) §3; enforced by
+`server/src/runtime/microapp-structure.test.ts`.
+
+**The two global rules — the only protocol-level behavior:**
+
+1. **`template` swaps the shell.** The one reserved name: `resources/read` the named
+   template, re-render the whole surface. Safe because the template owns nothing
+   (§2e-0 of the spec) — conversation, components, and data stay in the store; the new
+   template reacts to the same component states through *its own* selectors.
+2. **Inline is the universal default.** No state, or a state this template has no
+   selector for → the component renders inline. Always, always, always.
+
+**This SUPERSEDES the earlier bridge mechanics** (deletions, to sweep as templates
+migrate): the component→template `then: setTemplateValue { defaultState: "focus" }`
+chain; the universal component node's `TEMPLATE_DATA { defaultState: "focus" }` emit-on-publish; and
+type-pinned focus slots (`select: { type: ["SomeWidget"] }` — a template naming a
+component type was always the violation). SDK addition required:
+`ComponentSlot.select.where` (match components by state field/value — generic, no
+feature names in core). Status: to build.
+
+> **Authoring discipline:** since state names are open, keep them consistent per org —
+> `focused` in one component and `focus` in another silently fragments the vocabulary
+> templates select on. Convention, not protocol.
 
 ---
 

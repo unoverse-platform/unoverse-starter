@@ -54,7 +54,7 @@ Three developer-editable folders are mounted into the running platform:
 
 | Folder | What it is | To see changes live |
 |--------|------------|---------------------|
-| `apps/unoverse/rx/`      | **Design** — components, atoms, org templates + styles (JSON definitions) | `./unoverse gendesign` (restyles of existing components apply live) |
+| `apps/unoverse/rx/`      | **Design** — components, atoms, org templates + styles (JSON definitions) | `./unoverse gendesign` (restart — nodes synthesize from definitions; restyles apply live) |
 | `apps/unoverse/prompts/` | **Behavior** — agent skills (`skills/`) + prompt blocks (`blocks/`) | `docker compose restart unoverse` |
 | `apps/unoverse/nodes/`   | **Logic** — custom workflow node packages (TypeScript) | `./unoverse build @unoverse-platform/<pkg>` |
 
@@ -96,7 +96,7 @@ and approve the `unoverse-builder` server the first time Claude Code asks.
 | `unoverse check` | Health check: services, endpoints, node catalog, bundles |
 | `unoverse logs [service]` | Stream logs |
 | `unoverse build [pkg]` | Build node packages + restart (all, or one) |
-| `unoverse gendesign` | Regenerate component nodes from `rx/` + restart |
+| `unoverse gendesign` | Restart so component nodes re-synthesize from `rx/` (definition-backed, no codegen) |
 | `unoverse update` | Full update: git sync + pull images + rebuild + restart |
 | `unoverse doctor` | Diagnose issues |
 | `unoverse db-setup` | Apply database migrations |

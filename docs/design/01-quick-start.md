@@ -97,12 +97,12 @@ Two mechanisms, both already in your file:
 
 ```bash
 ./unoverse lint         # authoring-time checks: schema rules, tokens, state rules — with doc-cited messages
-./unoverse gendesign    # regenerate + restart
+./unoverse gendesign    # restart — nodes synthesize from your definitions
 ```
 
-`gendesign` regenerates the component nodes from `rx/` (nodegen), rebuilds, and restarts the platform. Your `PriceCard` is now:
+Component nodes are **definition-backed**: one universal executor serves every component, and the platform synthesizes a node per definition at boot — there is no code generation. `gendesign` just restarts so your new definition is picked up. Your `PriceCard` is now:
 
-- a **node** any workflow can drop on the canvas and stream data into, and
+- a **node** any workflow can use — copy it from Studio (**⧉ Copy for Canvas**) and paste (`Cmd+V`) onto the canvas, wire data into its props — and
 - an **MCP resource** every channel (web, native, Studio) renders natively.
 
 ---

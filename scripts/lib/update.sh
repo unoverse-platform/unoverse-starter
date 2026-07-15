@@ -125,9 +125,10 @@ cmd_update() {
     fi
     # Turbo handles build dependencies, no need to build plugin-base separately
     npm run build --workspaces --if-present >> "$build_log" 2>&1 || true
-    # NOTE: component-node generation is NOT run here. Starters ship pre-generated
-    # nodes/components; regenerate on demand with `unoverse gendesign` (runs nodegen
-    # inside the unoverse container). See scripts/lib/build.sh.
+    # NOTE: component nodes are DEFINITION-BACKED (no generation): the universal
+    # node package (nodes/components, shipped pre-built) synthesizes one node per
+    # rx/components/* definition at boot. Component changes need only a restart —
+    # `unoverse gendesign` does that (and builds the package if dist is missing).
   ) &
   local build_pid=$!
   local build_start=$(date +%s)
@@ -216,11 +217,9 @@ cmd_update_nodes() {
   printf "\r\033[2K"
   ok "${pkg_count} packages built"
 
-  # Step 3: Generate nodes
-  printf "  ${DIM}●${NC} Generating nodes..."
-  (cd "$ROOT" && npm run gen:nodes >/dev/null 2>&1) || true
-  printf "\r\033[2K"
-  ok "Nodes generated"
+  # Step 3 (retired): component nodes are DEFINITION-BACKED — no generation step.
+  # They synthesize from rx/components at boot; the universal package is built
+  # in-container by `unoverse gendesign` when its source changes.
 
   # Step 4: Restart
   printf "  ${DIM}●${NC} Restarting unoverse..."

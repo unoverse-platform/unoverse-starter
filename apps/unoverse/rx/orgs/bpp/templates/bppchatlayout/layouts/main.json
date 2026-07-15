@@ -1,0 +1,91 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "row",
+    "width": "full",
+    "height": "full",
+    "background": "brand.bpp.gradient"
+  },
+  "children": [
+    {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "flex": 1.3,
+        "minWidth": 0,
+        "minHeight": "0"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "flex": 1,
+            "minHeight": "0",
+            "position": "relative"
+          },
+          "children": [
+            {
+              "$include": "components/header"
+            },
+            {
+              "type": "Box",
+              "style": {
+                "direction": "column",
+                "flex": 1,
+                "minHeight": "0",
+                "position": "relative",
+                "when": [
+                  {
+                    "field": "hasMessages",
+                    "eq": true,
+                    "apply": {
+                      "background": "brand.bpp.paper",
+                      "radiusTopLeft": "2xl",
+                      "overflow": "hidden"
+                    }
+                  }
+                ]
+              },
+              "children": [
+                {
+                  "$include": "states/welcome"
+                },
+                {
+                  "$include": "states/conversation"
+                }
+              ]
+            },
+            {
+              "type": "Box",
+              "style": {
+                "position": "absolute",
+                "bottom": "0",
+                "left": "0",
+                "right": "0",
+                "direction": "column"
+              },
+              "children": [
+                {
+                  "$include": "components/suggestions"
+                }
+              ]
+            },
+            {
+              "$include": "states/focus"
+            }
+          ]
+        },
+        {
+          "$include": "components/composer-bar"
+        }
+      ]
+    },
+    {
+      "$include": "states/course"
+    },
+    {
+      "$include": "states/apply"
+    }
+  ]
+}

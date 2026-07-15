@@ -76,6 +76,27 @@ Everything you author reads from the first lane. The second lane belongs to nati
 
 ---
 
+## 🎨 The four ways a component renders
+
+Every design component reaches the chat by one of **four paths** — two in the workflow world, two discovered natively from spatial. **Every path ends identically:** the SDK renders your definition into the conversation. Knowing which path you're on tells you *where the data comes from* and *whether a workflow is involved*. (Canonical: `docs/unoverse/UNOVERSE_MCP_TEMPLATE_PROTOCOL.md` §"The four ways UI reaches the chat".)
+
+| # | Way to render | Where the data comes from | Workflow? |
+|---|---|---|---|
+| **A** | **Template app** — you bind a workflow to a template; the workflow drives the whole surface (the app shell — `binding` in the manifest, [05](./05-templates.md)). | the bound workflow | ✅ |
+| **B** | **Self-contained component app** — the component **is its own MCP app** (a tool + `ui://`); spatial surfaces it, the agent reacts natively, and the SDK renders it **as-is**. It carries its own `state`. | the component itself | ❌ |
+| **C** | **Node-hydrated component** — a spatial **data node** carries an assigned component **URI** (a card shell); on discovery the node **hydrates** that component with its data and the SDK renders the filled card. | a spatial data node | ❌ |
+| **D** | **Streamed component** — a workflow node emits `COMPONENT_INIT`/`DATA` mid-run and the component **streams in** (the classic runtime paint path for **A**). | the running workflow | ✅ |
+
+**Two worlds:**
+- **A + D — the workflow world.** Assign a workflow; it drives the surface (A) and streams its pieces in (D). Streaming is the standard runtime paint path, not a legacy one.
+- **B + C — the native-MCP-from-spatial world.** The component is **discovered**, not pushed. **B** carries its own data; **C** is a reusable card shell a spatial node fills.
+
+**The one rule that keeps B + C pure:** a component is never a callable primitive. The discovered unit is a standard **MCP app** (a tool with a `ui://` resource); the agent does an ordinary `tools/call`, the result carries the UI, and the **SDK** renders it. Nothing component-specific is invented.
+
+**This axis is orthogonal to *presentation*.** The four ways are only *how the data arrives*. Once a component is in the store — by **any** of the four — how it's **shown** is the **reaction contract**: the component carries its **own `defaultState`** and owns its faces (`inline`, `focused`, `course`, …); a **template reacts** to that state via a `ComponentSlot.select.where` surface and frames the matching face — it never reaches into the component. So a **streamed (D)** course card can write `defaultState: "course"` and a chat template's `course` surface frames it, exactly the same way a **self-contained (B)** one would. Which of the four delivered it, and how a template presents it, are independent choices — see [04 — State](./04-state.md).
+
+---
+
 ## 🔁 One path, dev and prod
 
 Studio is **not a special harness**. It is just another MCP client: it subscribes to the same definition resources, receives the same component stream, and runs the same native renderers as production channels. That's why:

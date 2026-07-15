@@ -1,9 +1,11 @@
 ---
-# Generate + build component nodes ON the production server.
+# Component nodes ON the production server — DEFINITION-BACKED (no generation).
 #
-# Mirrors the local `unoverse gendesign` (scripts/lib/build.sh), but runs inside the
-# prod unoverse container. Reads the deployed rx/ defs, writes nodes/components, compiles
-# to dist/, and restarts unoverse so the runtime loads them.
+# One universal executor serves every design component; node definitions are
+# synthesized from the deployed rx/components/* at boot. There is NO nodegen step:
+# adding or editing a component definition only needs the restart below. The build
+# step compiles the small hand-written package (apps/unoverse/nodes/components)
+# only when its dist/ is missing (fresh server / package source change).
 #
 # Prereq: the rx/ defs must already be on the server (run `unoverse deploy` / `deploy
 # packages` first — that rsyncs apps/unoverse/{nodes,rx,prompts}).
@@ -11,7 +13,7 @@
 # Usage:
 #   ansible-playbook -i inventory playbooks/gendesign.yml
 
-- name: Generate + build component nodes on the server
+- name: Component nodes on the server (definition-backed)
   hosts: all
   become: yes
 
@@ -19,20 +21,14 @@
     gravity_dir: /opt/gravity
 
   tasks:
-    - name: "[1/3] Generate component nodes from rx/ (nodegen)"
-      shell: |
-        cd {{ gravity_dir }}
-        docker compose exec -T -w /app/apps/unoverse unoverse npm run nodegen:local 2>&1 | tail -25
-      register: gen_result
-
-    - name: "[1/3] nodegen output"
-      debug:
-        msg: "{{ gen_result.stdout_lines[-25:] | default(['done']) }}"
-
     # tsc ignores NODE_PATH and the pruned image links no plugin-base — the only built
     # copy is in the plugins volume. Symlink it into node_modules so tsc resolves it,
-    # then compile. (Same logic as the local gendesign build step.)
-    - name: "[2/3] Compile component nodes to dist (tsc)"
+    # then compile. ALWAYS build: deploy-packages rsyncs SOURCE with dist excluded
+    # (and --delete never removes excluded dest files), so a stale dist can survive a
+    # deploy — a skip-if-present here would silently run old executor code. The build
+    # is a small tsc (seconds). Component DEFINITION changes still need no build at
+    # all — they synthesize from rx/ at boot.
+    - name: "[1/2] Build the universal component-node package (tsc — always, dist may be stale)"
       shell: |
         cd {{ gravity_dir }}
         docker compose exec -T unoverse sh -c '
@@ -45,11 +41,11 @@
         ' 2>&1 | tail -15
       register: build_result
 
-    - name: "[2/3] build output"
+    - name: "[1/2] build output"
       debug:
         msg: "{{ build_result.stdout_lines[-15:] | default(['done']) }}"
 
-    - name: "[3/3] Restart unoverse (load the generated nodes)"
+    - name: "[2/2] Restart unoverse (definitions re-synthesize from rx/components)"
       shell: |
         cd {{ gravity_dir }}
         docker compose restart unoverse 2>&1
@@ -59,7 +55,7 @@
       debug:
         msg: |
           ============================================
-          COMPONENT NODES GENERATED + BUILT ON SERVER
+          COMPONENT NODES LIVE (DEFINITION-BACKED)
           ============================================
           Host:    {{ inventory_hostname }} ({{ ansible_host }})
           Build:   {{ 'OK' if build_result.rc == 0 else 'FAILED' }}

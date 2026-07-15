@@ -1,0 +1,245 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "row",
+    "align": "center",
+    "gap": "3",
+    "width": "full"
+  },
+  "children": [
+    {
+      "type": "Box",
+      "style": {
+        "flex": "0 0 auto",
+        "direction": "row",
+        "align": "center",
+        "gap": "2"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "flex": "0 0 auto",
+            "width": "8",
+            "height": "8",
+            "radius": "full",
+            "background": "surface.sunken",
+            "direction": "row",
+            "align": "center",
+            "justify": "center",
+            "when": [
+              {
+                "field": "phase",
+                "eq": "eligibility",
+                "apply": {
+                  "background": "status.success"
+                }
+              }
+            ]
+          },
+          "children": [
+            {
+              "type": "Text",
+              "style": {
+                "font": "body.sm",
+                "weight": "bold",
+                "color": "text.tertiary",
+                "when": [
+                  {
+                    "field": "phase",
+                    "eq": "eligibility",
+                    "apply": {
+                      "color": "text.inverse"
+                    }
+                  }
+                ]
+              },
+              "value": "1"
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "style": {
+            "font": "body.md",
+            "weight": "medium",
+            "color": "text.primary",
+            "when": [
+              {
+                "field": "phase",
+                "eq": "eligibility",
+                "apply": {
+                  "weight": "semibold",
+                  "color": "status.success"
+                }
+              }
+            ]
+          },
+          "value": "Eligibility"
+        }
+      ]
+    },
+    {
+      "type": "Box",
+      "style": {
+        "flex": "1",
+        "height": "1",
+        "background": "border.subtle",
+        "radius": "full"
+      }
+    },
+    {
+      "type": "Box",
+      "style": {
+        "flex": "0 0 auto",
+        "direction": "row",
+        "align": "center",
+        "gap": "2"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "flex": "0 0 auto",
+            "width": "8",
+            "height": "8",
+            "radius": "full",
+            "background": "surface.sunken",
+            "direction": "row",
+            "align": "center",
+            "justify": "center",
+            "when": [
+              {
+                "field": "phase",
+                "eq": "bestfit",
+                "apply": {
+                  "background": "status.success"
+                }
+              }
+            ]
+          },
+          "children": [
+            {
+              "type": "Text",
+              "style": {
+                "font": "body.sm",
+                "weight": "bold",
+                "color": "text.tertiary",
+                "when": [
+                  {
+                    "field": "phase",
+                    "eq": "bestfit",
+                    "apply": {
+                      "color": "text.inverse"
+                    }
+                  }
+                ]
+              },
+              "value": "2"
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "style": {
+            "font": "body.md",
+            "weight": "medium",
+            "color": "text.primary",
+            "when": [
+              {
+                "field": "phase",
+                "eq": "bestfit",
+                "apply": {
+                  "weight": "semibold",
+                  "color": "status.success"
+                }
+              }
+            ]
+          },
+          "value": "Preferences"
+        }
+      ]
+    },
+    {
+      "type": "Box",
+      "style": {
+        "flex": "1",
+        "height": "1",
+        "background": "border.subtle",
+        "radius": "full"
+      }
+    },
+    {
+      "type": "Box",
+      "style": {
+        "flex": "0 0 auto",
+        "direction": "row",
+        "align": "center",
+        "gap": "2"
+      },
+      "children": [
+        {
+          "type": "Box",
+          "style": {
+            "flex": "0 0 auto",
+            "width": "8",
+            "height": "8",
+            "radius": "full",
+            "background": "surface.sunken",
+            "direction": "row",
+            "align": "center",
+            "justify": "center",
+            "when": [
+              {
+                "field": "phase",
+                "eq": "result",
+                "apply": {
+                  "background": "status.success"
+                }
+              }
+            ]
+          },
+          "children": [
+            {
+              "type": "Text",
+              "style": {
+                "font": "body.sm",
+                "weight": "bold",
+                "color": "text.tertiary",
+                "when": [
+                  {
+                    "field": "phase",
+                    "eq": "result",
+                    "apply": {
+                      "color": "text.inverse"
+                    }
+                  }
+                ]
+              },
+              "value": "3"
+            }
+          ]
+        },
+        {
+          "type": "Text",
+          "style": {
+            "font": "body.md",
+            "weight": "medium",
+            "color": "text.primary",
+            "when": [
+              {
+                "field": "phase",
+                "eq": "result",
+                "apply": {
+                  "weight": "semibold",
+                  "color": "status.success"
+                }
+              }
+            ]
+          },
+          "value": "Card"
+        }
+      ]
+    }
+  ]
+}

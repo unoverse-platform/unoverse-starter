@@ -16,9 +16,6 @@
     },
     {
       "type": "Each",
-      "bind": {
-        "items": "salaryOptions"
-      },
       "style": {
         "direction": "column",
         "gap": "2",
@@ -52,7 +49,24 @@
             }
           ]
         }
-      }
+      },
+      "items": [
+        {
+          "value": "yes",
+          "label": "Yes",
+          "description": "My salary is transferred to SAB"
+        },
+        {
+          "value": "no",
+          "label": "No",
+          "description": "My salary goes to another bank"
+        },
+        {
+          "value": "unsure",
+          "label": "Not sure",
+          "description": "I need to check"
+        }
+      ]
     }
   ]
 }

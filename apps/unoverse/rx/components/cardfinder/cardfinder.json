@@ -3,317 +3,51 @@
   "kind": "component",
   "name": "CardFinder",
   "category": "Input",
-  "nodeSize": { "width": 1040, "height": 760 },
-  "description": "An interactive card-recommendation finder: a guided questionnaire of eligibility and preference questions with a phase stepper and progress bar, an eligibility summary, then a best-fit result card — match score, card name and image, key benefits, annual fee, tier, and why-it-fits reasons — beside a hero image.",
-  "whenToUse": "Help a user find or choose the right card by answering a few eligibility and preference questions, then present a personalised best-fit recommendation with a match score and reasons. Pick when the outcome is a guided question-and-answer flow that ends in a single tailored recommendation.",
-  "props": {
-    "defaultState": { "type": "string", "default": "focused" },
-    "focusable": { "type": "boolean", "default": true },
-    "focusLabel": { "type": "string", "default": "Card Finder" },
-    "inlinePrimary": { "type": "string", "default": "Find your perfect card" },
-    "inlineSecondary": { "type": "string", "default": "Answer a few quick questions" },
-    "recommendation": { "type": "object", "input": true, "default": {"matchScore": "95%", "cardFamily": "Premium Travel", "cardName": "SAB Emirates Infinite", "cardDescription": "Premium travel card with Emirates Skywards miles and unlimited lounge access.", "cardImage": "https://res.cloudinary.com/sonik/image/upload/v1767547655/SAB/ek-visa-472X296.png", "feeValue": "750", "tierValue": "Infinite", "uiTags": [{"label": "Travel"}, {"label": "Miles"}, {"label": "Lounge"}, {"label": "Premium"}], "keyBenefits": [{"label": "Earn Emirates Skywards miles on every spend"}, {"label": "Unlimited airport lounge access worldwide"}, {"label": "Comprehensive travel insurance included"}, {"label": "Dedicated premium concierge service"}], "fitReasons": [{"label": "Perfect match for Emirates Skywards miles earning"}, {"label": "Unlimited lounge access for frequent travelers"}], "ctaNote": "Annual fee SAR 750 (without VAT) · Instant decision"} },
-    "step": { "type": "string", "default": "income" },
-    "phase": { "type": "string", "default": "eligibility" },
-    "progressPct": { "type": "string", "default": "14%" },
-    "questionLabel": { "type": "string", "default": "Question 1 of 7" },
-    "headerTitle": { "type": "string", "default": "Quick Eligibility Check" },
-    "headerSubtitle": { "type": "string", "default": "3 quick questions" },
-    "n1": { "type": "string", "default": "1" },
-    "n2": { "type": "string", "default": "2" },
-    "n3": { "type": "string", "default": "3" },
-    "phase1Label": { "type": "string", "default": "Eligibility" },
-    "phase2Label": { "type": "string", "default": "Preferences" },
-    "phase3Label": { "type": "string", "default": "Card" },
-
-    "incomeTitle": { "type": "string", "default": "What is your monthly income?" },
-    "incomeSubtitle": { "type": "string", "default": "This helps us find cards you qualify for" },
-    "incomeOptions": { "type": "array", "default": [
-      { "value": "<7000", "label": "Less than 7,000 SAR" },
-      { "value": "7000-12000", "label": "7,000 – 12,000 SAR" },
-      { "value": "12000-20000", "label": "12,000 – 20,000 SAR" },
-      { "value": "20000+", "label": "20,000+ SAR" }
-    ] },
-
-    "salaryTitle": { "type": "string", "default": "Is your salary transferred to SAB?" },
-    "salarySubtitle": { "type": "string", "default": "This can unlock more options" },
-    "salaryOptions": { "type": "array", "default": [
-      { "value": "yes", "label": "Yes", "description": "My salary is transferred to SAB" },
-      { "value": "no", "label": "No", "description": "My salary goes to another bank" },
-      { "value": "unsure", "label": "Not sure", "description": "I need to check" }
-    ] },
-
-    "residencyTitle": { "type": "string", "default": "What is your residency status?" },
-    "residencySubtitle": { "type": "string", "default": "Saudi Arabia" },
-    "residencyOptions": { "type": "array", "default": [
-      { "value": "saudi", "label": "Saudi National" },
-      { "value": "non-saudi", "label": "Non-Saudi Resident" }
-    ] },
-
-    "summaryTitle": { "type": "string", "default": "You're Eligible!" },
-    "summarySubtitle": { "type": "string", "default": "Let's find your perfect card" },
-    "summaryCta": { "type": "string", "default": "Find My Card" },
-    "eligibleTiers": { "type": "array", "input": true, "default": [
-      { "label": "Premium Travel Cards" },
-      { "label": "Travel Essentials" },
-      { "label": "Cashback Cards" }
-    ] },
-
-    "goalTitle": { "type": "string", "default": "What is your primary goal?" },
-    "goalSubtitle": { "type": "string", "default": "Choose what matters most to you" },
-    "goalOptions": { "type": "array", "default": [
-      { "value": "cashback", "label": "Cashback", "description": "Earn money back on everyday purchases", "icon": "coins" },
-      { "value": "travel", "label": "Travel perks", "description": "Lounges, insurance, and travel benefits", "icon": "plane" },
-      { "value": "miles", "label": "Airline miles", "description": "Earn miles with your preferred airline", "icon": "ticket" },
-      { "value": "premium", "label": "Premium lifestyle", "description": "Concierge, exclusive access, and luxury perks", "icon": "crown" }
-    ] },
-
-    "airlineTitle": { "type": "string", "default": "Do you have an airline preference?" },
-    "airlineSubtitle": { "type": "string", "default": "For earning miles" },
-    "airlineOptions": { "type": "array", "default": [
-      { "value": "emirates", "label": "Emirates", "description": "Earn Skywards miles" },
-      { "value": "saudia", "label": "SAUDIA", "description": "Earn AlFursan miles" },
-      { "value": "none", "label": "No preference", "description": "Flexible rewards across airlines" }
-    ] },
-
-    "travelTitle": { "type": "string", "default": "How often do you travel?" },
-    "travelSubtitle": { "type": "string", "default": "Flights per year" },
-    "travelOptions": { "type": "array", "default": [
-      { "value": "0-1", "label": "0 – 1 flights per year", "description": "Occasional traveler" },
-      { "value": "2-4", "label": "2 – 4 flights per year", "description": "Regular traveler" },
-      { "value": "5-10", "label": "5 – 10 flights per year", "description": "Frequent traveler" },
-      { "value": "10+", "label": "10+ flights per year", "description": "Very frequent traveler" }
-    ] },
-
-    "feeTitle": { "type": "string", "default": "Annual fee preference?" },
-    "feeSubtitle": { "type": "string", "default": "How much are you willing to pay?" },
-    "feeOptions": { "type": "array", "default": [
-      { "value": "low", "label": "Prefer free / low fee", "description": "Keep costs minimal" },
-      { "value": "medium", "label": "Will pay if value is clear", "description": "Balance cost and benefits" },
-      { "value": "high", "label": "Happy to pay for premium", "description": "Best perks matter most" }
-    ] },
-
-    "matchScore": { "type": "string", "default": "95%" },
-    "matchLabel": { "type": "string", "default": "Match" },
-    "cardFamily": { "type": "string", "default": "Premium Travel" },
-    "cardName": { "type": "string", "default": "SAB Emirates Infinite" },
-    "cardDescription": { "type": "string", "default": "Premium travel card with Emirates Skywards miles and unlimited lounge access." },
-    "cardImage": { "type": "string", "default": "https://res.cloudinary.com/sonik/image/upload/v1767547655/SAB/ek-visa-472X296.png" },
-    "feeValue": { "type": "string", "default": "750" },
-    "feeUnit": { "type": "string", "default": "SAR / year" },
-    "tierValue": { "type": "string", "default": "Infinite" },
-    "tierLabel": { "type": "string", "default": "Card Tier" },
-    "uiTags": { "type": "array", "default": [
-      { "label": "Travel" }, { "label": "Miles" }, { "label": "Lounge" }, { "label": "Premium" }
-    ] },
-    "benefitsTitle": { "type": "string", "default": "Key Benefits" },
-    "keyBenefits": { "type": "array", "default": [
-      { "label": "Earn Emirates Skywards miles on every spend" },
-      { "label": "Unlimited airport lounge access worldwide" },
-      { "label": "Comprehensive travel insurance included" },
-      { "label": "Dedicated premium concierge service" }
-    ] },
-    "whyTitle": { "type": "string", "default": "Why this card for you" },
-    "fitReasons": { "type": "array", "default": [
-      { "label": "Perfect match for Emirates Skywards miles earning" },
-      { "label": "Unlimited lounge access for frequent travelers" }
-    ] },
-    "applyLabel": { "type": "string", "default": "Apply for this card" },
-    "ctaNote": { "type": "string", "default": "Annual fee SAR 750 (without VAT) · Instant decision" },
-    "restartLabel": { "type": "string", "default": "Start over" },
-    "heroImage": { "type": "string", "input": true, "default": "https://res.cloudinary.com/sonik/image/upload/v1767543207/SAB/travel.jpg" }
+  "nodeSize": {
+    "width": 1040,
+    "height": 760
   },
+  "state": {
+    "inlinePrimary": "Find your perfect card",
+    "step": "income",
+    "phase": "eligibility",
+    "progressPct": "14%",
+    "questionLabel": "Question 1 of 7",
+    "headerTitle": "Quick Eligibility Check"
+  },
+  "stateOrder": [
+    "income",
+    "salary",
+    "residency",
+    "summary",
+    "goal",
+    "airline",
+    "travelfreq",
+    "feetolerance",
+    "result"
+  ],
   "root": {
     "type": "Box",
-    "style": { "width": "full", "height": "full" },
+    "style": {
+      "width": "full",
+      "height": "full",
+      "container": "inline-size"
+    },
     "children": [
       {
-        "type": "Button",
-        "visibleWhen": { "field": "defaultState", "eq": "inline" },
-        "action": { "type": "setValue", "values": [{ "key": "defaultState", "value": "focused" }], "then": { "type": "setTemplateValue", "values": [{ "key": "defaultState", "value": "focus" }] } },
-        "style": { "position": "relative", "cursor": "pointer", "padding": "0", "direction": "row", "align": "stretch", "width": "full", "maxWidth": "140", "minHeight": "40", "background": "surface.base", "border": "subtle", "radius": "xl", "shadow": "sm", "overflow": "hidden", "transition": "all 150ms ease", "hover": { "shadow": "md" } },
-        "children": [
-          {
-            "type": "Box",
-            "style": { "flex": "0 0 auto", "width": "16", "background": "surface.inverse", "radiusTopLeft": "xl", "radiusBottomLeft": "xl", "direction": "row", "align": "center", "justify": "center" },
-            "children": [
-              { "type": "Icon", "icon": "creditCard", "style": { "width": "6", "height": "6", "color": "text.inverse" } }
-            ]
+        "type": "Switch",
+        "on": "defaultState",
+        "cases": {
+          "focused": {
+            "$include": "layouts/focused"
           },
-          {
-            "type": "Box",
-            "style": { "flex": "1", "minWidth": "0", "direction": "column", "gap": "1", "padding": "4" },
-            "children": [
-              {
-                "type": "Box",
-                "style": { "direction": "row", "justify": "center", "width": "full" },
-                "children": [
-                  { "type": "Text", "bind": { "value": "headerTitle" }, "style": { "font": "body.sm", "weight": "semibold", "color": "text.secondary" } }
-                ]
-              },
-              { "type": "Text", "bind": { "value": "inlinePrimary" }, "style": { "font": "title", "weight": "semibold", "lineHeight": "tight", "color": "text.primary" } },
-              { "type": "Text", "visibleWhen": "inlineSecondary", "bind": { "value": "inlineSecondary" }, "style": { "font": "body.sm", "color": "text.secondary" } },
-              {
-                "type": "Box",
-                "style": { "width": "full", "height": "1", "background": "surface.sunken", "radius": "full", "overflow": "hidden", "margin": ["2", "0", "0", "0"] },
-                "children": [
-                  { "type": "Box", "style": { "height": "full", "width": "{{progressPct}}", "background": "status.success", "radius": "full", "transition": "all 300ms ease" } }
-                ]
-              },
-              {
-                "type": "Box",
-                "visibleWhen": "questionLabel",
-                "style": { "direction": "row", "justify": "center", "margin": ["2", "0", "0", "0"] },
-                "children": [
-                  {
-                    "type": "Box",
-                    "style": { "background": "surface.sunken", "radius": "full", "padding": ["1", "2"] },
-                    "children": [
-                      { "type": "Text", "bind": { "value": "questionLabel" }, "style": { "font": "caption", "weight": "medium", "color": "text.tertiary" } }
-                    ]
-                  }
-                ]
-              }
-            ]
+          "inline": {
+            "$include": "layouts/inline"
           },
-          {
-            "type": "Box",
-            "visibleWhen": "heroImage",
-            "style": { "flex": "0 0 auto", "width": "40", "overflow": "hidden", "hideBelow": "180", "position": "relative", "radiusTopRight": "xl", "radiusBottomRight": "xl" },
-            "children": [
-              { "type": "Image", "bind": { "src": "heroImage", "alt": "headerTitle" }, "style": { "position": "absolute", "inset": "0", "width": "full", "height": "full", "fit": "cover" } }
-            ]
-          },
-          {
-            "type": "Box",
-            "visibleWhen": "focusable",
-            "style": { "position": "absolute", "inset": "0 0 auto auto", "margin": "3", "width": "7", "height": "7", "radius": "full", "background": "surface.base", "border": "subtle", "shadow": "sm", "direction": "row", "align": "center", "justify": "center" },
-            "children": [
-              { "type": "Icon", "icon": "expand", "style": { "width": "4", "height": "4", "color": "text.secondary" } }
-            ]
+          "default": {
+            "$include": "layouts/inline"
           }
-        ]
-      },
-      {
-        "type": "Box",
-        "visibleWhen": { "field": "defaultState", "ne": "inline" },
-        "style": { "position": "relative", "width": "full", "height": "full", "minHeight": "160", "container": "inline-size", "direction": "row", "background": "surface.base", "overflow": "hidden" },
-        "children": [
-      {
-        "type": "Box",
-        "style": { "flex": "1.5", "minWidth": "0", "minHeight": "0", "direction": "column" },
-        "children": [
-          {
-            "type": "Box",
-            "style": { "width": "full", "direction": "row", "align": "center", "gap": "4", "padding": ["4", "6"], "background": "surface.inverse" },
-            "children": [
-              {
-                "type": "Box",
-                "style": { "width": "12", "height": "12", "radius": "xl", "border": "subtle", "direction": "row", "align": "center", "justify": "center" },
-                "children": [
-                  { "type": "Icon", "icon": "creditCard", "style": { "width": "7", "height": "7", "color": "text.inverse" } }
-                ]
-              },
-              {
-                "type": "Box",
-                "style": { "direction": "column", "gap": "0" },
-                "children": [
-                  { "type": "Text", "bind": { "value": "headerTitle" }, "style": { "font": "headline.lg", "weight": "semibold", "color": "text.inverse" } },
-                  { "type": "Text", "visibleWhen": "headerSubtitle", "bind": { "value": "headerSubtitle" }, "style": { "font": "body.sm", "color": "text.inverse" } }
-                ]
-              }
-            ]
-          },
-
-          {
-            "type": "Box",
-            "visibleWhen": { "field": "phase", "ne": "result" },
-            "style": { "direction": "column", "gap": "3", "padding": ["4", "8"], "width": "full", "borderBottom": "subtle" },
-            "children": [
-                  {
-                    "type": "Box",
-                    "style": { "direction": "row", "align": "center", "gap": "3", "width": "full" },
-                    "children": [
-                      {
-                        "type": "Box",
-                        "style": { "flex": "0 0 auto", "direction": "row", "align": "center", "gap": "2" },
-                        "children": [
-                          { "type": "Box", "style": { "flex": "0 0 auto", "width": "8", "height": "8", "radius": "full", "background": "surface.sunken", "direction": "row", "align": "center", "justify": "center", "when": [ { "field": "phase", "eq": "eligibility", "apply": { "background": "status.success" } } ] }, "children": [ { "type": "Text", "bind": { "value": "n1" }, "style": { "font": "body.sm", "weight": "bold", "color": "text.tertiary", "when": [ { "field": "phase", "eq": "eligibility", "apply": { "color": "text.inverse" } } ] } } ] },
-                          { "type": "Text", "bind": { "value": "phase1Label" }, "style": { "font": "body.md", "weight": "medium", "color": "text.primary", "when": [ { "field": "phase", "eq": "eligibility", "apply": { "weight": "semibold", "color": "status.success" } } ] } }
-                        ]
-                      },
-                      { "type": "Box", "style": { "flex": "1", "height": "1", "background": "border.subtle", "radius": "full" } },
-                      {
-                        "type": "Box",
-                        "style": { "flex": "0 0 auto", "direction": "row", "align": "center", "gap": "2" },
-                        "children": [
-                          { "type": "Box", "style": { "flex": "0 0 auto", "width": "8", "height": "8", "radius": "full", "background": "surface.sunken", "direction": "row", "align": "center", "justify": "center", "when": [ { "field": "phase", "eq": "bestfit", "apply": { "background": "status.success" } } ] }, "children": [ { "type": "Text", "bind": { "value": "n2" }, "style": { "font": "body.sm", "weight": "bold", "color": "text.tertiary", "when": [ { "field": "phase", "eq": "bestfit", "apply": { "color": "text.inverse" } } ] } } ] },
-                          { "type": "Text", "bind": { "value": "phase2Label" }, "style": { "font": "body.md", "weight": "medium", "color": "text.primary", "when": [ { "field": "phase", "eq": "bestfit", "apply": { "weight": "semibold", "color": "status.success" } } ] } }
-                        ]
-                      },
-                      { "type": "Box", "style": { "flex": "1", "height": "1", "background": "border.subtle", "radius": "full" } },
-                      {
-                        "type": "Box",
-                        "style": { "flex": "0 0 auto", "direction": "row", "align": "center", "gap": "2" },
-                        "children": [
-                          { "type": "Box", "style": { "flex": "0 0 auto", "width": "8", "height": "8", "radius": "full", "background": "surface.sunken", "direction": "row", "align": "center", "justify": "center", "when": [ { "field": "phase", "eq": "result", "apply": { "background": "status.success" } } ] }, "children": [ { "type": "Text", "bind": { "value": "n3" }, "style": { "font": "body.sm", "weight": "bold", "color": "text.tertiary", "when": [ { "field": "phase", "eq": "result", "apply": { "color": "text.inverse" } } ] } } ] },
-                          { "type": "Text", "bind": { "value": "phase3Label" }, "style": { "font": "body.md", "weight": "medium", "color": "text.primary", "when": [ { "field": "phase", "eq": "result", "apply": { "weight": "semibold", "color": "status.success" } } ] } }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    "type": "Box",
-                    "visibleWhen": { "field": "phase", "ne": "result" },
-                    "style": { "direction": "row", "align": "center", "gap": "3", "width": "full" },
-                    "children": [
-                      { "type": "Text", "visibleWhen": "questionLabel", "bind": { "value": "questionLabel" }, "style": { "font": "label", "color": "text.tertiary" } },
-                      {
-                        "type": "Box",
-                        "style": { "flex": "1", "height": "1", "background": "surface.sunken", "radius": "full", "overflow": "hidden" },
-                        "children": [
-                          { "type": "Box", "style": { "height": "full", "width": "{{progressPct}}", "background": "status.success", "radius": "full", "transition": "all 300ms ease" } }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-          {
-            "type": "Box",
-            "style": { "flex": "1", "minHeight": "0", "overflow": "auto", "direction": "column", "gap": "5", "padding": ["6", "8"], "width": "full" },
-            "children": [
-              {
-                "type": "Switch",
-                "on": "step",
-                "cases": {
-                  "income": { "$include": "states/income" },
-                  "salary": { "$include": "states/salary" },
-                  "residency": { "$include": "states/residency" },
-                  "summary": { "$include": "states/summary" },
-                  "goal": { "$include": "states/goal" },
-                  "airline": { "$include": "states/airline" },
-                  "travelfreq": { "$include": "states/travelfreq" },
-                  "feetolerance": { "$include": "states/feetolerance" },
-                  "result": { "$include": "states/result" },
-                  "default": { "$include": "states/income" }
-                }
-              }
-            ]
-          }
-        ]
-      },
-
-      {
-        "type": "Box",
-        "visibleWhen": { "field": "phase", "ne": "result" },
-        "style": { "flex": "1", "minWidth": "0", "direction": "column", "background": "surface.sunken", "overflow": "hidden", "hideBelow": "180" },
-        "children": [
-          { "type": "Image", "bind": { "src": "heroImage", "alt": "headerTitle" }, "style": { "width": "full", "height": "full", "fit": "cover" } }
-        ]
-      },
-      { "type": "Ref", "ref": "close-button", "visibleWhen": "focusable", "action": { "type": "setValue", "values": [{ "key": "defaultState", "value": "inline" }], "then": { "type": "setTemplateValue", "values": [{ "key": "defaultState", "value": null }] } }, "style": { "position": "absolute", "inset": "0 0 auto auto", "margin": "4" } }
-        ]
+        }
       }
     ]
   }

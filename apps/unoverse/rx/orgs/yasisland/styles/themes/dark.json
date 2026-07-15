@@ -1,0 +1,87 @@
+{
+  "$description": "Yas Island dark theme — identical to light: the Yas Island brand IS dark-first (yasisland.com). Served at unoverse://theme/yasisland/dark.",
+  "color": {
+    "$type": "color",
+    "text": {
+      "primary": {
+        "$value": "{color.brand.yasisland.mist}"
+      },
+      "secondary": {
+        "$value": "{color.brand.yasisland.mist-dim}"
+      },
+      "tertiary": {
+        "$value": "{color.brand.yasisland.mist-faint}"
+      },
+      "inverse": {
+        "$value": "{color.brand.yasisland.night}"
+      }
+    },
+    "surface": {
+      "base": {
+        "$value": "{color.brand.yasisland.night}"
+      },
+      "raised": {
+        "$value": "{color.brand.yasisland.coal}"
+      },
+      "sunken": {
+        "$value": "{color.brand.yasisland.coal}"
+      },
+      "inverse": {
+        "$value": "{color.brand.yasisland.paper-warm}"
+      }
+    },
+    "border": {
+      "subtle": {
+        "$value": "{color.brand.yasisland.coal-soft}"
+      },
+      "strong": {
+        "$value": "{color.brand.yasisland.coal-strong}"
+      }
+    },
+    "action": {
+      "primary": {
+        "$value": "{color.brand.yasisland.yellow}"
+      },
+      "primary-hover": {
+        "$value": "{color.brand.yasisland.yellow-bright}"
+      },
+      "primary-active": {
+        "$value": "{color.brand.yasisland.yellow-bright}"
+      },
+      "primary-text": {
+        "$value": "{color.brand.yasisland.night}"
+      },
+      "subtle": {
+        "$value": "{color.brand.yasisland.yellow-deep}"
+      }
+    },
+    "status": {
+      "success": {
+        "$value": "{color.brand.yasisland.green-bright}"
+      },
+      "success-subtle": {
+        "$value": "{color.brand.yasisland.green-deep}"
+      },
+      "success-border": {
+        "$value": "{color.brand.yasisland.green}"
+      },
+      "success-text": {
+        "$value": "{color.brand.yasisland.green-subtle}"
+      },
+      "error": {
+        "$value": "{color.brand.yasisland.red-bright}"
+      },
+      "warning": {
+        "$value": "{color.brand.yasisland.yellow}"
+      },
+      "info": {
+        "$value": "{color.brand.yasisland.cobalt-bright}"
+      }
+    },
+    "overlay": {
+      "scrim": {
+        "$value": "linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0.1), transparent)"
+      }
+    }
+  }
+}

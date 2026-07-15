@@ -1,0 +1,43 @@
+{
+  "name": "@unoverse-platform/components",
+  "version": "0.0.1",
+  "description": "Unoverse design-system nodes \u2014 definition-backed (no React bundles)",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@unoverse-platform/plugin-base": "^1.2.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  },
+  "gravity": {
+    "logoUrl": "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
+    "nodes": [
+      "AccountTransferWidget",
+      "AIResponse",
+      "BarChart",
+      "BarList",
+      "Card",
+      "Card2",
+      "CardCarousel",
+      "CardFinder",
+      "CourseCard",
+      "ImageBlock",
+      "JourneyFinder",
+      "KenBurnsImage",
+      "ListPicker",
+      "MarkdownRenderer",
+      "MetricGrid",
+      "RadialGauge",
+      "StackedBarChart",
+      "StatCard"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

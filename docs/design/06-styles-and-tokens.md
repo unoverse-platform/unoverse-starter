@@ -17,7 +17,7 @@ The SDK renderer owns no styles either — it only *resolves* token names agains
 ```
 
 - No `px` / `rem` / `em` / `#hex` anywhere under `rx/components/`, `rx/atoms/`, or `rx/orgs/**/templates/`. `./unoverse lint` scans for exactly this and fails ([08](./08-validate-and-ship.md)).
-- Sizes use the **space scale** (`"width": "8"`), not lengths.
+- Sizes use the **space scale** (`"width": "8"` = 2rem, Tailwind-style: step N = N × 0.25rem) — and only **real steps**: `0 1 1.5 2 3 4 5 6 7 8 10 12 16 20 24 28 40 50 75 90 100 120 140 160 180 200` (+ `full`/`auto`). An invented step (`"26"`, `"3.5"`) is NOT rounded — it falls through as broken CSS and the element silently reverts to auto sizing. `./unoverse lint` rejects off-scale values.
 - ❌ No invented component-named tokens (`cardMin`, `wizardWidth`) — use the generic scale steps. If the scale genuinely lacks a step, extend the scale in `styles/`, don't smuggle a value into a definition.
 
 ## 🔒 Style KEYS are closed too — the cross-platform contract
@@ -36,7 +36,7 @@ Both the schema (editor squiggle) and `./unoverse lint` (error) enforce the key 
 rx/orgs/<org>/styles/
 ├── base/        # raw scales — the only place raw values EXIST
 │   ├── color.json        # palettes
-│   ├── spacing.json      # the space scale ("1".."12")
+│   ├── spacing.json      # the space scale (the closed step set — see LAW above)
 │   ├── typography.json   # font scales
 │   └── radius.json / shadow.json / border.json / motion.json
 ├── semantic/    # named meanings, built FROM base

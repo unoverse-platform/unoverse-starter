@@ -16,12 +16,12 @@ It runs the schema rules, the token law, and the state/structure rules over ever
 
 `rx/_schema/unoverse.schema.json` validates every definition in your editor (wiring in [01](./01-quick-start.md)). Structural, zero false positives. It catches:
 
-- missing envelope fields (`unoverse`, `kind`, `name`, `root`; components also need `category`, `description`, **`whenToUse`**)
+- missing envelope fields (`unoverse`, `kind`, `name`, `root`; components also need `category` — discovery meta lives in the **manifest**)
 - an unknown primitive `type` (the closed set is encoded)
-- broken primitives — `Switch` without `cases`, `Each` without `template`, `Ref` without `ref`, `ComponentSlot` without `select`
+- broken primitives — `Switch` without `cases`, `Each` without `template` + a list (literal `items` or `bind.items`), `Ref` without `ref`, `ComponentSlot` without `select`
 - illegal conditions — only `eq` / `ne` / `in` / truthy exist; `and`/`or`/arithmetic are rejected by design (derive in the node, [03](./03-components.md))
 
-It validates two shapes: **envelope** files (with the `unoverse` field) and **bare node** partials (`blocks/`, `states/`, atoms).
+It validates two shapes: **envelope** files (with the `unoverse` field) and **bare node** partials (`layouts/`, `states/`, `components/`, atoms).
 
 One-off sweep of everything from the CLI (needs `ajv` once: `npm i -D ajv` at the repo root):
 
@@ -48,10 +48,13 @@ The same rules the platform's guard tests enforce in CI, runnable in seconds fro
 | **conditions** | only `eq`/`ne`/`in`/truthy — no `and`/`or`/arithmetic; `style.when` entries carry `field` + `apply` | error |
 | **self-guard** | a `Switch` case never re-checks its own discriminant ([03](./03-components.md)) | error |
 | **resolution** | every `$include` path and `Ref` atom actually exists | error |
-| **envelope** | components carry `category`/`description`/`whenToUse` | error |
-| **bind ⇒ prop** | a bound field is declared in `props` with a default (self-written view-state keys excluded) | warn |
-| **global slots** | `from: "all"` without a pinned `type` ([05](./05-templates.md)) | warn |
-| **states fixture** | component has mock states for Studio ([07](./07-studio.md)) | hint |
+| **space scale** | dimension values are real scale steps — an invented step is silently broken CSS ([06](./06-styles-and-tokens.md)) | error |
+| **microapp: three homes** | all `props` are `input: true`; the `state` block is SCALAR view-state only (arrays/objects/URLs = slop) ([03](./03-components.md)) | error |
+| **microapp: faces** | a faced component's root is `Switch on defaultState` → `layouts/<state>` (filename = state name) and declares its arrival state (manifest) | error |
+| **manifests** | discovery meta correct (`description` ≤120, `whenToUse` utterance-shaped, no envelope duplicates); a template manifest resolves its `layout` and its `stateOrder` matches `states/` | error |
+| **reaction contract** | flags the deprecated bridge — a component writing `defaultState` into template state, or a top-level envelope `defaultState` ([04](./04-state.md)) | warn |
+| **global slots** | `from: "all"` with no `where` and no `type` — a reaction surface selects by state ([05](./05-templates.md)) | warn |
+| **states picker** | a definition with layers (a `Switch`) but no `states/` folder ([07](./07-studio.md)) | hint |
 
 The platform's own CI additionally runs the **theme-contract** and **discoverability-meta** guards, and the SDK build enforces the **closed set** at the renderer level — you can't drift past them even if you skip lint.
 
@@ -62,7 +65,7 @@ The platform's own CI additionally runs the **theme-contract** and **discoverabi
 What no linter can decide — audit every artifact against this before calling it done:
 
 **Structure**
-- [ ] Root declares identity — defining states in the root; `blocks/`/`states/` extraction is **earned**, not pre-emptive
+- [ ] Structure is **earned** — flat if it can be; `components/`/`states/`/`layouts/` only when the shape demands them
 - [ ] Few shallow discriminants, not boolean soup; same-shape states collapsed into one data-driven state
 - [ ] No self-guarding states; mutually exclusive views in ONE `Switch`
 
@@ -71,11 +74,11 @@ What no linter can decide — audit every artifact against this before calling i
 - [ ] Derived values computed in the node, sent as plain fields — no logic simulated in the definition
 
 **State ([04](./04-state.md))**
-- [ ] Only `setValue` / `setTemplateValue`; keys are dev-named; right bucket per the decision table
+- [ ] Reaction contract respected — a component writes only its own slice; template surfaces react via `select.where`; `setTemplateValue` only for the template's own chrome
 - [ ] Locked state respected — lifecycle from derived flags, voice via `callState`, host chrome via `props`
 
 **Templates ([05](./05-templates.md))**
-- [ ] No component-type rules in slots; global slots pin `type`; components own their size
+- [ ] No component-type rules in slots; reaction surfaces select by `where`; components own their size and faces
 - [ ] Manifest binds the workflow; `whenToUse` outcome-first, disqualifies by property
 
 **Style ([06](./06-styles-and-tokens.md))**
@@ -87,7 +90,7 @@ What no linter can decide — audit every artifact against this before calling i
 
 ```bash
 ./unoverse lint          # clean?
-./unoverse gendesign     # regenerate component nodes from rx/ + rebuild + restart
+./unoverse gendesign     # restart — component nodes re-synthesize from rx/ (no codegen)
 ./unoverse check         # health check: services, endpoints, node catalog
 ```
 

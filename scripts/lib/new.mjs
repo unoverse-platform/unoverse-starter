@@ -83,55 +83,48 @@ Next:
 } else {
   const dir = join(RX, "orgs", org, "templates", slug);
   if (!existsSync(join(RX, "orgs", org)))
-    console.log(`  note: org "${org}" doesn't exist yet — creating it (styles come from: npm run new-org -- ${org})`);
+    console.log(`  note: org "${org}" doesn't exist yet — copy rx/orgs/default/styles → rx/orgs/${org}/styles for its token set`);
   if (existsSync(dir)) { console.error(`rx/orgs/${org}/templates/${slug} already exists`); process.exit(1); }
-  mkdirSync(dir, { recursive: true });
+  mkdirSync(join(dir, "layouts"), { recursive: true });
+  mkdirSync(join(dir, "states"), { recursive: true });
 
-  write(join(dir, `${slug}.json`), {
-    unoverse: "1.0",
-    kind: "template",
-    name: pascal,
-    category: "Layout",
-    description: `TODO: ${pascal} app shell — renders what the bound workflow streams in (single catch-all ComponentSlot).`,
-    root: {
-      type: "Box",
-      style: { direction: "column", width: "full", height: "full" },
-      children: [
-        {
-          type: "ComponentSlot",
-          select: { from: "all" },
-          fallback: { type: "Skeleton", variant: "card" },
-        },
-      ],
-    },
-  });
-
+  // manifest-only anatomy: the manifest IS the envelope; layouts/main.json is the root
   write(join(dir, "manifest.json"), {
     name: pascal,
-    description: "TODO: one line — what this app does for the user.",
+    description: "TODO: one line — what this app IS (≤120 chars).",
     whenToUse:
-      "TODO: outcome-first, user vocabulary — what user intent selects this app. Disqualify by property, never by naming siblings.",
+      "TODO: utterance-shaped, the USER's words — what someone would say that should open this app. Disqualify by property, never by naming siblings.",
     category: "General",
     version: "1.0.0",
-    defaultState: "focus",
+    defaultState: "template",
     inputSchema: {
       type: "object",
       properties: { message: { type: "string", description: "The user's request" } },
     },
+    stateOrder: ["conversation"],
     binding: { workflow: "TODO-workflow-id", trigger: "TODO-trigger-node-id" },
-    autoTrigger: true,
-    expose: { openaiApps: false },
-    previewComponents: [],
+    autoTrigger: false,
+    layout: "main",
+  });
+
+  write(join(dir, "layouts", "main.json"), {
+    type: "Box",
+    style: { direction: "column", width: "full", height: "full" },
+    children: [{ $include: "states/conversation" }],
+  });
+
+  write(join(dir, "states", "conversation.json"), {
+    type: "Box",
+    style: { direction: "column", flex: "1", minHeight: "0" },
+    children: [
+      { type: "ComponentSlot", select: {}, fallback: { type: "Skeleton", variant: "card" } },
+    ],
   });
 
   console.log(`
 Next:
   1. Fill the TODOs — especially binding.workflow + binding.trigger (the app OWNS its workflow).
-  2. defaultState = the named state the app loads in (open name): "focus" (takeover),
-     "component" (inline card), "template" (the app IS the surface), or your own name —
-     your templates branch on it via visibleWhen/Switch on "defaultState". (docs/design/04)
-  3. This scaffold is the vanilla single-widget shell (untyped catch-all slot). For a
-     multi-turn chat/voice surface add Timeline + composer chrome, and PIN "type" on any
-     global slot.   (docs/design/05)
-  4. ./unoverse lint, then ./unoverse gendesign, then preview in Studio.`);
+  2. Build the surface in layouts/main.json + states/ (mirror rx/orgs/bpp/templates/bppchatlayout).
+     Reaction surfaces select by STATE: where:{field:"defaultState",eq:"focused"} — never by type.
+  3. ./unoverse lint, then ./unoverse gendesign, then preview in Studio.`);
 }

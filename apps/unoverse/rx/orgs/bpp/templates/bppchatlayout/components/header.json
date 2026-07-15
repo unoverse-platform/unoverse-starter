@@ -1,0 +1,30 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "row",
+    "align": "center",
+    "justify": "space-between",
+    "padding": "md",
+    "background": "transparent"
+  },
+  "children": [
+    {
+      "type": "Image",
+      "style": {
+        "height": "8",
+        "fit": "contain"
+      },
+      "src": "https://www.datocms-assets.com/106045/1768981856-bpp_endorsed-logo_reversed_rgb.svg",
+      "alt": "BPP Assistant"
+    },
+    {
+      "type": "Ref",
+      "ref": "close-button",
+      "action": "close",
+      "visibleWhen": {
+        "field": "mode",
+        "ne": "focus"
+      }
+    }
+  ]
+}

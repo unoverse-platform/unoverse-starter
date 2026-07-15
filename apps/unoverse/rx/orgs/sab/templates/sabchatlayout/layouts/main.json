@@ -1,0 +1,60 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "column",
+    "width": "full",
+    "height": "full",
+    "background": "surface.base"
+  },
+  "children": [
+    {
+      "type": "Box",
+      "style": {
+        "direction": "column",
+        "flex": 1,
+        "minHeight": "0",
+        "position": "relative"
+      },
+      "children": [
+        {
+          "$include": "components/header"
+        },
+        {
+          "type": "Box",
+          "style": {
+            "direction": "column",
+            "flex": 1,
+            "minHeight": "0",
+            "position": "relative"
+          },
+          "children": [
+            {
+              "$include": "states/welcome"
+            },
+            {
+              "$include": "states/conversation"
+            }
+          ]
+        },
+        {
+          "type": "Box",
+          "style": {
+            "width": "full",
+            "direction": "column"
+          },
+          "children": [
+            {
+              "$include": "components/suggestions"
+            }
+          ]
+        },
+        {
+          "$include": "states/focus"
+        }
+      ]
+    },
+    {
+      "$include": "components/composer-bar"
+    }
+  ]
+}

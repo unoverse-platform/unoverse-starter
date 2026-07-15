@@ -1,0 +1,27 @@
+{
+  "type": "Box",
+  "style": {
+    "direction": "row",
+    "align": "center",
+    "justify": "space-between",
+    "padding": "md",
+    "background": "surface.base",
+    "borderBottom": "subtle"
+  },
+  "children": [
+    {
+      "type": "Image",
+      "style": {
+        "height": "7",
+        "fit": "contain"
+      },
+      "src": "https://res.cloudinary.com/sonik/image/upload/v1764865338/SAB/sablogo.jpg",
+      "alt": "SAB Smart Assistant"
+    },
+    {
+      "type": "Ref",
+      "ref": "close-button",
+      "action": "close"
+    }
+  ]
+}

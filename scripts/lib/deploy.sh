@@ -91,7 +91,7 @@ EOF
       #   deploy-packages→ rsync the carve-out (nodes, rx, prompts) + build
       #   marketplace    → reconcile npm nodes from the DB (also installs plugin-base,
       #                    which gendesign needs to compile)
-      #   gendesign      → generate + build the component nodes from the deployed rx/
+      #   gendesign      → build the definition-backed component-node package + restart (nodes synthesize from the deployed rx/ at boot)
       info "Running full deployment (install + packages + marketplace + component nodes)..."
       echo ""
       ansible-playbook \

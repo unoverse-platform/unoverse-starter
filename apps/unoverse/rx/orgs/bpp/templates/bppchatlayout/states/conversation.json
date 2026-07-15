@@ -25,10 +25,10 @@
         "thinkingText": "Thinking…"
       },
       "user": {
-        "$include": "blocks/user-turn"
+        "$include": "components/user-turn"
       },
       "assistant": {
-        "$include": "blocks/assistant-turn"
+        "$include": "components/assistant-turn"
       }
     }
   ]

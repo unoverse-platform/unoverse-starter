@@ -1,0 +1,33 @@
+{
+  "name": "Yas Island Voice Assistant",
+  "description": "Hands-free voice conversation with the Yas Island assistant.",
+  "whenToUse": "Talk to Yas Island by voice — a live, hands-free audio call instead of typing. Use voice, talk hands-free, have a phone-style conversation about planning your visit. Wanting a human or live agent is a different job, not this.",
+  "category": "Assistant",
+  "version": "1.0.0",
+  "defaultState": "template",
+  "width": "70vw",
+  "focusWidth": "82vw",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "description": "The user's request"
+      }
+    }
+  },
+  "autoTrigger": false,
+  "previewComponents": [],
+  "expose": {
+    "openaiApps": false
+  },
+  "service": "voice",
+  "layout": "main",
+  "stateOrder": [
+    "idle",
+    "active",
+    "agent-speaking",
+    "user-speaking",
+    "focus"
+  ]
+}

@@ -1,59 +1,61 @@
 # Playbook — Components & Atoms (rx data)
 
-**Read first:** `docs/unoverse/UNOVERSE_AUTHORING.md` §1–§7 (mental model, envelope,
-props/bind, walkthrough, composition, state, the four moves). This playbook is the
-workflow; that doc is the law. If the model or the state rules are unfamiliar, the
-guided path is `docs/design/` (esp. `03-components.md` and `04-state.md`).
+**Read first:** `docs/design/03-components.md` (the microapp anatomy) + `docs/design/04-state.md`
+(the reaction contract). Deep law: `docs/unoverse/UNOVERSE_AUTHORING.md` §3 (three homes),
+`UNOVERSE_STATE_MODEL.md` §5b. **Study the exemplars before writing**: `rx/components/journeyfinder`
+and `rx/components/cardfinder` — mirror them exactly.
 
-## Where files go
+## The anatomy
 
-| Kind | Path |
-|---|---|
-| Component | `apps/unoverse/rx/components/<name>/<name>.json` (folder form unlocks `$include`) |
-| Atom (shared partial) | `apps/unoverse/rx/atoms/<name>.json` |
+```
+apps/unoverse/rx/components/<name>/
+  <name>.json      # envelope: name/category/nodeSize/outputs/props/state/stateOrder/root
+  manifest.json    # RENDER CONTRACT: arrival defaultState (open name, default "inline")
+                   #   + discovery meta (title / description ≤120 / whenToUse utterance-shaped).
+                   #   Presence = spatially discoverable; envelope NEVER duplicates the meta.
+  layouts/         # the FACES — filename = state name: inline.json, focused.json, (custom).json
+  states/          # the component's PRIVATE steps (wizard questions) — listed in stateOrder
+  components/      # component-local shared partials (earned: 2+ states share a shape)
+```
 
-The filesystem **is** the registry — drop the file in and it's discoverable. Lookup is
-case-insensitive by filename.
+A **flat component** (simple card/chart) is just `<name>.json` + `root` — one face, no manifest,
+no folders. Structure is EARNED; start flat.
+
+## The rules (lint enforces all of these — 0 errors required)
+
+1. **Three homes for everything it shows** (AUTHORING §3):
+   - static content → **hardcoded literals** in the layout (`value`, literal `items: []` on
+     Each, `src`) — never props, never `state`;
+   - internal view-state → the **`state` block, SCALARS ONLY** (`step`, `phase`,
+     `progressPct`) — an array/object/URL in `state` is slop (workflow data → props;
+     static → hardcode);
+   - workflow-fed data → **`props` with `input: true`** (the `default` is the preview mock).
+     Usually empty.
+2. **Root = `Switch on defaultState`** — the component is a switch of **views**, ONE active.
+   Cases `$include layouts/<state>` (filename = view name); `default` → the inline layout.
+   Arrival view = **manifest.defaultState**. Always keep an `inline` case — it is the
+   component's placeholder in the conversation flow.
+3. **State is local; the VIEW is the interface** (STATE_MODEL §5b). Internal `state`
+   (`step`, `phase`, …) is the component's own business — the template never sees it. The
+   only thing that crosses to the template is the **active view** (`defaultState`). The
+   component writes ONLY its own slice (`setValue`): expand = `setValue { defaultState:
+   "course" }`; its expanded face carries its own ✕ back to `"inline"`. When a template has
+   a surface for that view, the instance **lifts out of the flow into the surface** — the
+   SDK renders each instance in exactly ONE placeholder, so you never hide a flow copy
+   yourself (no `hideBelow`, no overlay hack). ❌ NEVER `setTemplateValue` to open a surface
+   (the deprecated bridge — linted).
+4. **`stateOrder`** names exactly the `states/*.json` files, in order.
+5. **Atoms** (`rx/atoms/`, via `Ref`) are for shapes shared across components. ⚠ An atom's
+   internal `bind` is field-lookup ONLY — you cannot pass a literal through `Ref props`
+   into it; for content-bearing pieces, inline the atom with direct literals instead.
+   ⚠ Icon: literal = `icon: "phone"`; bound = `bind: { name: field }`.
+6. **Tokens only** (LAW 1) + closed style keys + real space-scale steps
+   (`docs/design/06`) — an invented step is silently broken CSS.
 
 ## Workflow
 
-1. **Study 2–3 existing components** in `rx/components/` closest in shape to the request
-   (a card, a list, a wizard) before writing. Match their idioms exactly.
-2. **Write the envelope**: `unoverse`, `kind`, `name`, `category`, `description`, and
-   `whenToUse` (required for components — generic and selection-focused, never naming a
-   specific agent or workflow).
-3. **Declare every bound field in `props` with a `default`** (the mock the workbench
-   renders). Mark **every workflow-fed field `input: true`** — marking only some
-   silently breaks the others at runtime (they'll show their defaults forever).
-4. **Build the tree** from the closed vocabulary only (AUTHORING §10):
-   - Structural: `Box` `Stack` `Row` `Column` `Each` `Switch`
-   - Leaves: `Text` `Image` `Button` `Input` `Markdown` `Skeleton` `Icon`
-   - Helpers: `Ref` (atom), `$include` (sibling file)
-   There is no Chart/Card/Loader leaf — compose them from `Box` + `Each` + data.
-5. **State = a few shallow discriminants** (`step`, `defaultState`), not boolean soup.
-   The four moves: `visibleWhen` (small show/hide), `Switch` (whole-view swap),
-   `Each` (repeat over data), `style.when` (same element restyles). Never clone an
-   element under opposite `eq`/`ne` conditions just to change a style.
-6. **Compose**: shared look → atom via `Ref`; alternate view → `$include` + `Switch`;
-   repeated item → `Each`.
-
-## Tokens (styles/themes)
-
-Definitions own **zero raw values** — no `px`/`rem`/`#hex`. Token names only
-(`"color": "text.primary"`, `"radius": "lg"`, space-scale sizes like `"width": "8"`).
-Raw values live once in `apps/unoverse/rx/orgs/<org>/styles/` (`base/` scales →
-`semantic/` + `themes/`); `rx/orgs/default/styles` is the default set and the starter
-you copy for a new org. Need a missing value? Add/extend a token there and reference
-it — never inline it. Never invent component-named tokens (`cardMin`, `tile`).
-
-## Validate & ship
-
-1. **Schema-check** the definition against `apps/unoverse/rx/_schema/unoverse.schema.json`
-   (any JSON Schema validator, e.g. `npx ajv-cli validate -s rx/_schema/unoverse.schema.json -d <file> --strict=false`).
-2. **Audit** against the conformance checklist — AUTHORING §9, every box.
-3. `./unoverse gendesign` to (re)generate the component's node and restart; restyles of
-   existing components take effect live.
-4. Preview in the Studio: mock renders from prop `default`s, and the component's
-   `states/` folder IS the state picker (one pill per layer, activated via the root
-   `Switch` discriminant — AUTHORING §12 / LAYERS §7). Never create `*.states.json`
-   fixtures — nothing reads them.
+1. Study the closest exemplar; copy its folder shape.
+2. Write the envelope + manifest + layouts; put every shown thing in its ONE home.
+3. `./unoverse lint` — 0 errors (it cites the doc for every rule).
+4. `./unoverse gendesign` → Studio: mock (prop defaults + state picker + Inline/Focused
+   toggle), then live. Debug: stream log → state inspector → definition; never guess.

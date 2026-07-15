@@ -1,50 +1,70 @@
-# 04 — State
+# 04 — State (the reaction contract)
 
-**Three buckets. Two writes. Four moves. Everything else is locked — you project it, you never manage it.**
+**Components write themselves. Templates react. Inline is the universal default.**
 
-This is the most important doc in the pack. Every interactive behavior — tabs, wizards, focus, disclosures, voice phases — is built from this one model. The SDK hardcodes **no UI concept**: no focus, no panels, no suggestions, no voice machine. You name the keys; the engine just moves them.
+Think Redux: ONE store; a component dispatches only to **its own slice**; templates are **pure views with selectors** over that store. Every write goes one direction. This is the most important doc in the pack — every interactive behavior is built from it.
 
 ---
 
 ## 🪣 The three buckets
 
-| Bucket | Holds | Keyed by | Written by |
-|---|---|---|---|
-| **Conversation** | the timeline of turns, each turn's status (streaming/complete), the voice transcript | the conversation | **the stream** (and the voice service) — 🔒 never by you |
-| **Component state** | one slice per component: its streamed data **and** its own view state (tab, step, `defaultState`) | the component's unique id | streamed `COMPONENT_DATA` + your `setValue` actions |
-| **Template state** | the active template's bag: `draft`, plus any keys you name (`openPanel`, `defaultState`, suggestion data, voice `callState`) | the active template | the workflow (`TEMPLATE_DATA`) + your `setTemplateValue` actions + producer services |
+| Bucket | Holds | Written by |
+|---|---|---|
+| **Conversation** | the timeline of turns, each turn's status (streaming/complete), the voice transcript | 🔒 **the stream** (and the voice service) — never by you |
+| **Component state** | one slice per component: its streamed data **and** its own view state (`defaultState`, `step`, …) | streamed `COMPONENT_DATA` + the component's own `setValue` actions |
+| **Template state** | the template's **own** things only: its `draft`, its panels (`openPanel`) | the workflow (`TEMPLATE_DATA`) + `setTemplateValue` — never a component |
 
-All three live in the client's in-memory store, rebuilt from the stream on reload. They are **render state** — the agent's real conversation memory lives on the server and is a different layer entirely. Don't conflate them, and don't try to persist render state.
+All three live in the client's in-memory store, rebuilt from the stream on reload. They are render state; the agent's conversation memory lives on the server — a different layer.
 
 ---
 
-## ✍️ The two writes — the ENTIRE write API
+## ⚡ The reaction contract
+
+**A component's state changes exactly two ways — both the same write into its own slice:**
+
+1. **Arrival** — it streams in already in a state (the manifest's `defaultState`, [03](./03-components.md)).
+2. **Interaction** — the user clicks it into a state: `setValue { defaultState: "focused" }` — now, or ten turns later.
+
+**Templates react via selectors — never by component type, never by id:**
 
 ```jsonc
-// a button inside a component — writes into ITS OWN slice, then flags the template
-{ "type": "Button",
-  "action": {
-    "type": "setValue",
-    "values": [{ "key": "defaultState", "value": "focused" }],
-    "then": { "type": "setTemplateValue", "values": [{ "key": "defaultState", "value": "focus" }] }
-  } }
-
-// close chrome — clear both, same two verbs
-{ "type": "Ref", "ref": "close-button",
-  "action": {
-    "type": "setValue",
-    "values": [{ "key": "defaultState", "value": "inline" }],
-    "then": { "type": "setTemplateValue", "values": [{ "key": "defaultState", "value": null }] }
-  } }
+{ "type": "ComponentSlot",
+  "select": { "from": "all", "where": { "field": "defaultState", "eq": "focused" }, "limit": 1 } }
 ```
 
-- **`setValue`** → the component's own slice
-- **`setTemplateValue`** → template state
-- `values` is a list of `{ key, value }` writes (values may be `{{field}}` reads); `then` chains a second write
+- A component enters a state the template has a surface for → the surface presents it.
+- A state the template doesn't know → **nothing happens; the component stays inline.** No error, no registry of valid state names.
+- "Which component?" is intrinsic — the one that changed state is the one selected. Conflicts: most recent wins (`limit: 1`).
+- **One instance → one placeholder.** A component instance renders in exactly one place. While its **view** matches a surface, it renders **there** — it *lifts out of the flow into the surface*; with no matching surface it renders in the **flow** (the `inline` placeholder). It never paints in two places at once — you never hide a flow copy yourself (no `hideBelow`, no overlay-to-cover; the SDK keeps a claimed instance out of the flow). Its data stays in the conversation history throughout. **Close = the instance switches its view back** (its expanded face carries its own ✕ → `setValue { defaultState: "inline" }`) → the surface releases it → it's back in the flow.
+- **State is local; the view is the interface.** A component's *internal* state (`step`, `phase`, …) is private — the template never reads it. The only thing that crosses to the template is the **active view** (`defaultState`); the template reacts to *that* (`select.where { defaultState }`), never to a component's internal keys.
+- **Many instances are fine.** A source can create many instances of a component (three courses → three cards); the rule is *per instance*. **The template decides how a placeholder lays its instances out** — a flow list, one focus (`limit: 1`), a rail/grid — via its `select`.
+- **Template-focus is derived, not stored**: "is anything focused?" = "does any component match my focus selector?". Nothing writes a focus flag anywhere.
 
-That's it. There is no `openPanel` verb, no `toggleFocus`, no `showSuggestions`. Those are **keys you invent**, written by the two actions, read by conditions. Adding a feature is **data**, never a new action.
+**The two global rules — the only protocol-level behavior:**
 
-Anything that is not one of these two is routed to the **server as a native MCP call** ([02](./02-sdui-and-mcp-apps.md)): sending a message is `tools/call` on the app's trigger tool; answering a waiting wizard is an MCP **elicitation**. You never build transport.
+1. **`template` swaps the shell** (the one reserved name) — the whole surface re-renders; conversation, components, and data stay in the store, and the new template reacts through *its own* selectors.
+2. **Inline is the universal default.** No state, or a state no selector matches → the component renders inline in the flow. Always.
+
+### State names are open — the template decides what they mean
+
+`focused` isn't hardcoded anywhere. A component can arrive in **any** named state — `focused`, `course`, `pip` — and a template reacts to exactly the names it defines surfaces for: a `where: { eq: "course" }` rail frames course cards; a template without one renders them inline. New names ship with zero protocol change. (Convention: keep names consistent per org — `focused` in one component and `focus` in another silently fragments the vocabulary templates select on.)
+
+---
+
+## ✍️ The two writes
+
+- **`setValue`** → the component's **own slice** — its answers, its `step`, its `defaultState`. This is the only thing a component ever writes.
+- **`setTemplateValue`** → template state — **only for what is genuinely the template's own** (a disclosure panel, the composer draft). ❌ A component chaining `setTemplateValue` to open a surface is the deprecated bridge — the linter flags it; use a `where` selector instead.
+
+```jsonc
+// a wizard option: record the answer + advance — one setValue, own slice
+{ "action": { "type": "setValue", "values": [
+    { "key": "subject", "value": "{{value}}" },
+    { "key": "step", "value": "route" }
+  ] } }
+```
+
+Anything that is not one of these two routes to the **server as a native MCP call** ([02](./02-sdui-and-mcp-apps.md)): sending a message is `tools/call`; answering a waiting wizard is an elicitation. You never build transport.
 
 ---
 
@@ -54,92 +74,35 @@ All reactivity is `eq` / `ne` / `in` / truthy applied four ways:
 
 | Move | Use when | Example |
 |---|---|---|
-| **`visibleWhen`** | a small thing appears/disappears | `"visibleWhen": { "field": "openPanel", "eq": "faq" }` |
-| **`Switch`** | a whole view swaps (wizard steps, inline↔focused) | `"on": "step", "cases": { … }` |
-| **`Each`** | repeat over a data array | see [03](./03-components.md) |
-| **`style.when`** | the same element restyles by state | `"when": [{ "field": "deltaPositive", "eq": true, "apply": { "color": "status.success" } }]` |
+| **`visibleWhen`** | a small thing appears/disappears | `{ "field": "isLookingUp", "eq": true }` |
+| **`Switch`** | a whole view swaps (faces, wizard steps) | `"on": "defaultState", "cases": { … }` |
+| **`Each`** | repeat — a literal `items: []` list or a bound array | see [03](./03-components.md) |
+| **`style.when`** | the same element restyles by state | `[{ "field": "deltaPositive", "eq": true, "apply": { "color": "status.success" } }]` |
 
-✅ Mutually exclusive views belong in **one `Switch`**, never in N `visibleWhen`s fighting with opposite conditions.
-
-### Discriminants, not boolean soup
-
-Name **one field** per axis of variation, with a few values — `defaultState: "inline" | "focused"`, `step: "choose" | "confirm" | "done"`, `callState: "idle" | "active" | …`. A pile of independent booleans (`isExpanded`, `showDetails`, `hideHeader`) always drifts into contradictory combinations.
+✅ Mutually exclusive views belong in **one `Switch`**; a case never re-guards its own discriminant. Name **one field per axis** (`defaultState`, `step`, `callState`) — never boolean soup.
 
 ### Named states are first-class — enumerated, viewable, served
 
-A definition's states aren't hidden inside its conditions. Each layer lives as a file in the definition's **`states/` folder**, and that folder is a registry three consumers read automatically:
-
-- **Studio** shows a pill per state in mock view — click to activate it and design that layer in isolation ([07](./07-studio.md)).
-- **The served app manifest** carries the same list (`states`, each with its activation selector), so any MCP caller knows which states exist and how to activate them.
-- **The root definition** declares the pill order (the sequence of its `$include: "states/…"` references).
-
-Add a state = add a file. It appears everywhere, nothing to register.
-
----
-
-## 🔍 Focus is not special — it's your choice of bucket
-
-There is **no focus concept in the SDK**. You build it like everything else:
-
-| Behavior | Bucket & key | Read by |
-|---|---|---|
-| A widget's own expanded/inline look | its slice: `setValue` of `defaultState: "focused"` | `visibleWhen`/`Switch` on `defaultState` |
-| A screen-wide "something is focused" signal (hide the chat input, open an overlay) | template state: `setTemplateValue` of `defaultState: "focus"` | `visibleWhen: { field: "defaultState", eq: "focus" }` |
-
-A widget chains both with `then`: set its own `defaultState`, *then* flag the template. **How** `defaultState: "focus"` looks is each template's own business — a chat template may render a full overlay, a voice template a side panel. Same key, different surface, zero SDK involvement ([05](./05-templates.md)).
+Each layer lives as a file (`states/`, faces in `layouts/`), so three consumers read them automatically: **Studio** shows a pill per state (+ the Inline/Focused master toggle), the **served manifest** lists them for any MCP caller, and **`stateOrder`** fixes the order. Add a state = add a file.
 
 ---
 
 ## 🔒 Locked state — managed FOR you, read-only to you
 
-Not all state is yours to write. Three kinds are **locked**: the platform manages them, and your definitions only project them. Trying to manage these yourself is the #1 architecture mistake.
-
-### 1. Conversation & lifecycle — locked to the stream
-
-The timeline, turn identity, and streaming status are written **only by the stream** (`WORKFLOW_STARTED` opens a turn, `WORKFLOW_COMPLETED` closes it — run-scoped, on the MCP `/stream` lane). "Is the assistant thinking" is **derived** from the conversation and handed to you as flags (`isStreaming`, `isEmpty`) for `visibleWhen`.
-
-- ✅ `{"visibleWhen": { "field": "isStreaming" }}` on your thinking indicator.
-- ❌ Never simulate lifecycle with your own keys, and never gate a "done" look on whether text has arrived. If a streaming flag never clears, that's a stream-delivery problem to report — not something to patch in a definition.
-
-### 2. Voice — locked in the SDK's voice service
-
-Voice is the canonical **native service**: mic, speakers, and audio frames cannot be data, so the SDK owns them (`useVoiceService`, on the SDK WebSocket lane — the audio lane, [02](./02-sdui-and-mcp-apps.md)). You never touch a connection, a frame, or a mute toggle's plumbing.
-
-But the service is a **producer**: it writes its *derived state* into the normal buckets, and you read it exactly like any other key:
-
-| Voice piece | Where it lands | Your job |
-|---|---|---|
-| audio I/O (mic/speaker/frames) | 🔒 the service — invisible to definitions | nothing |
-| **`callState`**: `idle` · `active` · `agentSpeaking` · `userSpeaking` | **template state** | branch your voice template's phases on it |
-| transcript (the words said) | **conversation** | render via `Timeline` |
-| fine flags (`isMuted`, `isAssistantSpeaking`, …) | template scope | small reads (a mute icon) |
-
-```jsonc
-// a voice template branches call phases off ONE value — same pattern as defaultState
-{ "type": "Switch", "on": "callState",
-  "cases": {
-    "idle":          { "$include": "states/idle" },
-    "active":        { "$include": "states/listening" },
-    "agentSpeaking": { "$include": "states/speaking" },
-    "userSpeaking":  { "$include": "states/listening" }
-  } }
-```
-
-**The rule services follow:** a service may own native I/O, but its **state lives in the normal buckets**. If UI-driving state hides inside a service hook, that's the same leak as a feature name in the engine.
-
-### 3. Native host chrome — locked in the channel
-
-Truly ephemeral, presentation-only toggles that belong to a specific host screen (a docs drawer open/closed in an embedding app) live in the **host's own native state** (e.g. React `useState` in the channel), passed into the template as `props` and projected with `visibleWhen`. They do NOT go in the store, and they NEVER justify a new SDK primitive.
+1. **Conversation & lifecycle** — written only by the stream. "Is it thinking" is the derived `isStreaming`/`isEmpty` flags; project them, never simulate them (a stuck flag is a stream-delivery bug to report, not to patch in a definition).
+2. **Voice** — the SDK's voice service owns the audio natively and, as a producer, projects **`callState`** (`idle · active · agentSpeaking · userSpeaking`) into the template's scope; a voice template branches its phases on that one field. The transcript rides the conversation. A template binds the service by declaring `service: "voice"` in its manifest. You never wire audio.
+3. **Native host chrome** — ephemeral toggles that belong to the embedding host live in the host's own state, passed as `props`; never in the store, never a new primitive.
 
 ### The decision table
 
 | The state is… | It goes in… | Written by |
 |---|---|---|
-| a component's data or its own view state | the component slice | stream + `setValue` |
-| shared across the surface (defaultState, panels, drafts, suggestions data) | template state | workflow + `setTemplateValue` |
+| a component's data, answers, or view state (incl. `defaultState`) | the component's own slice | stream + its own `setValue` |
+| the template's own chrome (panels, draft) | template state | `setTemplateValue` |
+| "is a component focused/expanded" | **nowhere — derived** via a `where` selector | — |
 | conversation flow / streaming status | 🔒 conversation (derived flags) | the stream only |
-| voice call phase / transcript | 🔒 written by the voice service into template state / conversation | the service (you read it) |
-| host-screen-only ephemeral chrome | 🔒 the native host, as `props` | the channel |
+| voice call phase / transcript | 🔒 projected by the voice service | the service (you read it) |
+| host-screen-only chrome | 🔒 the native host, as `props` | the channel |
 
 ---
 

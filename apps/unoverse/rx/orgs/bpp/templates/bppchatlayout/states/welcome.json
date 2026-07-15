@@ -42,20 +42,15 @@
           "children": [
             {
               "type": "Text",
-              "bind": {
-                "value": "headline"
-              },
               "style": {
                 "font": "display",
                 "color": "white",
                 "align": "start"
-              }
+              },
+              "value": "Built to transform"
             },
             {
               "type": "Text",
-              "bind": {
-                "value": "headlineAccent"
-              },
               "style": {
                 "font": "display",
                 "color": "action.primary-text",
@@ -66,28 +61,24 @@
                 ],
                 "radius": "sm",
                 "align": "start"
-              }
+              },
+              "value": "careers."
             }
           ]
         },
         {
           "type": "Text",
-          "bind": {
-            "value": "brandSubtitle"
-          },
           "style": {
             "font": "body.lg",
             "color": "brand.bpp.white-dim",
             "align": "start"
-          }
+          },
+          "value": "Courses, qualifications and apprenticeships — ask me anything."
         }
       ]
     },
     {
       "type": "Each",
-      "bind": {
-        "items": "suggestions"
-      },
       "style": {
         "direction": "row",
         "gap": "md",
@@ -166,8 +157,8 @@
                     "type": "Icon",
                     "icon": "journey",
                     "style": {
-                      "width": "3.5",
-                      "height": "3.5",
+                      "width": "4",
+                      "height": "4",
                       "color": "white"
                     }
                   },
@@ -242,7 +233,33 @@
             ]
           }
         ]
-      }
+      },
+      "items": [
+        {
+          "image": "https://www.datocms-assets.com/106045/1727947826-woman-on-computer-edited.png?auto=format&fit=crop&w=520&h=760",
+          "tag": "Courses",
+          "title": "Find a course",
+          "subtitle": "Share your career goals — I'll match you to the right course.",
+          "cta": "Find my course",
+          "text": "Help me find the right course or learning journey for my career goals"
+        },
+        {
+          "image": "https://www.datocms-assets.com/106045/1727865777-mock-trial-edited.png?auto=format&fit=crop&w=520&h=760",
+          "tag": "Professional",
+          "title": "Qualifications",
+          "subtitle": "ACCA, ACA, SQE — compare routes and find your right fit.",
+          "cta": "Compare options",
+          "text": "Which professional qualification should I take?"
+        },
+        {
+          "image": "https://www.datocms-assets.com/106045/1720167177-data_and_tech.jpg?auto=format&fit=crop&w=520&h=760",
+          "tag": "Earn & learn",
+          "title": "Apprenticeships",
+          "subtitle": "Routes that pay you a salary while you train for a career.",
+          "cta": "Explore routes",
+          "text": "What apprenticeship routes are available?"
+        }
+      ]
     }
   ]
 }

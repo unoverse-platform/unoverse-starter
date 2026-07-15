@@ -1,6 +1,6 @@
 # Runbook: Restart & Rebuild
 
-Rebuild packages, regenerate component nodes, and restart services so the platform picks up your latest changes.
+Rebuild packages and restart services so the platform picks up your latest changes. Component nodes are definition-backed — they re-synthesize from `rx/` at boot, no generation step.
 
 ## When To Use
 
@@ -20,7 +20,7 @@ Rebuild packages, regenerate component nodes, and restart services so the platfo
 # Build one package only
 ./unoverse build @unoverse-platform/my-package
 
-# Regenerate component nodes from rx/ definitions + restart
+# Restart — component nodes re-synthesize from rx/ definitions (no codegen)
 ./unoverse gendesign
 
 # Full dev setup — install deps, build, restart
@@ -61,7 +61,7 @@ npm install
 # 2. Build all node packages
 npm run build
 
-# 3. Regenerate component nodes from rx/ (requires unoverse running)
+# 3. Restart so component nodes re-synthesize from rx/ (requires unoverse running)
 ./unoverse gendesign
 
 # 4. Restart the service that loads packages (the workflow engine runs

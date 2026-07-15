@@ -44,11 +44,17 @@ Switching layers **never touches data**. Data arrives the standard way (`COMPONE
 / template state) and whichever layer is active binds it. One dataset, many projections — the
 same data as a compact card *or* a full panel. The discriminant lives in the owning bucket
 (a component's layer → its slice via `setValue`; a template's layer → template state via
-`setTemplateValue`) — see `UNOVERSE_STATE_MODEL.md` §5. No new mechanism, no new SDK.
+`setTemplateValue`) — see `UNOVERSE_STATE_MODEL.md` §5, and §5b for the ownership
+contract (templates own template states; components own component states; the arrival
+state is the one bridge). No new mechanism, no new SDK.
 
 ---
 
-## 2. The structure — `blocks/` + `states/`
+## 2. The structure — `layouts/` + `states/` + `components/`
+
+> Naming (July 2026): the shared-shapes folder is **`components/`** (formerly `blocks/`), and the
+> master faces live in **`layouts/`** — the layout filename IS the state name (`layouts/inline`,
+> `layouts/focused`, or any custom state). The rules below are unchanged.
 
 A **rich** thing (a template or component that actually has layers) is organized as:
 
@@ -56,11 +62,11 @@ A **rich** thing (a template or component that actually has layers) is organized
 <thing>/
   <thing>.json     ← ROOT: the selector(s) — Switch on the discriminant — + any shell
   manifest.json    ← templates only (the app: mode, binding, …)
-  blocks/          ← OPTIONAL — present ONLY when a shape is shared by 2+ states. Each lives ONCE.
-  states/          ← LAYERS: thin — each ties a discriminant value → blocks/inline shape + its data.
+  components/          ← OPTIONAL — present ONLY when a shape is shared by 2+ states. Each lives ONCE.
+  states/          ← LAYERS: thin — each ties a discriminant value → components/inline shape + its data.
 ```
 
-- **`blocks/`** = the *how it looks* — pure shapes, no data baked in (a section-header, an
+- **`components/`** = the *how it looks* — pure shapes, no data baked in (a section-header, an
   option-list, a result-card, a stepper). A block is written **once** and exists **only** because
   more than one state reuses it. A shape used by a single state is **not** a block — it stays
   inline in that state. (See §3 — extraction is *earned* by reuse.)
@@ -100,14 +106,14 @@ flips between a compact `inline` card and a `focused` panel. Those two are the d
 into `states/` would leave a thin assembler that tells you nothing about what the thing *is*.
 
 > **Extract only when it earns it:**
-> - to **`blocks/`** → a shape that is **reused** (by 2+ states).
+> - to **`components/`** → a shape that is **reused** (by 2+ states).
 > - to **`states/`** → a layer that is **repeated** (many siblings, like wizard steps) *or*
 >   **large-and-independent** enough that inlining it would bury the root.
 > - **a design's few defining states stay in the root** — they *are* the design.
 
 So a widget's `inline` ↔ `focused` views stay in the root (the identity); repeated question steps
 that share one shape collapse into **one** data-driven `states/` file; a shape is pulled to
-`blocks/` only if two or more states share it. The root stays legible.
+`components/` only if two or more states share it. The root stays legible.
 
 ---
 
@@ -115,7 +121,7 @@ that share one shape collapse into **one** data-driven `states/` file; a shape i
 
 The structure only appears where there is real layering:
 
-| Kind | Example | Has `blocks/` + `states/`? |
+| Kind | Example | Has `components/` + `states/`? |
 |---|---|---|
 | **Dumb shell** — a bare mount point | a passthrough template (one `ComponentSlot`) | ❌ no — one file, nothing to organize |
 | **Rich thing** — owns layers | a stateful widget component · a chat template | ✅ yes |
@@ -216,7 +222,7 @@ wizard/
 **After (the model):** the seven question steps are **one shape with seven data sets** — one
 layer, not seven. The data producer sends the current step's heading and options (and, on each
 option row, where it advances to); the state binds them. Only genuinely different arrangements
-(`summary`, `result`) earn a file. **Nothing is shared across states, so there is no `blocks/`
+(`summary`, `result`) earn a file. **Nothing is shared across states, so there is no `components/`
 folder** — the always-on chrome (stepper, side image) lives in the **root**, and the question
 shape, used by a single state, stays **inline** in it:
 
@@ -235,7 +241,7 @@ wizard/
 standard); the `step` discriminant selects *which data*, never a new layout. No self-guarding
 `visibleWhen`, and no extraction that reuse didn't earn.
 
-> **When would `blocks/` appear?** Only with genuine cross-state reuse — e.g. a chat template
+> **When would `components/` appear?** Only with genuine cross-state reuse — e.g. a chat template
 > whose header, composer, and thinking-indicator shapes are each used by its `welcome`,
 > `conversation`, *and* `focus` states. Those three shapes earn a block file each; a shape used
 > by one state never does.
@@ -288,9 +294,9 @@ compute the projection.
 
 This is **formalizing what already exists**, not new machinery:
 
-- `blocks/` = shared shapes, composed with **`$include`** (`Ref` stays for **global** `rx/atoms/`
+- `components/` = shared shapes, composed with **`$include`** (`Ref` stays for **global** `rx/atoms/`
   when a shape needs per-use field remapping — `$include` inlines, it can't remap).
-- `states/` = the `$include`d **layer views** — but thin, because the shape lives in `blocks/`.
+- `states/` = the `$include`d **layer views** — but thin, because the shape lives in `components/`.
 - the root's `Switch on <discriminant>` = the **selector** already in the vocabulary.
 
 The three state buckets are unchanged; the discriminant is just a key in the right bucket

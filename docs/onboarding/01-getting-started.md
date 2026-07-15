@@ -213,7 +213,7 @@ unoverse update           # Pull latest images and restart
 | `unoverse dev`          | Start platform if needed, install deps, build packages, restart |
 | `unoverse build`        | Build all node packages + restart services          |
 | `unoverse build <pkg>`  | Build one package + restart services                |
-| `unoverse gendesign`    | Regenerate component nodes from `rx/` + restart     |
+| `unoverse gendesign`    | Restart — component nodes re-synthesize from `rx/`  |
 | `unoverse open`         | Open in browser (`unoverse open canvas\|api\|logs`)  |
 | `unoverse help`         | Show all commands                                   |
 

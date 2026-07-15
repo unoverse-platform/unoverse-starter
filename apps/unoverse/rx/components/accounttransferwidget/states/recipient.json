@@ -1,13 +1,67 @@
 {
   "type": "Box",
-  "style": { "direction": "column", "gap": "4", "width": "full" },
+  "style": {
+    "direction": "column",
+    "gap": "4",
+    "width": "full"
+  },
   "children": [
-    { "type": "Ref", "ref": "section-header", "props": { "title": "recipientTitle", "subtitle": "recipientSubtitle" } },
+    {
+      "type": "Ref",
+      "ref": "section-header",
+      "props": {
+        "title": "recipientTitle",
+        "subtitle": "recipientSubtitle"
+      }
+    },
     {
       "type": "Each",
-      "bind": { "items": "beneficiaries" },
-      "style": { "direction": "column", "gap": "2", "width": "full" },
-      "template": { "type": "Ref", "ref": "account-row", "props": { "label": "name", "sub": "accountNumber", "meta": "bankName" }, "action": { "type": "setValue", "values": [{ "key": "recipientLabel", "value": "{{name}}" }, { "key": "recipientBank", "value": "{{bankName}}" }, { "key": "step", "value": "amount" }, { "key": "progressPct", "value": "75%" }, { "key": "stepLabel", "value": "Step 3 of 4" }, { "key": "inlinePrimary", "value": "Enter the amount" }] } }
+      "bind": {
+        "items": "beneficiaries"
+      },
+      "style": {
+        "direction": "column",
+        "gap": "2",
+        "width": "full"
+      },
+      "template": {
+        "type": "Ref",
+        "ref": "account-row",
+        "props": {
+          "label": "name",
+          "sub": "accountNumber",
+          "meta": "bankName"
+        },
+        "action": {
+          "type": "setValue",
+          "values": [
+            {
+              "key": "recipientLabel",
+              "value": "{{name}}"
+            },
+            {
+              "key": "recipientBank",
+              "value": "{{bankName}}"
+            },
+            {
+              "key": "step",
+              "value": "amount"
+            },
+            {
+              "key": "progressPct",
+              "value": "75%"
+            },
+            {
+              "key": "stepLabel",
+              "value": "Step 3 of 4"
+            },
+            {
+              "key": "inlinePrimary",
+              "value": "Enter the amount"
+            }
+          ]
+        }
+      }
     }
   ]
 }

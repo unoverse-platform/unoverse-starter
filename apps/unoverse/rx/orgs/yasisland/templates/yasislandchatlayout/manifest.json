@@ -1,0 +1,24 @@
+{
+  "name": "Yas Island Assistant",
+  "description": "The Yas Island guest chat for planning parks, stays, dining and events.",
+  "whenToUse": "Ask Yas Island anything about your visit — theme parks, hotels, dining, events, tickets and getting around. The conversational home and fallback for guests; anything without its own focused app starts here.",
+  "category": "Assistant",
+  "version": "1.0.0",
+  "defaultState": "template",
+  "width": "70vw",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "message": {
+        "type": "string",
+        "description": "The user's request"
+      }
+    }
+  },
+  "stateOrder": ["welcome", "conversation", "focus"],
+  "autoTrigger": false,
+  "expose": {
+    "openaiApps": false
+  },
+  "layout": "main"
+}

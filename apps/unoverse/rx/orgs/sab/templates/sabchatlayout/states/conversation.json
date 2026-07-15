@@ -11,8 +11,8 @@
         "avatarUrl": "https://res.cloudinary.com/sonik/image/upload/v1734332867/sixflags/uxgtoiaxezsfzueh5xkn.jpg",
         "thinkingText": "Thinking…"
       },
-      "user": { "$include": "blocks/user-turn" },
-      "assistant": { "$include": "blocks/assistant-turn" }
+      "user": { "$include": "components/user-turn" },
+      "assistant": { "$include": "components/assistant-turn" }
     }
   ]
 }

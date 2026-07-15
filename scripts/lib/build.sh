@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# unoverse build + unoverse gendesign (nodegen)
+# unoverse build + unoverse gendesign (definition-backed component nodes)
 
 cmd_build() {
   local package="$1"
@@ -22,13 +22,13 @@ cmd_build() {
 }
 
 cmd_gendesign() {
-  banner "Generate Component Nodes (nodegen)"
+  banner "Component Nodes (definition-backed)"
 
-  # nodegen turns rx/ component definitions into loadable component-node source
-  # under apps/unoverse/nodes/components. It runs INSIDE the unoverse container:
-  # the image carries the generator (apps/unoverse/tools), its server-side deps,
-  # and tsx — none of which ship as host source. The carve-out folders are mounted,
-  # so it reads the local rx/ and writes nodes/components straight back to the host.
+  # Component nodes are DEFINITION-BACKED: one universal executor serves every
+  # component, and node definitions are synthesized from rx/components/* at boot.
+  # There is NO generation step — adding or editing a component definition only
+  # needs a restart. The one-time build below compiles the small hand-written
+  # package (apps/unoverse/nodes/components) if its dist/ is missing.
   local ns_status
   ns_status=$(docker compose -f "$ROOT/docker-compose.yml" ps --format '{{.Status}}' unoverse 2>/dev/null | head -1)
   if ! echo "$ns_status" | grep -qi "up"; then
@@ -37,41 +37,30 @@ cmd_gendesign() {
     return
   fi
 
-  echo "  Generating component nodes from rx/ (in the unoverse container)..."
-  # -w: the container WORKDIR is /app (monorepo root); nodegen:local lives in
-  # apps/unoverse/package.json, and its relative paths (tools/nodegen, nodes/components)
-  # only resolve — and write back to the mounted host folders — from that directory.
-  if docker compose -f "$ROOT/docker-compose.yml" exec -T -w /app/apps/unoverse unoverse npm run nodegen:local; then
-    ok "Component nodes generated → apps/unoverse/nodes/components"
-  else
-    fail "nodegen failed — check the output above"
-    return
-  fi
-
-  # nodegen emits TypeScript SOURCE; the runtime imports the compiled dist/. The
-  # generated package is NOT a workspace (root globs are apps/* + plugin-base), so
-  # neither `npm run build -w` nor `turbo run build` compiles it — its own `tsc` must
-  # run in its own dir. tsc ignores NODE_PATH, and the pruned image has no linked
-  # @unoverse-platform/plugin-base — the only built copy lives in the plugins volume.
-  # Symlink it into node_modules so tsc resolves it, then compile. The dist/ lands in
-  # the mounted host folder and rides to prod via the nodes/ rsync.
-  echo "  Building component nodes (tsc → dist)..."
-  if docker compose -f "$ROOT/docker-compose.yml" exec -T unoverse sh -c '
-    if [ ! -d /app/plugins/node_modules/@unoverse-platform/plugin-base ]; then
-      echo "  ✗ @unoverse-platform/plugin-base not installed in the plugins volume"; exit 1
+  # The package is NOT a workspace (root globs are apps/* + plugin-base), so its
+  # own tsc must run in its own dir. ALWAYS build: an update can ship new package
+  # SOURCE while an old dist survives (rsync excludes dist) — skip-if-present would
+  # silently run stale executor code. The build is a small tsc (seconds); component
+  # DEFINITION changes alone still need no build — they synthesize from rx/ at boot.
+  if true; then
+    echo "  Building the universal component-node package (tsc → dist)..."
+    if docker compose -f "$ROOT/docker-compose.yml" exec -T unoverse sh -c '
+      if [ ! -d /app/plugins/node_modules/@unoverse-platform/plugin-base ]; then
+        echo "  ✗ @unoverse-platform/plugin-base not installed in the plugins volume"; exit 1
+      fi
+      mkdir -p /app/node_modules/@unoverse-platform
+      ln -sfn /app/plugins/node_modules/@unoverse-platform/plugin-base /app/node_modules/@unoverse-platform/plugin-base
+      cd /app/apps/unoverse/nodes/components && npm run build
+    '; then
+      ok "Component-node package built → apps/unoverse/nodes/components/dist"
+    else
+      fail "component package build (tsc) failed — check the output above"
+      return
     fi
-    mkdir -p /app/node_modules/@unoverse-platform
-    ln -sfn /app/plugins/node_modules/@unoverse-platform/plugin-base /app/node_modules/@unoverse-platform/plugin-base
-    cd /app/apps/unoverse/nodes/components && npm run build
-  '; then
-    ok "Component nodes built → apps/unoverse/nodes/components/dist"
-  else
-    fail "component build (tsc) failed — check the output above"
-    return
   fi
 
-  echo "  Restarting unoverse..."
+  echo "  Restarting unoverse (definitions re-synthesize from rx/components)..."
   docker compose -f "$ROOT/docker-compose.yml" restart unoverse 2>/dev/null || true
-  ok "Restarted — changes are live"
+  ok "Restarted — component changes are live"
   echo ""
 }

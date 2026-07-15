@@ -1,133 +1,116 @@
 # 05 — Templates (MCP Apps)
 
-**A template is a whole surface — and a deployable MCP App that owns its workflow.**
+**A template is a whole surface and a deployable MCP App. Its manifest IS its envelope; its surfaces are reactions to component state.**
 
-Components render pieces of data. A **template** is the shell around them: the chat layout, the voice surface, the dashboard. It is org-scoped, swappable at runtime (the conversation stays put — state lives in the store, not the template), and it ships as an **MCP App**.
+Components render pieces; a **template** is the shell around them — the chat layout, the voice surface. It owns **nothing**: conversation and component data live in the store, so templates are swappable mid-conversation.
 
 ---
 
-## 📁 Layout & the manifest
+## 📁 The anatomy — manifest-only
 
 ```
-rx/orgs/<org>/templates/chatlayout/
-├── chatlayout.json     # the template definition (envelope, kind: "template")
-├── manifest.json       # the APP binding — workflow, defaultState, autoTrigger
-├── states/             # earned extractions
-└── blocks/
+rx/orgs/<org>/templates/bppchatlayout/
+├── manifest.json        # THE ENVELOPE — everything about the app (below)
+├── layouts/
+│   └── main.json        # the root tree (named by manifest.layout, default "main")
+├── components/          # template-local partials (header, composer-bar, turns, …)
+└── states/              # the template's layers (welcome, conversation, focus)
 ```
 
-`manifest.json` is what makes the template an **app**:
+There is **no `<name>.json`** — the manifest is the single contract file and `layouts/main.json` is the root. Same folder grammar as components: `layouts/` (the surface), `components/` (local partials), `states/` (layers).
 
 ```jsonc
+// manifest.json — the whole app in one file
 {
-  "name": "Trip Booker",
-  "description": "A guided trip booking assessment.",
-  "whenToUse": "Book, change or cancel a trip — a guided flow that recommends the best option.",
-  "category": "Travel",
+  "name": "BPP Assistant",
+  "description": "The BPP learning-support chat for questions about studying with BPP.",
+  "whenToUse": "Ask BPP a question or get general guidance about studying…",   // utterance-shaped — selection text
+  "category": "Assistant",
   "version": "1.0.0",
-  "defaultState": "focus",            // the named state the app LOADS in — an OPEN name: "template" (fluid surface) · "focus" (takeover) · "component" (inline card) · or your own
-  "inputSchema": {
-    "type": "object",
-    "properties": { "message": { "type": "string", "description": "The user's request" } }
-  },
-  "binding": { "workflow": "wf-xxxxxx", "trigger": "inputtrigger1" },   // the app OWNS this binding
-  "autoTrigger": true,
-  "expose": { "openaiApps": false },
-  "previewComponents": ["BookingWizard"]
+  "defaultState": "template",                     // the app's load state: "template" = the full surface
+  "width": "70vw",
+  "inputSchema": { "type": "object", "properties": { "message": { "type": "string" } } },
+  "stateOrder": ["welcome", "conversation", "focus"],   // the states/ files, in picker order
+  "binding": { "workflow": "wf-8koixv", "trigger": "inputtrigger1" },   // the app OWNS its workflow
+  "autoTrigger": false,
+  "layout": "main"
+  // a voice template adds: "service": "voice"  (the channel instantiates the native service)
 }
 ```
 
-This is the MCP-apps standard in practice ([02](./02-sdui-and-mcp-apps.md)): clients **pull** the app (definition + manifest) as MCP resources; nothing pushes UI by workflow name. Sending a user message = `tools/call` on the app's trigger tool; a wizard's answers = a native elicitation resolving the held call. The channel never invents transport.
+This is the MCP-apps standard in practice ([02](./02-sdui-and-mcp-apps.md)): clients pull the app as MCP resources; sends are `tools/call` on its trigger tool; a wizard's answers are a native elicitation. The channel never invents transport.
 
 ---
 
 ## 🧩 Template-only primitives
 
-### `Timeline` — the conversation
-
-Renders the turn history (user + assistant messages, streamed answer text, the transcript in voice apps). The conversation bucket is locked to the stream ([04](./04-state.md)) — `Timeline` just projects it.
-
-### `ComponentSlot` — where streamed components land
+- **`Timeline`** — renders the conversation (you supply the `user`/`assistant` turn subtrees; per-turn scope carries `text`, `streaming`, …). The conversation bucket is locked to the stream ([04](./04-state.md)).
+- **`ComponentSlot`** — where components render. Two forms:
 
 ```jsonc
+// 1. the FLOW slot — components render inline in the conversation (the default home)
 { "type": "ComponentSlot", "select": {} }
+
+// 2. a REACTION surface — presents whichever component is in a named state (§04)
+{ "type": "ComponentSlot",
+  "select": { "from": "all", "where": { "field": "defaultState", "eq": "focused" }, "limit": 1 },
+  "frame": { /* the surface chrome the selected component renders inside */ } }
 ```
 
 Rules that bite:
-
-- ✅ **One generic `select: {}`** in the flow of conversation — components arrive with their own natural size and the slot just hosts them.
-- ❌ **Never type-filter slots by component name** ("prose here, ProductCard there") — hardcoded type rules are brittle and forbidden. A component that needs to be wide declares that in **its own definition**.
-- ⚠️ **Global slots (`from: "all"`) select oldest-first.** An untyped global slot shows the conversation's *first-ever* component forever. If you use a global slot (e.g. a focus panel), **pin its `type`**.
+- ✅ Reaction surfaces select by the **view** (`where { field: "defaultState" }`) — ❌ never by component type (`type: ["SomeWidget"]`), ❌ never by a component's internal state key (that's private). Both are lint-flagged violations.
+- ✅ **One instance → one placeholder.** While a component's view matches a surface, it renders **there** — it *lifts out of the flow* into the surface; the SDK keeps it out of the flow so it never paints twice. Its own ✕ switches it back to `inline` and it returns to the flow. You never hide a flow copy yourself.
+- ❌ Never size or restyle a component from the template — a component owns its faces ([03](./03-components.md)); the template owns only the **framing** (and how a placeholder lays out multiple instances, via `select`).
 
 ---
 
-## 🔍 `defaultState` — the named state the app loads in
+## 🔍 Surfaces per state — the template decides what names mean
 
-`defaultState` is just a template-state key ([04](./04-state.md)) — but by convention it's THE key for screen-wide surface state. The manifest declares the name the app loads in; after load it's ordinary state anything can move. The name set is OPEN — invent one and design for it; every template defines **its own** rendering per name:
-
-```jsonc
-// chat template: defaultState "focus" = full overlay over the conversation
-{ "type": "Box", "visibleWhen": { "field": "defaultState", "eq": "focus" },
-  "style": { "position": "absolute", "inset": "0", "width": "full", "height": "full",
-             "background": "surface.base", "overflow": "hidden", "direction": "column" },
-  "children": [
-    { "type": "ComponentSlot",
-      "select": { "from": "all", "type": ["BookingWizard"], "limit": 1 },
-      "style": { "width": "full", "height": "full" } }
-  ] }
-```
-
-- A focusable widget's **node** emits `TEMPLATE_DATA { defaultState: "focus" }` when it streams in (declared in its definition's `defaultState`), so the surface opens the instant the widget arrives; the user's expand/close buttons write the same key.
-- The **component stays fit-to-content**; the **template decides the framing** — modal, sheet, side panel, anything. Same `defaultState` name, different surface per template, zero SDK change.
-
-### Rich layers: cap height, scroll inside
-
-A focus surface can hold unbounded content. Don't let it grow forever or clip:
+A template defines a surface for each state name it recognizes; unknown names render inline (the universal default). The chat layout's focus state is just:
 
 ```jsonc
-{ "type": "Box", "style": { "height": "full", "minHeight": "0", "direction": "column" },
-  "children": [
-    { "$include": "blocks/header" },
-    { "type": "Box", "style": { "flex": "1", "minHeight": "0", "overflow": "auto" },
-      "children": [ /* the long body */ ] }
-  ] }
+// states/focus.json — reacts to ANY component that sets defaultState: "focused"
+{ "type": "ComponentSlot",
+  "select": { "from": "all", "where": { "field": "defaultState", "eq": "focused" }, "limit": 1 },
+  "frame": { "type": "Box", "style": { "position": "absolute", "inset": "0", "background": "surface.base" },
+             "children": [ { "type": "ComponentSlot" } ] } }
 ```
 
-Header/footer pinned; **only the body scrolls**.
+Same mechanics for a custom state: a template that wants to frame course cards adds a surface with `where: { "field": "defaultState", "eq": "course" }` — zero SDK or protocol change. Different templates present the same view completely differently (a full **overlay**, a **right-hand panel** beside the flow, a modal, a rail) — the surface *is* the frame, and it lives in the template, never the SDK. Both a covering overlay and a side panel work equally: the instance has already lifted out of the flow (one placeholder), so a side-by-side surface does **not** double-render — you don't need an overlay to hide a flow copy.
+
+**Rich layers cap their height and scroll inside** (header/footer pinned, `flex: 1` + `minHeight: 0` + `overflow: auto` body) — a focus surface holds unbounded content.
 
 ---
 
 ## 🎙️ Voice templates
 
-A voice template is the same model with one extra locked input: the voice service projects **`callState`** (`idle` · `active` · `agentSpeaking` · `userSpeaking`) into template scope, and the template branches its phases on it with one `Switch` — exactly like `defaultState` ([04 §Locked state](./04-state.md)). The transcript rides the conversation, so `Timeline` renders it for free. You never wire audio.
+Declare `"service": "voice"` in the manifest; the channel instantiates the native service, which projects **`callState`** into scope. The template branches its phase layers on it (`states/idle … states/user-speaking`), and its focus panel is a normal reaction surface. Audio is never wired in a definition.
 
 ---
 
-## 🤖 `whenToUse` — how the AI picks your app
+## 🤖 `whenToUse` — how the AI picks the app
 
-The **manifest's** `whenToUse` is the text the platform embeds to **select** your app for a user's intent (the template definition may carry one too). It replaces `description` in selection when present.
+The manifest's `whenToUse` is the selection text findIntent ranks against the user's own message:
 
 | | Example |
 |---|---|
-| ✅ **Outcome-first, user's vocabulary** | "Book, change or cancel a trip in a guided conversation." |
-| ❌ Layout-first | "Two-column split layout with a side panel." |
-| ✅ **Disqualify by property** | "Not for data-dense monitoring — use a dashboard template for that." |
-| ❌ Disqualify by naming a sibling | "Don't use if AcmeDashboard is available." |
+| ✅ Utterance-shaped, outcome-first | "Book, change or cancel a trip." |
+| ❌ Selector-shaped | "Use this when the user wants to book." |
+| ✅ Disqualify by property | "Not for data-dense monitoring." |
+| ❌ Disqualify by naming a sibling | "Don't use if AcmeDashboard exists." |
 
-Never hardcode agent, workflow, or sibling-template names in meta.
+A fallback/home surface cedes specific jobs *by property*, never by enumerating its siblings' vocabularies (the generalist trap).
 
 ---
 
 ## 📋 Template checklist
 
-- [ ] Scaffolded with `./unoverse new template <org> <name>` (envelope + manifest for free)
-- [ ] `manifest.json` `binding.workflow` + `binding.trigger` filled (the app owns them)
-- [ ] `Timeline` for conversation, generic `ComponentSlot` in the flow
-- [ ] Global/focus slots pin `type`
-- [ ] `defaultState` surfaces defined for every name the app can load in or reach, body scrolls inside a capped frame
-- [ ] No component-type rules, no sizing overrides of components
-- [ ] `whenToUse` outcome-first
-- [ ] Previewed in Studio, mock then live ([07](./07-studio.md))
+- [ ] Manifest-only: no `<name>.json`; `manifest.layout` → `layouts/main.json`
+- [ ] `binding.workflow` + `binding.trigger` real (the app owns them); `stateOrder` = the `states/` files
+- [ ] Flow slot generic (`select: {}`); reaction surfaces select by `where`, never `type`
+- [ ] Surfaces defined for every state name the app should react to; everything else falls back inline
+- [ ] `whenToUse` utterance-shaped; `description` ≤120 chars
+- [ ] `./unoverse lint` 0 errors, then preview in Studio — mock states, then live ([07](./07-studio.md))
 
 ---
 

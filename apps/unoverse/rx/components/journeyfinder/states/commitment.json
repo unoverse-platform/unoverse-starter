@@ -1,34 +1,90 @@
 {
   "type": "Box",
-  "style": { "direction": "column", "gap": "4", "width": "full" },
+  "style": {
+    "direction": "column",
+    "gap": "4",
+    "width": "full"
+  },
   "children": [
     {
       "type": "Ref",
       "ref": "section-header",
-      "props": { "title": "commitmentTitle", "subtitle": "commitmentSubtitle" }
+      "props": {
+        "title": "commitmentTitle",
+        "subtitle": "commitmentSubtitle"
+      }
     },
     {
       "type": "Each",
-      "bind": { "items": "commitmentOptions" },
-      "style": { "direction": "column", "gap": "2", "width": "full" },
+      "style": {
+        "direction": "column",
+        "gap": "2",
+        "width": "full"
+      },
       "template": {
         "type": "Ref",
         "ref": "choice-row",
         "action": {
           "type": "setValue",
           "values": [
-            { "key": "commitment", "value": "{{value}}" },
-            { "key": "step", "value": "searching" },
-            { "key": "phase", "value": "results" },
-            { "key": "progressPct", "value": "100%" },
-            { "key": "questionLabel", "value": "" },
-            { "key": "headerTitle", "value": "Your learning journey" },
-            { "key": "inlinePrimary", "value": "Finding your courses…" },
-            { "key": "defaultState", "value": "inline" }
+            {
+              "key": "commitment",
+              "value": "{{value}}"
+            },
+            {
+              "key": "step",
+              "value": "searching"
+            },
+            {
+              "key": "phase",
+              "value": "results"
+            },
+            {
+              "key": "progressPct",
+              "value": "100%"
+            },
+            {
+              "key": "questionLabel",
+              "value": ""
+            },
+            {
+              "key": "headerTitle",
+              "value": "Your learning journey"
+            },
+            {
+              "key": "inlinePrimary",
+              "value": "Finding your courses\u2026"
+            },
+            {
+              "key": "defaultState",
+              "value": "inline"
+            }
           ],
-          "then": { "type": "submit" }
+          "then": {
+            "type": "submit"
+          }
         }
-      }
+      },
+      "items": [
+        {
+          "value": "full-time",
+          "label": "Full-time",
+          "description": "Study will be my main focus",
+          "icon": "calendar"
+        },
+        {
+          "value": "part-time",
+          "label": "Part-time",
+          "description": "Alongside work and other commitments",
+          "icon": "clock"
+        },
+        {
+          "value": "flexible",
+          "label": "Flexible",
+          "description": "My own pace, when it suits me",
+          "icon": "sliders"
+        }
+      ]
     }
   ]
 }

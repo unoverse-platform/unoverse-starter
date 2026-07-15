@@ -41,32 +41,25 @@
       "children": [
         {
           "type": "Text",
-          "bind": {
-            "value": "summaryTitle"
-          },
           "style": {
             "font": "headline.sm",
             "weight": "semibold",
             "color": "text.primary"
-          }
+          },
+          "value": "You're Eligible!"
         },
         {
           "type": "Text",
-          "bind": {
-            "value": "summarySubtitle"
-          },
           "style": {
             "font": "body.md",
             "color": "text.secondary"
-          }
+          },
+          "value": "Let's find your perfect card"
         }
       ]
     },
     {
       "type": "Each",
-      "bind": {
-        "items": "eligibleTiers"
-      },
       "style": {
         "direction": "column",
         "gap": "2",
@@ -105,7 +98,18 @@
             }
           }
         ]
-      }
+      },
+      "items": [
+        {
+          "label": "Premium Travel Cards"
+        },
+        {
+          "label": "Travel Essentials"
+        },
+        {
+          "label": "Cashback Cards"
+        }
+      ]
     },
     {
       "type": "Button",
@@ -138,9 +142,6 @@
           }
         ]
       },
-      "bind": {
-        "label": "summaryCta"
-      },
       "style": {
         "width": "full",
         "cursor": "pointer",
@@ -159,7 +160,8 @@
         "hover": {
           "background": "action.primary-hover"
         }
-      }
+      },
+      "label": "Find My Card"
     }
   ]
 }

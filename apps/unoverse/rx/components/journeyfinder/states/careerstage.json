@@ -1,30 +1,81 @@
 {
   "type": "Box",
-  "style": { "direction": "column", "gap": "4", "width": "full" },
+  "style": {
+    "direction": "column",
+    "gap": "4",
+    "width": "full"
+  },
   "children": [
     {
       "type": "Ref",
       "ref": "section-header",
-      "props": { "title": "careerStageTitle", "subtitle": "careerStageSubtitle" }
+      "props": {
+        "title": "careerStageTitle",
+        "subtitle": "careerStageSubtitle"
+      }
     },
     {
       "type": "Each",
-      "bind": { "items": "careerStageOptions" },
-      "style": { "direction": "column", "gap": "2", "width": "full" },
+      "style": {
+        "direction": "column",
+        "gap": "2",
+        "width": "full"
+      },
       "template": {
         "type": "Ref",
         "ref": "choice-row",
         "action": {
           "type": "setValue",
           "values": [
-            { "key": "careerStage", "value": "{{value}}" },
-            { "key": "step", "value": "situation" },
-            { "key": "phase", "value": "about" },
-            { "key": "progressPct", "value": "33%" },
-            { "key": "questionLabel", "value": "Question 2 of 6" }
+            {
+              "key": "careerStage",
+              "value": "{{value}}"
+            },
+            {
+              "key": "step",
+              "value": "situation"
+            },
+            {
+              "key": "phase",
+              "value": "about"
+            },
+            {
+              "key": "progressPct",
+              "value": "33%"
+            },
+            {
+              "key": "questionLabel",
+              "value": "Question 2 of 6"
+            }
           ]
         }
-      }
+      },
+      "items": [
+        {
+          "value": "start",
+          "label": "Start my career",
+          "description": "I'm exploring my options and ready to begin",
+          "icon": "journey"
+        },
+        {
+          "value": "qualify",
+          "label": "Become qualified",
+          "description": "Earn a professional qualification",
+          "icon": "qualifications"
+        },
+        {
+          "value": "build",
+          "label": "Build my skills",
+          "description": "Grow and progress in my current role",
+          "icon": "skills"
+        },
+        {
+          "value": "change",
+          "label": "Change career",
+          "description": "Move into something completely new",
+          "icon": "careerChange"
+        }
+      ]
     }
   ]
 }

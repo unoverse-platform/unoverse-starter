@@ -16,9 +16,6 @@
     },
     {
       "type": "Each",
-      "bind": {
-        "items": "travelOptions"
-      },
       "style": {
         "direction": "column",
         "gap": "2",
@@ -52,7 +49,29 @@
             }
           ]
         }
-      }
+      },
+      "items": [
+        {
+          "value": "0-1",
+          "label": "0 \u2013 1 flights per year",
+          "description": "Occasional traveler"
+        },
+        {
+          "value": "2-4",
+          "label": "2 \u2013 4 flights per year",
+          "description": "Regular traveler"
+        },
+        {
+          "value": "5-10",
+          "label": "5 \u2013 10 flights per year",
+          "description": "Frequent traveler"
+        },
+        {
+          "value": "10+",
+          "label": "10+ flights per year",
+          "description": "Very frequent traveler"
+        }
+      ]
     }
   ]
 }

@@ -34,11 +34,19 @@ Render a component or template with **mock data and mock history**, no backend l
 Two mechanisms, zero hand-maintained fixtures:
 
 1. **Prop `default`s are the mock data.** Studio renders every definition from its declared defaults — which is why defaults should be realistic content, not empty strings.
-2. **The `states/` folder IS the state picker.** Every layer file a definition enumerates (`states/welcome.json`, `states/focus.json`, `states/summary.json`, …) automatically becomes a pill in Studio — no registration, no fixture file. Clicking a pill activates the state **by its own selector** (the file's `visibleWhen`): `"isEmpty"` leaves the store pristine (the welcome layer), `"hasMessages"` seeds a mock conversation, `{ "field": "defaultState", "eq": "focus" }` sets that key in template state — and the matching layer draws itself. Pills follow the root's `$include` order.
+2. **Two docks — layouts on top, states on the left.** A component has two axes, and Studio never shares one control between them:
+   - its **layout faces** — the root `Switch on defaultState` cases (`inline`, `focused`, a custom `course`) — are a **toggle at the top of the toolbar** (first control after the name). Any face name appears automatically; `inline` always leads; a flat component with no face switch shows no toggle. Any non-inline face gets the grow container.
+   - its own **`states/`** files (a wizard's private steps, `careerstage.json … results.json`) are the **left-rail list** under the component's name.
+
+   Picking a face writes `defaultState` into the slice; picking a state walks the wizard — both via the same generic `setValue` a real component's buttons use. (Templates work the same way: the app's `states/` layers are the picker.)
 
 So "viewable states" is not extra work — it falls straight out of organizing a definition into layers ([03](./03-components.md)): the folder that structures your `Switch` cases is the same folder Studio reads. Use the picker to exercise every discriminant value (each wizard `step`, `inline/focused`, each `callState` phase), and vary prop defaults to check edge data (empty lists, long text — how you catch a `bind` without a default).
 
 **Apps show their widget's states too.** Selecting an app template (a single-widget shell) also lists its **seeded component's** states as pills — a wizard's steps are one click each, activated by writing the widget's `Switch` discriminant into its slice, exactly what its own buttons do.
+
+### 📋 Copy for Canvas — drop a component onto a workflow
+
+When a component is selected, Studio shows a **`⧉ Copy for Canvas`** button. It copies the component as a **canvas node** to your clipboard; then **`Cmd+V` on any workflow canvas** pastes it in, sized to the component's `nodeSize`. This is **how a design component reaches a workflow** — the canvas palette no longer lists components, so you preview it here, copy it, and paste it where the workflow needs it. (No file edit, no `gendesign`; it's just placing the node.)
 
 ---
 
@@ -50,7 +58,7 @@ Use Live mode to verify the things mock can't:
 
 - your component's **node** receives and merges streamed `COMPONENT_DATA` correctly,
 - the **template selection** picks your app for the intents you wrote `whenToUse` for,
-- **focus flow**: the widget streams in, `defaultState: "focus"` opens the template's surface, close returns cleanly,
+- **reaction flow**: the widget streams in (or is clicked) into a state, the template's `where` surface frames it, its ✕ returns it inline cleanly,
 - **turn lifecycle**: thinking indicators derived from `isStreaming` appear and — critically — clear.
 
 ---
@@ -70,12 +78,12 @@ Debugging order, always: **stream log** (did it arrive?) → **state inspector**
 
 ```bash
 vi rx/components/pricecard/pricecard.json   # 1. edit (schema validates as you type)
-./unoverse gendesign                         # 2. regenerate nodes + restart
+./unoverse gendesign                         # 2. restart — the node re-synthesizes from the definition
 # 3. Studio: mock states → looks right
 # 4. Studio: live mode → streams right
 ```
 
-For pure definition edits, the resource subscription refreshes the preview without a full regen; `gendesign` is required when the component's **node** must change (new props, new component, meta changes).
+For pure definition edits (layouts, styles, copy), the resource subscription refreshes the preview live — no restart at all. A restart (`gendesign`) is only needed when the component's **node** must change (new props, a new component, discovery meta), because node definitions synthesize from your JSON at boot — there is no code generation step, ever.
 
 ---
 

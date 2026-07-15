@@ -5,6 +5,7 @@
   "category": "Assistant",
   "version": "1.0.0",
   "defaultState": "template",
+  "stateOrder": ["welcome", "conversation", "focus"],
   "width": "60vw",
   "inputSchema": {
     "type": "object",
@@ -22,5 +23,6 @@
   "autoTrigger": false,
   "expose": {
     "openaiApps": false
-  }
+  },
+  "layout": "main"
 }

@@ -1,30 +1,81 @@
 {
   "type": "Box",
-  "style": { "direction": "column", "gap": "4", "width": "full" },
+  "style": {
+    "direction": "column",
+    "gap": "4",
+    "width": "full"
+  },
   "children": [
     {
       "type": "Ref",
       "ref": "section-header",
-      "props": { "title": "studyModeTitle", "subtitle": "studyModeSubtitle" }
+      "props": {
+        "title": "studyModeTitle",
+        "subtitle": "studyModeSubtitle"
+      }
     },
     {
       "type": "Each",
-      "bind": { "items": "studyModeOptions" },
-      "style": { "direction": "column", "gap": "2", "width": "full" },
+      "style": {
+        "direction": "column",
+        "gap": "2",
+        "width": "full"
+      },
       "template": {
         "type": "Ref",
         "ref": "choice-row",
         "action": {
           "type": "setValue",
           "values": [
-            { "key": "studyMode", "value": "{{value}}" },
-            { "key": "step", "value": "commitment" },
-            { "key": "phase", "value": "study" },
-            { "key": "progressPct", "value": "100%" },
-            { "key": "questionLabel", "value": "Question 6 of 6" }
+            {
+              "key": "studyMode",
+              "value": "{{value}}"
+            },
+            {
+              "key": "step",
+              "value": "commitment"
+            },
+            {
+              "key": "phase",
+              "value": "study"
+            },
+            {
+              "key": "progressPct",
+              "value": "100%"
+            },
+            {
+              "key": "questionLabel",
+              "value": "Question 6 of 6"
+            }
           ]
         }
-      }
+      },
+      "items": [
+        {
+          "value": "online-live",
+          "label": "Online Classroom Live",
+          "description": "Live online classes with expert tutors",
+          "icon": "online"
+        },
+        {
+          "value": "online-ondemand",
+          "label": "Online Classroom",
+          "description": "On demand, at your own pace",
+          "icon": "play"
+        },
+        {
+          "value": "in-centre",
+          "label": "In centre",
+          "description": "Face-to-face teaching at a study centre",
+          "icon": "location"
+        },
+        {
+          "value": "no-preference",
+          "label": "No preference",
+          "description": "Show me everything that fits",
+          "icon": "journey"
+        }
+      ]
     }
   ]
 }

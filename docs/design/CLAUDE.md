@@ -1,67 +1,70 @@
 # Unoverse Design — Agent Rulebook
 
-Condensed, non-negotiable rules for building Unoverse components and templates. Full journey: [README](./README.md), docs 01–09. Deep reference: `docs/unoverse/UNOVERSE_AUTHORING.md`, `UNOVERSE_STATE_MODEL.md`, `UNOVERSE_LAYERS.md`, `UNOVERSE_CONFORMANCE.md`.
+Condensed, non-negotiable rules for building Unoverse components and templates. Full journey: [README](./README.md), docs 01–09. Deep reference: `docs/unoverse/UNOVERSE_AUTHORING.md`, `UNOVERSE_STATE_MODEL.md` (§5b = the reaction contract), `UNOVERSE_LAYERS.md`, `UNOVERSE_CONFORMANCE.md`.
 
 ---
 
 ## 1. The architecture in one paragraph
 
-UI is **data**: neutral JSON definitions in `rx/`, rendered natively per platform by a **dumb, generic, style-free SDK**. Definitions are distributed as **MCP resources**; templates are **MCP Apps** whose `manifest.json` binds their workflow; user sends are `tools/call`, wizard answers are MCP elicitations; run-scoped UI state arrives on the MCP `/stream`. You author data; you never touch the SDK, the transport, or platform code.
+UI is **data**: neutral JSON in `rx/`, rendered natively per platform by a dumb, style-free SDK. Templates are **MCP Apps** (manifest = the envelope; sends = `tools/call`; answers = elicitations; state on the MCP `/stream`). Interaction follows the **reaction contract**: a component writes ONLY its own slice; templates are pure views that react via state selectors; **inline is the universal default**. You author data; you never touch the SDK, transport, or platform code.
 
-## 2. Where files go
+## 2. The anatomy (both kinds share the folder grammar)
 
-| Artifact | Path |
-|---|---|
-| Component | `rx/components/<name>/<name>.json` (prop defaults = the Studio mock) |
-| Atom (shared partial) | `rx/atoms/<name>.json` (bare node, no envelope) |
-| Template + manifest | `rx/orgs/<org>/templates/<name>/{<name>.json, manifest.json}` |
-| Tokens/themes | `rx/orgs/<org>/styles/{base,semantic,themes}/` |
-| Earned extractions | `blocks/` (shape reused by 2+ states), `states/` (repeated/large layers) — `$include`, bare nodes |
+| | Component | Template |
+|---|---|---|
+| Contract file | `manifest.json` = render contract (arrival `defaultState`, open name, default `"inline"`) + discovery meta (`title`/`description` ≤120/`whenToUse` utterance-shaped). Presence = discoverable; envelope never duplicates it | `manifest.json` = THE envelope: name/whenToUse/`defaultState`/`inputSchema`/`stateOrder`/`binding{workflow,trigger}`/`layout`/`service?` — no `<name>.json` |
+| Envelope | `<name>.json`: name/category/`nodeSize`/`outputs`/`props`/`state`/`stateOrder`/`root` | — |
+| Faces/root | `root` = `Switch on defaultState` → `$include layouts/<state>` (**filename = state name**: `layouts/inline`, `layouts/focused`, custom `layouts/course`); `default` case → inline | root = `layouts/<manifest.layout>.json` (default `main`) |
+| Layers | `states/` = private steps (wizard questions) + `stateOrder` names exactly those files | `states/` = the template's layers (welcome/conversation/focus) + `stateOrder` in the manifest |
+| Local partials | `components/` (earned: 2+ states share a shape); cross-component shapes = atoms in `rx/atoms/` (`Ref`) | `components/` (header, composer-bar, turns) |
+| Flat form | just `<name>.json` + `root` — one face, no manifest/layouts/states. Structure is EARNED | — |
 
-## 3. Component envelope template
+## 3. Three homes — everything a component shows (slop rule)
 
-```jsonc
-{
-  "unoverse": "1.0", "kind": "component", "name": "MyCard",
-  "category": "…", "description": "…",
-  "whenToUse": "Outcome-first, user vocabulary. Disqualify by property, never by naming siblings/agents.",
-  "props": { "title": { "type": "string", "default": "" } },   // EVERY bind has a prop WITH a default
-  "root": { "type": "Box", "style": { "padding": "4", "background": "surface.base" }, "children": [ … ] }
-}
-```
+1. **Static content** → hardcoded LITERALS in the layout (`value`, literal `items: []` on Each, `src`). Never props, never `state`.
+2. **`state` block** → **SCALAR internal view-state only** (`step`, `phase`, `progressPct`) with initial values. An **array/object/URL in `state` is slop** — the linter rejects it.
+3. **`props`** → ONLY `input: true` workflow-fed data (a finder's matched `courses`), `default` = the preview mock. Usually empty.
 
-## 4. Non-negotiable rules
+Arrival `defaultState` lives in the **manifest**, not the state block.
 
-1. **Closed primitive set** — `Box Stack Row Column Each Switch ComponentSlot Timeline · Text Image Button Input Markdown Skeleton Icon · Ref $include`. Conditions: `eq ne in` truthy only. Never invent a primitive; compose.
-2. **LAW 1: zero raw values** — no `px/rem/em/#hex` in any definition; **semantic** token names only; no invented component-named tokens. Style KEYS are closed too (the cross-platform contract — no web-isms like `backdropFilter`; lint + schema enforce, incl. inside `hover`/`when.apply`).
-3. **Two writes only** — `setValue` (component's own slice) + `setTemplateValue` (template state). All UI features are dev-named KEYS, never new verbs/buckets. Focus = `setValue {defaultState}` (widget's own look) + `setTemplateValue {defaultState:"focus"}` (screen-wide signal). `defaultState` = the app's named state (manifest declares the load default; OPEN name set); the template defines its own surface per name.
-4. **Locked state is read-only** — conversation/turn lifecycle (project derived `isStreaming`/`isEmpty`; never simulate or gate on text); voice (SDK service owns audio; you branch a `Switch` on the projected template-state `callState`: `idle|active|agentSpeaking|userSpeaking`; transcript rides `Timeline`); native host chrome (host `useState` → `props`, never the store, never a new primitive).
-5. **Derived values in the node** — no arithmetic/logic in definitions; the workflow sends plain fields.
-6. **No component-type rules in templates** — one generic `ComponentSlot select: {}` in the flow; global slots MUST pin `type` (oldest-first trap); a component owns its size in its own definition.
-7. **Extraction is earned** — defining states stay in the root; a `Switch` case never re-checks its own discriminant; one discriminant per axis, no boolean soup.
-8. **Never hand-roll transport** — no bespoke REST/user_action; the SDK's MCP path is the only one.
+## 4. The reaction contract — state-selected UI (STATE_MODEL §5b)
 
-## 5. Workflow checklist
+- **A component is a `Switch` of views, one active.** State is **local**; the **view** (`defaultState`) is the interface — the only thing a template sees. A component's internal state (`step`, `phase`) is private.
+- A view changes two ways, both `setValue` into **its own slice**: arrival (manifest `defaultState`) or user interaction. Close = it sets itself back (`inline`); its expanded face carries its own ✕.
+- **One instance → one placeholder.** Every view has a placeholder: the **flow** = `inline`; a **reaction surface** = a named view. While a view matches a surface, the instance **lifts out of the flow into the surface** (the SDK renders it in exactly one place — never both). No `hideBelow`/overlay trick to hide a flow copy. An unmatched view stays in the flow. **Many instances** are fine — the template decides a placeholder's layout (flow list / one focus / rail) via `select`.
+- Templates react via `ComponentSlot.select.where: { field: "defaultState", eq: "<name>" }` (+ `limit: 1`, most-recent-wins) — **never `type`-pinned, never by id, never on a component's internal state key** (all lint-flagged). Template-focus is DERIVED (does anything match?), never stored.
+- `setTemplateValue` = ONLY the template's own chrome (panels, draft). A component writing template state to open a surface is the deprecated bridge — linted.
+- Reserved behaviors: `template` swaps the shell; **inline is the universal default**. State names are otherwise OPEN — keep them consistent per org.
 
-1. Read the matching journey doc before authoring ([03](./03-components.md) component / [05](./05-templates.md) template / [06](./06-styles-and-tokens.md) styles).
-2. Scaffold: `./unoverse new component <name>` / `./unoverse new template <org> <name>` — the output passes lint; fill the TODOs.
-3. Make prop defaults realistic (they ARE the Studio mock). Multi-layer definitions enumerate each layer as `states/<layer>.json` — the folder IS Studio's state picker AND the served manifest's state list; add a state = add a file, nothing to register.
-4. Validate: `./unoverse lint` (schema + token law + state rules, doc-cited messages, [08](./08-validate-and-ship.md)). Must be 0 errors; justify any warning.
-5. Audit against the conformance checklist ([08](./08-validate-and-ship.md) Layer 3) — do this explicitly, it covers what linters can't.
-6. Deploy: `./unoverse gendesign`, then `./unoverse check`.
-7. Verify in **Studio**: mock states, then **live mode** (real workflow streams real data — the release test). Debug order: stream log → state inspector → definition. Never edit on a guess.
+## 5. Non-negotiable style/structure rules
 
-## 6. Error → fix quick table
+1. **Closed primitive set** — `Box Stack Row Column Each Switch ComponentSlot Timeline · Text Image Button Input Markdown Skeleton Icon · Ref $include`. Conditions: `eq ne in` truthy only. Compose; never invent.
+2. **LAW 1: zero raw values** — no `px/rem/em/#hex`; **semantic** token names only; style KEYS are closed (no web-isms); dimension VALUES must be real space-scale steps (`0 1 1.5 2 3 4 5 6 7 8 10 12 16 20 24 28 40 50 75 90 100 120 140 160 180 200`, `full`, `auto`) — an invented step is silently broken CSS.
+3. **Derived values in the node/workflow** — no arithmetic in definitions.
+4. **A component owns its faces and size; the template owns only the framing.** No component-type rules in templates.
+5. **A Switch case never re-guards its own discriminant**; one discriminant per axis, no boolean soup.
+6. **Never hand-roll transport** — the SDK's MCP path is the only one.
+7. **Locked state is read-only**: conversation/lifecycle (project `isStreaming`/`isEmpty`), voice (`service: "voice"` in the manifest; branch on the projected `callState`), host chrome (host props).
+8. **Icon quirk**: literal glyph = `icon: "phone"`; bound = `bind: { name: field }`. An atom's `bind` is field-lookup ONLY — a literal passed through `Ref props` into a bind breaks; inline the atom with direct literals instead.
+
+## 6. Workflow checklist
+
+1. Read the matching journey doc ([03](./03-components.md) component / [05](./05-templates.md) template / [06](./06-styles-and-tokens.md) styles); study the exemplars: `journeyfinder`/`cardfinder` (components), `bppchatlayout` (template).
+2. Author to the anatomy in §2; put every shown thing in its ONE home (§3).
+3. **`./unoverse lint` — 0 errors required**; it enforces §2–§5 with doc-cited messages. Justify any warning.
+4. Deploy: `./unoverse gendesign`; then Studio — mock (prop defaults + state picker + Inline/Focused toggle), then live. Debug order: stream log → state inspector → definition. Never edit on a guess.
+
+## 7. Error → fix quick table
 
 | Symptom | Fix |
 |---|---|
-| Blank render while data streams | `bind` ≠ streamed key, or missing default — read the stream log first |
-| `visibleWhen` never fires | wrong bucket: align `setValue`/`setTemplateValue` with where you read ([04](./04-state.md) table) |
-| Focus won't close | `defaultState` is TEMPLATE state — `setTemplateValue { defaultState: null }` |
-| Focus panel shows stale component | pin `type` on the global slot |
-| Thinking dots never stop | `WORKFLOW_COMPLETED` missing on the stream — report; never patch in the definition |
-| Style ignored | raw value or nonexistent token — check `styles/semantic/` |
+| Blank image/icon after passing content into an atom | atom `bind` can't take literals — inline the atom, direct `src`/`icon` (§5.8) |
+| Renders a field's NAME as text | bare field ref on an absent field — hardcode the literal, or object-form `visibleWhen` |
+| Focus surface won't open | the surface must `select.where` on the state the component actually writes; check the state inspector |
+| Focus won't close | the component's ✕ must `setValue { defaultState: "inline" }` on ITS OWN slice |
+| Component invisible in a template | unknown state name + no matching surface = inline is where it went — check the flow slot exists |
+| Style ignored / element auto-sizes | raw value, unknown style key, or off-scale step — lint tells you which |
 | Edit does nothing | node contract changed → `./unoverse gendesign` |
-| AI never picks it | rewrite `whenToUse` outcome-first |
+| AI never picks it | manifest `whenToUse` is selector-shaped or missing — write the user's words |
 
 Full table: [09 — Troubleshooting](./09-troubleshooting.md).

@@ -16,9 +16,6 @@
     },
     {
       "type": "Each",
-      "bind": {
-        "items": "residencyOptions"
-      },
       "style": {
         "direction": "column",
         "gap": "2",
@@ -52,7 +49,17 @@
             }
           ]
         }
-      }
+      },
+      "items": [
+        {
+          "value": "saudi",
+          "label": "Saudi National"
+        },
+        {
+          "value": "non-saudi",
+          "label": "Non-Saudi Resident"
+        }
+      ]
     }
   ]
 }

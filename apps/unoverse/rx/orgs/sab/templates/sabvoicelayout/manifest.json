@@ -24,5 +24,14 @@
   "previewComponents": [],
   "expose": {
     "openaiApps": false
-  }
+  },
+  "service": "voice",
+  "layout": "main",
+  "stateOrder": [
+    "idle",
+    "active",
+    "agent-speaking",
+    "user-speaking",
+    "focus"
+  ]
 }

@@ -1,7 +1,11 @@
 ---
 # Rebuild & Restart
 # Rebuilds packages in-place on the server and restarts services.
-# Use this after unoverse update / git pull to pick up new components and nodes.
+# Use this after unoverse update / git pull to pick up new custom/logic nodes.
+# NOTE: design COMPONENTS need no package build at all — their nodes synthesize
+# from rx/components at boot (definition-backed). The universal component-node
+# package itself (apps/unoverse/nodes/components — NOT a workspace) is built
+# in-container by playbooks/gendesign.yml, not here.
 #
 # Usage:
 #   ansible-playbook -i inventory/production.yml playbooks/rebuild-packages.yml
