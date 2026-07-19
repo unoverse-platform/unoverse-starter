@@ -13,6 +13,7 @@
 │  components/ atoms/  │  MCP   │  web · Flutter · iOS · Android  │
 │  orgs/<org>/         │ ─────► │  — dumb, generic, style-free    │
 │    templates/ styles/│ stream │                                 │
+│    components/       │        │                                 │
 └──────────────────────┘        │ Engine: workflows stream data   │
    JSON + tokens only           │ into your components            │
                                 └─────────────────────────────────┘
@@ -93,7 +94,7 @@ Every design component reaches the chat by one of **four paths** — two in the 
 
 **The one rule that keeps B + C pure:** a component is never a callable primitive. The discovered unit is a standard **MCP app** (a tool with a `ui://` resource); the agent does an ordinary `tools/call`, the result carries the UI, and the **SDK** renders it. Nothing component-specific is invented.
 
-**This axis is orthogonal to *presentation*.** The four ways are only *how the data arrives*. Once a component is in the store — by **any** of the four — how it's **shown** is the **reaction contract**: the component carries its **own `defaultState`** and owns its faces (`inline`, `focused`, `course`, …); a **template reacts** to that state via a `ComponentSlot.select.where` surface and frames the matching face — it never reaches into the component. So a **streamed (D)** course card can write `defaultState: "course"` and a chat template's `course` surface frames it, exactly the same way a **self-contained (B)** one would. Which of the four delivered it, and how a template presents it, are independent choices — see [04 — State](./04-state.md).
+**This axis is orthogonal to *presentation*.** The four ways are only *how the data arrives*. Once a component is in the store — by **any** of the four — how it's **shown** is the **reaction contract**: the component carries its **own `defaultState`** and owns its faces (`inline`, `focused`, `product`, …); a **template reacts** to that state via a `ComponentSlot.select.where` surface and frames the matching face — it never reaches into the component. So a **streamed (D)** product card can write `defaultState: "product"` and a chat template's `product` surface frames it, exactly the same way a **self-contained (B)** one would. Which of the four delivered it, and how a template presents it, are independent choices — see [04 — State](./04-state.md).
 
 ---
 

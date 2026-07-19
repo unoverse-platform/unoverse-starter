@@ -55,6 +55,8 @@ source "$GRAVITY_LIB/open.sh"
 source "$GRAVITY_LIB/db-setup.sh"
 source "$GRAVITY_LIB/db-verify.sh"
 source "$GRAVITY_LIB/deploy.sh"
+# Owner-only module — absent in the starter kit by design.
+[ -f "$GRAVITY_LIB/publish.sh" ] && source "$GRAVITY_LIB/publish.sh"
 
 # ── Dispatch ───────────────────────────────────────────────────────
 case "${1:-}" in
@@ -77,6 +79,10 @@ case "${1:-}" in
   db-setup)  cmd_db_setup ;;
   db-verify) cmd_db_verify ;;
   deploy)    cmd_deploy "${2:-}" ;;
+  publish)
+    if type cmd_publish >/dev/null 2>&1; then shift; cmd_publish "$@"
+    else echo "publish is a platform-owner command — not available in the starter kit"; exit 1; fi
+    ;;
   build)     cmd_build "${2:-}" ;;
   lint)      cmd_lint "${2:-}" ;;
   new)       shift; cmd_new "$@" ;;

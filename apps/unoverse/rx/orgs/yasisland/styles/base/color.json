@@ -1,9 +1,9 @@
 {
-  "$description": "Base color palettes — raw values, the ingredients. Named by what they ARE. Seeded from apps/design-system/storybook/styles/colors.css. Semantic meaning is assigned in themes/.",
+  "$description": "Base color palettes \u2014 raw values, the ingredients. Named by what they ARE. Seeded from apps/design-system/storybook/styles/colors.css. Semantic meaning is assigned in themes/.",
   "color": {
     "$type": "color",
     "primary": {
-      "$description": "Primary brand — green.",
+      "$description": "Primary brand \u2014 green.",
       "50": {
         "$value": "#f0fdf4"
       },
@@ -36,7 +36,7 @@
       }
     },
     "secondary": {
-      "$description": "Secondary — teal.",
+      "$description": "Secondary \u2014 teal.",
       "50": {
         "$value": "#f0fdfa"
       },
@@ -173,7 +173,7 @@
       }
     },
     "brand": {
-      "$description": "Yas Island brand palette — STARTER values (energetic destination: sea, sunset, night sky) pending official brand tokens. Referenced by this pack's themes; core token language stays neutral.",
+      "$description": "Yas Island brand palette \u2014 STARTER values (energetic destination: sea, sunset, night sky) pending official brand tokens. Referenced by this pack's themes; core token language stays neutral.",
       "yasisland": {
         "ink": {
           "$value": "#29241F"
@@ -205,9 +205,6 @@
         "navy": {
           "$value": "#012A4A"
         },
-        "midnight": {
-          "$value": "#04173A"
-        },
         "cobalt": {
           "$value": "#0E7DD8"
         },
@@ -217,14 +214,8 @@
         "cobalt-active": {
           "$value": "#0A6FC4"
         },
-        "cobalt-focus": {
-          "$value": "#4DB2F0"
-        },
         "cobalt-subtle": {
           "$value": "#E6F4FD"
-        },
-        "sky": {
-          "$value": "#2BC5F4"
         },
         "yellow": {
           "$value": "#FFC845"
@@ -244,23 +235,8 @@
         "red": {
           "$value": "#D30047"
         },
-        "night": {
-          "$value": "#13110D"
-        },
-        "coal": {
-          "$value": "#29241F"
-        },
         "coal-soft": {
           "$value": "#3E3A35"
-        },
-        "coal-strong": {
-          "$value": "#56514B"
-        },
-        "mist": {
-          "$value": "#F1EFEB"
-        },
-        "mist-dim": {
-          "$value": "#DDD8D1"
         },
         "mist-faint": {
           "$value": "#A59E93"
@@ -270,33 +246,6 @@
         },
         "yellow-deep": {
           "$value": "#4A3300"
-        },
-        "sky-deep": {
-          "$value": "#012A4A"
-        },
-        "teal": {
-          "$value": "#00C2B2"
-        },
-        "teal-deep": {
-          "$value": "#013530"
-        },
-        "pink": {
-          "$value": "#F43F85"
-        },
-        "pink-deep": {
-          "$value": "#4A0022"
-        },
-        "purple-soft": {
-          "$value": "#A78FE8"
-        },
-        "purple-deep": {
-          "$value": "#2A0F66"
-        },
-        "orange": {
-          "$value": "#F97C5D"
-        },
-        "orange-deep": {
-          "$value": "#4A1400"
         },
         "green-bright": {
           "$value": "#4EB186"
@@ -310,26 +259,14 @@
         "cobalt-bright": {
           "$value": "#5BB8F5"
         },
-        "purple": {
-          "$value": "#6C4FD8"
-        },
-        "yellow-subtle": {
-          "$value": "#FFF6DE"
-        },
         "gradient": {
           "$value": "linear-gradient(180deg, #04102A 0%, #072C58 22%, #0B4E93 44%, #0F72B8 64%, #1C9BCF 82%, #3EBBD1 100%)"
         },
         "glass": {
           "$value": "rgba(255,255,255,0.14)"
         },
-        "glass-strong": {
-          "$value": "rgba(255,255,255,0.24)"
-        },
         "glass-line": {
           "$value": "rgba(255,255,255,0.30)"
-        },
-        "glass-line-strong": {
-          "$value": "rgba(255,255,255,0.45)"
         },
         "white-dim": {
           "$value": "rgba(255,255,255,0.78)"

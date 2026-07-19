@@ -1,12 +1,10 @@
 {
   "name": "BPP Voice Assistant",
   "description": "Hands-free voice conversation with the BPP assistant.",
-  "whenToUse": "Talk to BPP by voice — a live, hands-free audio call instead of typing. Use voice, talk hands-free, have a phone-style conversation about studying. Wanting a human or live agent is a different job, not this.",
+  "whenToUse": "Talk to BPP by voice \u2014 a live, hands-free audio call instead of typing. Use voice, talk hands-free, have a phone-style conversation about studying. Wanting a human or live agent is a different job, not this.",
   "category": "Assistant",
   "version": "1.0.0",
   "defaultState": "template",
-  "width": "70vw",
-  "focusWidth": "82vw",
   "inputSchema": {
     "type": "object",
     "properties": {
@@ -21,17 +19,31 @@
     "trigger": "inputtrigger6"
   },
   "autoTrigger": false,
-  "previewComponents": [],
   "expose": {
     "openaiApps": false
   },
   "service": "voice",
-  "layout": "main",
+  "layout": "standard",
   "stateOrder": [
     "idle",
     "active",
     "agent-speaking",
     "user-speaking",
-    "focus"
-  ]
+    "courses",
+    "course",
+    "apply"
+  ],
+  "preview": {
+    "courses": [
+      "coursecard",
+      "coursecard",
+      "coursecard"
+    ],
+    "course": [
+      "coursecard"
+    ],
+    "apply": [
+      "coursecard"
+    ]
+  }
 }

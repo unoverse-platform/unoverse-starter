@@ -15,7 +15,7 @@ SDUI feels alien for about a day, because your framework reflexes reach for code
 | `switch`/ternary between views | `Switch` `on` one discriminant with `cases` | [04](./04-state.md) |
 | `items.map(item => <Row/>)` | `Each` with `bind: { items: "items" }` + a `template` | [03](./03-components.md) |
 | `onClick={() => setStep("confirm")}` | `action: { type: "setValue", values: [{ key: "step", value: "confirm" }] }` | [04](./04-state.md) |
-| A shared `<Button/>` component | An **atom** in `rx/atoms/`, used via `Ref` with a `props` remap | [03](./03-components.md) |
+| A shared `<Button/>` component | An **atom** in `rx/atoms/`, used via `Ref` — `props` remaps fields, `with` passes literals | [03](./03-components.md) |
 | Splitting a big component into files | `$include` of `layouts/`/`states/`/`components/` siblings — but extraction is **earned**, not default | [03](./03-components.md) |
 | CSS / styled-components / Tailwind values | **Semantic token names** only — `"padding": "lg"`, `"color": "text.primary"`. The values live in `rx/orgs/<org>/styles/` | [06](./06-styles-and-tokens.md) |
 | `className="hover:shadow-md"` | `style: { hover: { "shadow": "md" } }` | [06](./06-styles-and-tokens.md) |

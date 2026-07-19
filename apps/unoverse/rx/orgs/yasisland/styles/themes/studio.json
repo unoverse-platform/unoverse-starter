@@ -27,7 +27,7 @@
         "$value": "{color.brand.yasisland.paper-warm}"
       },
       "inverse": {
-        "$value": "{color.brand.yasisland.night}"
+        "$value": "{color.brand.yasisland.ink-emphasis}"
       }
     },
     "border": {
@@ -36,6 +36,9 @@
       },
       "strong": {
         "$value": "{color.brand.yasisland.line}"
+      },
+      "accent": {
+        "$value": "{color.brand.yasisland.yellow-bright}"
       }
     },
     "action": {
@@ -53,6 +56,15 @@
       },
       "subtle": {
         "$value": "{color.brand.yasisland.paper-tint}"
+      },
+      "cta": {
+        "$value": "{color.brand.yasisland.yellow-bright}"
+      },
+      "cta-text": {
+        "$value": "{color.brand.yasisland.ink-emphasis}"
+      },
+      "cta-hover": {
+        "$value": "{color.brand.yasisland.yellow}"
       }
     },
     "status": {
@@ -80,7 +92,7 @@
     },
     "overlay": {
       "scrim": {
-        "$value": "linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0.05), transparent)"
+        "$value": "linear-gradient(to top, rgba(0,0,0,0.72), rgba(0,0,0,0.40) 45%, rgba(0,0,0,0.10) 75%, rgba(0,0,0,0))"
       }
     }
   }

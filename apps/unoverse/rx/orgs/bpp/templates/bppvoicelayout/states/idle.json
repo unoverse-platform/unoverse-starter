@@ -1,9 +1,6 @@
 {
   "type": "Box",
-  "visibleWhen": {
-    "field": "callState",
-    "eq": "idle"
-  },
+  "visibleWhen": "isEmpty",
   "style": {
     "direction": "column",
     "align": "center",

@@ -44,8 +44,7 @@
           },
           "children": [
             {
-              "type": "Ref",
-              "ref": "close-button",
+              "type": "Button",
               "action": {
                 "type": "setTemplateValue",
                 "values": [
@@ -54,7 +53,35 @@
                     "value": null
                   }
                 ]
-              }
+              },
+              "style": {
+                "flex": "0 0 auto",
+                "cursor": "pointer",
+                "width": "8",
+                "height": "8",
+                "radius": "full",
+                "background": "surface.base",
+                "border": "subtle",
+                "shadow": "sm",
+                "direction": "row",
+                "align": "center",
+                "justify": "center",
+                "transition": "all 150ms ease",
+                "hover": {
+                  "background": "surface.sunken"
+                }
+              },
+              "children": [
+                {
+                  "type": "Icon",
+                  "icon": "close",
+                  "style": {
+                    "width": "4",
+                    "height": "4",
+                    "color": "text.secondary"
+                  }
+                }
+              ]
             }
           ]
         },

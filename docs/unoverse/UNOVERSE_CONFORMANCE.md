@@ -60,6 +60,9 @@ The CLI (`scripts/lib/lint.mjs`) runs at authoring time and **mirrors** the serv
 | Closed primitive set + required fields per primitive | error | schema + `closed-set` |
 | Closed **style keys** + **space-scale steps** (an invented step = silently broken CSS) | error | — (lint-first) |
 | `$include`/`Ref` resolution — everything composes | error | `…: fully expands` tests |
+| **Component tiers** — names unique across the design system (`rx/components/`) and every
+  org (`rx/orgs/<org>/components/`), no shadowing; design-system definitions never reference
+  org components (incl. template preview lists) | error | — |
 | A `Switch` case never re-guards its own discriminant | error | `self-guard.test.ts` |
 | **Microapp three homes** — all `props` are `input: true`; the `state` block is **scalar
   view-state only** (an array/object/URL in `state` is slop) | error | `microapp-structure.test.ts` |

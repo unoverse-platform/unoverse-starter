@@ -4,27 +4,27 @@
     "$type": "color",
     "text": {
       "primary": {
-        "$value": "{color.brand.yasisland.mist}"
+        "$value": "{color.brand.yasisland.paper-tint}"
       },
       "secondary": {
-        "$value": "{color.brand.yasisland.mist-dim}"
+        "$value": "{color.brand.yasisland.line}"
       },
       "tertiary": {
         "$value": "{color.brand.yasisland.mist-faint}"
       },
       "inverse": {
-        "$value": "{color.brand.yasisland.night}"
+        "$value": "{color.brand.yasisland.ink-emphasis}"
       }
     },
     "surface": {
       "base": {
-        "$value": "{color.brand.yasisland.night}"
+        "$value": "{color.brand.yasisland.ink-emphasis}"
       },
       "raised": {
-        "$value": "{color.brand.yasisland.coal}"
+        "$value": "{color.brand.yasisland.ink}"
       },
       "sunken": {
-        "$value": "{color.brand.yasisland.coal}"
+        "$value": "{color.brand.yasisland.ink}"
       },
       "inverse": {
         "$value": "{color.brand.yasisland.paper-warm}"
@@ -35,7 +35,10 @@
         "$value": "{color.brand.yasisland.coal-soft}"
       },
       "strong": {
-        "$value": "{color.brand.yasisland.coal-strong}"
+        "$value": "{color.brand.yasisland.ink-subtle}"
+      },
+      "accent": {
+        "$value": "{color.brand.yasisland.yellow-bright}"
       }
     },
     "action": {
@@ -49,10 +52,19 @@
         "$value": "{color.brand.yasisland.yellow-bright}"
       },
       "primary-text": {
-        "$value": "{color.brand.yasisland.night}"
+        "$value": "{color.brand.yasisland.ink-emphasis}"
       },
       "subtle": {
         "$value": "{color.brand.yasisland.yellow-deep}"
+      },
+      "cta": {
+        "$value": "{color.brand.yasisland.yellow-bright}"
+      },
+      "cta-text": {
+        "$value": "{color.brand.yasisland.ink-emphasis}"
+      },
+      "cta-hover": {
+        "$value": "{color.brand.yasisland.yellow}"
       }
     },
     "status": {
@@ -80,7 +92,7 @@
     },
     "overlay": {
       "scrim": {
-        "$value": "linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0.1), transparent)"
+        "$value": "linear-gradient(to top, rgba(0,0,0,0.72), rgba(0,0,0,0.40) 45%, rgba(0,0,0,0.10) 75%, rgba(0,0,0,0))"
       }
     }
   }

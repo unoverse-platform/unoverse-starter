@@ -63,9 +63,20 @@ Every component, template, and atom is one JSON file with the same envelope:
 
   | Kind | Lives in | Form |
   |---|---|---|
-  | component | `rx/components/<name>/<name>.json` + optional `manifest.json` (render contract + discovery) + `layouts/` (faces, filename = state name) + `states/` + `components/` | flat `rx/components/<name>.json` for a simple one-face card |
+  | component (design system) | `rx/components/<name>/<name>.json` + optional `manifest.json` (render contract + discovery) + `layouts/` (faces, filename = state name) + `states/` + `components/` | flat `rx/components/<name>.json` for a simple one-face card; **generic + org-neutral — any org can use it**. Addressed `unoverse://components/<name>` |
+  | component (org) | `rx/orgs/<org>/components/<name>/` — same anatomy; **org-private** (the client's own microapp). Addressed `unoverse://components/<org>/<name>`; the server injects `org` from the folder. Names unique across ALL tiers (lint-enforced) | the client's finders/pages — never a restyle of a shared component (that's the theme's job) |
   | template | `rx/orgs/<org>/templates/<name>/` — **manifest-only**: `manifest.json` IS the envelope; root = `layouts/<manifest.layout>.json` (+ `states/`, `components/`) | org-scoped; no `<name>.json` |
-  | atom | `rx/atoms/<name>.json` | shared partials, never served standalone |
+  | atom | `rx/atoms/<name>.json` | shared partials — **authoring-time only**: the server always expands them before serving (never served, never enumerable, no Studio view) |
+
+- **Tier rules.** An org pack is `rx/orgs/<org>/{templates, styles, components}`. Component
+  names are **unique across the design system and every org** — a collision is a lint error
+  (no shadowing). Both address forms are first-class: the bare URI
+  (`unoverse://components/<name>`) is the canonical address for a design-system component,
+  the org URI (`unoverse://components/<org>/<name>`) for an org component — and uniqueness
+  means a bare ref also resolves an org component unambiguously.
+  Direction: org definitions may reference design-system ones;
+  **design-system definitions never reference org ones** (lint-enforced, including template
+  preview lists). An org component is never a restyle of a shared one — that's the theme's job.
 
 ---
 
@@ -81,11 +92,11 @@ Every component, template, and atom is one JSON file with the same envelope:
 > 2. **`state` block — SCALAR internal view-state ONLY** — the mutable keys the
 >    component's own actions write (`step`, `phase`, `progressPct`, `questionLabel`),
 >    with their initial values. It is **NOT a content home**: an **array** (a finder's
->    `courses`), an **object**, a **URL** (`heroImage`), or any **workflow-fed data**
+>    `products`), an **object**, a **URL** (`heroImage`), or any **workflow-fed data**
 >    sitting in `state` is slop — move it out (→ #1 or #3). Merged into the render scope
 >    beneath the live slice.
 > 3. **`props` (`input: true`)** — the EXTERNAL contract: the workflow-fed data a run
->    streams in (a finder's matched `courses`, the user's real accounts), each with a
+>    streams in (a finder's matched `products`, the user's real accounts), each with a
 >    mock `default` for preview. A component with no workflow feed has an empty/absent
 >    props block.
 >
@@ -95,7 +106,7 @@ Every component, template, and atom is one JSON file with the same envelope:
 > The audit is mechanical: static content → hardcode in the layout; a **scalar** the
 > component mutates → `state`; data the workflow feeds → `props` (`input: true`); the
 > arrival face → the **manifest**. **An array / object / URL in `state` is the tell for
-> #1 or #3 slop.** (CardFinder went from ~60 props to ZERO props + a lean scalar `state`.)
+> #1 or #3 slop.** (PlanFinder went from ~60 props to ZERO props + a lean scalar `state`.)
 
 `props` declares every field the UI reads, with a `type` and a **`default`** (the mock value
 the workbench renders):
@@ -147,11 +158,11 @@ capability** — there is no flag inside it, and nothing else grants it.
 The manifest carries only discovery meta:
 
 ```jsonc
-// rx/components/cardfinder/manifest.json
+// rx/components/planfinder/manifest.json
 {
-  "title": "Card Finder",                       // display name (falls back to the def name)
-  "description": "A guided card-finder quiz: a few eligibility and preference questions ending in a best-fit card recommendation.",
-  "whenToUse": "Find the right card for me — which card should I get, what card is best for travel or rewards, am I eligible? A few quick questions end in one personalised best-fit recommendation with the reasons why it fits.",
+  "title": "Plan Finder",                       // display name (falls back to the def name)
+  "description": "A guided plan-finder quiz: a few eligibility and preference questions ending in a best-fit plan recommendation.",
+  "whenToUse": "Find the right plan for me — which plan should I get, what plan is best for my needs, am I eligible? A few quick questions end in one personalised best-fit recommendation with the reasons why it fits.",
   "category": "Input",
   "version": "1.0.0"
 }
@@ -173,6 +184,144 @@ The manifest carries only discovery meta:
   "Spatial" toggle appear on the component (Level 1 — workbench eligibility); the
   Content Engine then opts it onto a specific workflow's map (Level 2 — presence),
   where it's indexed and trained like any skill or template.
+
+---
+
+## 3b. Briefs — components an AI fills (July 2026, LOCKED)
+
+A **brief** tells an AI what should fill a bound element. It sits **on the node that
+renders what it describes**, next to the `bind` it governs — never in the manifest,
+never a separate file, never a prompt anywhere else:
+
+```jsonc
+{ "type": "Text",
+  "brief": { "description": "Name the day in the guest's OWN emotional language.",
+             "maxLength": 60 },
+  "bind": { "value": "headline" } }
+
+{ "type": "Each",
+  "brief": { "description": "Order as the day is lived. Variety of kind over similarity.",
+             "minItems": 3, "maxItems": 5 },
+  "bind": { "items": "sections" },
+  "template": { "$include": "components/story-section" } }   // its binds = the item shape
+```
+
+- **Vocabulary = JSON Schema's own words** (`description`, `maxLength`, `minItems`,
+  `maxItems`) — the brief IS the schema fragment it compiles to. String shorthand = just
+  the description. A brief on an unbound node (a face/partial root) = composition
+  context (ordering, refinement rules). Shape is closed and lint-enforced.
+- **The pipeline is 100% native MCP** (deep spec: `UNOVERSE_MCP_TEMPLATE_PROTOCOL.md`
+  §Briefed components): the server compiles briefs → the app tool's `inputSchema` (with
+  a recipe description: "the page IS your answer — search spatial, fill from results,
+  call"); the server **referees** every call (invalid/empty args → an instructive
+  result, no render — the retry loop self-corrects) and **mirrors** every success (the
+  result returns the page as rendered, so refinements are surgical).
+- **Four channels, one loop:** description instructs · schema constrains · error result
+  corrects · success result reflects. No composer service, no server-side model, no
+  skills framework, no prompt side-channels.
+- Pairs with the **single-face permanent component** (one named face, `default` → the
+  same face, no `inline`, no ✕) for continuously-enriched pages — e.g. a travel-plan
+  page a conversation keeps growing.
+
+---
+
+## 3c. Lifecycle handlers — a component brings its own JavaScript (July 2026, DESIGN — not yet built)
+
+A brief lets an **AI** fill a component. A **lifecycle handler** lets **code** fill it. A
+component may carry a small server-side script, co-located in its own folder, that the
+platform runs at defined moments in the component's life. Use it when the data comes from
+an **API or computation**, not from an AI or the workflow (e.g. "when this restaurant card
+loads, fetch its live details from Google Maps").
+
+**The mental model — browser & page.** The platform has **one universal component node**
+that renders every component (`nodes/components/src/lib` — `synthesize` builds a node def
+per rx component, `DesignComponentExecutor` runs them all; the only per-component variance
+is DATA). That node is a **browser**; a component is a **page**. Most pages are just
+content (the rx JSON). Some pages also carry a **script** — and the browser runs whatever
+script the page brought, **without being rebuilt per page**. The handler is that script:
+it travels *with* the component, so **any** universal node, on **any** server, can run it.
+Nothing is baked into the node.
+
+**Convention — one file per lifecycle, the filename names it; the manifest authorizes it.**
+The manifest **opts in** to the lifecycles a component runs (auditable — you can list every
+component that executes code); each lifecycle's code lives in a sibling file named for it:
+
+```jsonc
+// manifest.json
+{ …, "defaultState": "list", "lifecycle": ["onStart"] }   // authorizes onStart
+```
+```
+rx/orgs/<org>/components/restaurantcard/
+   restaurantcard.json      # the UI (data)
+   manifest.json            # declares "lifecycle": ["onStart"]  ← the opt-in
+   onstart.js               # the code — filename = the lifecycle
+```
+
+A stray `onstart.js` with **no** manifest opt-in does nothing — code runs only when the
+manifest said it runs. The file's **default export** is the handler; it returns a
+partial-props object **merged into the component instance** (streamed to the client as
+`COMPONENT_DATA`, the same path everything else uses). **The code is self-contained** — the
+external call lives right in the handler; only the **secret** comes from `ctx` (never
+hardcode a key in this shared folder):
+
+```js
+// onstart.js — the call is HERE; the key comes from server config via ctx.env
+export default async function onStart(ctx) {
+  const key = ctx.env("SEARCHAPI_KEY");                    // secret: server config, NOT in the file
+  const res = await fetch(`https://www.searchapi.io/api/v1/search?engine=google_maps&q=${encodeURIComponent(ctx.props.title)}&api_key=${key}`);
+  const place = (await res.json()).local_results?.[0] ?? {};
+  return { rating: place.rating, reviews: place.reviews, openState: place.open_state,
+           hours: place.hours, address: place.address, contactPhone: place.phone, website: place.website };
+}
+```
+
+> The handler holds its own logic by design. Later it may also **delegate** to platform
+> machinery via `ctx` (e.g. `ctx.callNode(type, config)` to reuse an existing node, or run
+> a workflow) — useful when non-coders should wire what runs. For now, prefer the code
+> right here.
+
+**`onStart` — the first (and, for now, only) lifecycle.** It fires **server-side when the
+component instance is created** (at `COMPONENT_INIT`), before/as the component streams to
+the client. So it needs **no SDK change and no client signal** — the client simply
+receives an already-enriched (or progressively-enriched) component. The key stays
+server-side; the client never calls the API.
+
+**How the one shared node runs the right script (the phonebook).** At boot the platform
+already walks every component folder to synthesize nodes (`loadComponentDefs`). At that
+same moment it records each component's handler on its `RuntimeComponentMeta` — a
+`name → handlers` table. The universal executor already holds that meta at run time (it's
+how it knows the prop names); when a lifecycle fires it looks up **this** component's
+handler by identity and runs it. **One node, one phonebook, the right script by name** —
+the sharing works *because* the per-component part is data-with-a-code-reference, riding
+the exact channel prop names already ride.
+
+**`ctx` — the bounded sandbox.** The handler gets only what it's allowed: `ctx.props`
+(the instance's current data), `ctx.instanceId`, and safe verbs like `ctx.callNode(type,
+config)` (run a workflow node, credentials resolved server-side) — NOT raw run-of-the-box
+access. "Bring anything it wants" means anything *within* this sandbox, like a page's
+script runs in the browser sandbox, not on the machine.
+
+**Security (deep spec: `UNOVERSE_MCP_TEMPLATE_PROTOCOL.md` §onEnter/lifecycle invariants).**
+- Handler code is **trusted-author** (same trust as a node) — never injected by an end
+  user or the AI. One file per component, one narrow entry point each.
+- The **caller** decides *what* runs (server resolves the lifecycle → handler from the
+  component's own record), never the client. A future *per-view* lifecycle that reacts to
+  a client "view opened" signal MUST treat that signal as an **event, not a command**
+  (server picks the handler, re-derives inputs from its own instance record, validates the
+  instance against the authed session, and rate-limits) — see the protocol's six binding
+  invariants.
+- Handler **output is shaped** (only the props it returns) — never a raw upstream response
+  or anything carrying a secret.
+
+**Extensible by design.** `onStart` is the first lifecycle; the shape generalizes. Future
+lifecycles are just more files with defined fire points — e.g. `onenterview.js` (a
+specific view opened — this one additionally needs the client view-open signal above),
+`onexit.js`, `onrefresh.js` — each added to the manifest's `lifecycle` array. A component
+implements only the lifecycles it needs; absence = no handler, zero cost. The rx folder was
+data-only until this feature — lifecycle handlers are the **one sanctioned code carve-out**
+(like atoms), enforced by conformance: a lifecycle file must be **named for a known
+lifecycle** AND **opted into by the manifest's `lifecycle` array** — an un-opted file, or
+one named for an unknown lifecycle, is a lint error (no silent/surprise code execution).
 
 ---
 
@@ -231,9 +380,11 @@ discoverable immediately (no registration).
 ## 5. Composition — atoms (`Ref`), `$include`, `Each`
 
 **Atoms (`Ref`)** — shared partials in `rx/atoms/` (e.g. `button`, `account-row`,
-`section-header`, `close-button`). A `Ref` inlines an atom and **remaps its fields** via
-`props` (the atom's bind field ← your data field). It may also override `visibleWhen`,
-`action`, or `style`:
+`section-header`, `close-button`). Atoms are **authoring-time only** — the server always
+expands a `Ref` before serving, so channels only ever receive fully-expanded primitive
+trees (atoms are never served, never enumerable, and have no Studio view). A `Ref` inlines
+an atom and **remaps its fields** via `props` (the atom's bind field ← your data field).
+It may also override `visibleWhen`, `action`, or `style`:
 
 ```jsonc
 // atom rx/atoms/account-row.json binds label/sub/meta…
@@ -241,6 +392,19 @@ discoverable immediately (no registration).
   "props": { "label": "name", "sub": "accountNumber", "meta": "bankName" },
   "action": { "type": "setValue", "values": [{ "key": "step", "value": "amount" }] } }
 ```
+
+**`Ref.with` — pass LITERALS into an atom** (`props` stays the field-remap map; different job):
+
+```jsonc
+{ "type": "Ref", "ref": "button",
+  "with": { "label": "Learn more", "icon": "arrowRight" },
+  "action": { /* … */ } }
+```
+
+Semantics of `with`: a bind entry whose field is a `with` key becomes a **hardcoded
+attribute**; a **truthy** `with` key satisfies (drops) a matching `visibleWhen` guard, while
+an unprovided key leaves the guard in place so that piece stays hidden; `{{key}}`-style
+bindings take the literal value.
 
 **`$include`** — split a big definition into sibling files (same folder). The included file is a
 **bare node** (no envelope). Use it to give each *view* its own file:
@@ -428,6 +592,16 @@ Run each definition against these. A "no" is a finding to fix.
 - [ ] Repeated UI uses **`Each`** over data (not hand-written N times).
 - [ ] Shared look is an **atom** via `Ref` (not copy-pasted).
 - [ ] Alternate views are **`$include` files** selected by `Switch`.
+
+**Briefs (AI-filled components — §3b)**
+- [ ] Every brief sits **on the node that renders what it describes**, next to its `bind` —
+      never in the manifest, never a separate file.
+- [ ] Brief keys are JSON Schema's own (`description` / `maxLength` / `minItems` /
+      `maxItems`); length/count constraints are **numbers**, not prose.
+- [ ] Composition rules (ordering, variety, refinement behavior) live on the **Each** or
+      the **face root** — not repeated per field.
+- [ ] No prompt for filling the component exists anywhere else (no skill, no agent
+      instruction, no workflow prompt) — the compiled schema is the only instruction home.
 
 **Sizing (focused / rich layers)**
 - [ ] A focused/full-panel layer **caps its height and scrolls its body only** — bounded height

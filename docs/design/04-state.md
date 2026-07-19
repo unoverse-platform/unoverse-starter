@@ -25,6 +25,12 @@ All three live in the client's in-memory store, rebuilt from the stream on reloa
 1. **Arrival** — it streams in already in a state (the manifest's `defaultState`, [03](./03-components.md)).
 2. **Interaction** — the user clicks it into a state: `setValue { defaultState: "focused" }` — now, or ten turns later.
 
+**Two lifetimes, one store.** CONVERSATION state (the turns + each instance's *data*) is durable and append-only — the stream owns it, nothing ever clears it. CHAT state (each instance's active *view*, the template's chrome) is the present interaction. **A new user turn advances the conversation, so the chat layer returns to its universal default: every instance goes back to `inline`** — surfaces empty, panels retract, the template derives its base state. Nothing is "reset"; a component with an inline face returns to it in its turn's history, while a **surface-only component** (no inline/default face + a surfaced arrival in its manifest — e.g. a rail card) simply retires: visible only while surfaced, invisible after. **The explicit opt-out — `"lifetime": "conversation"` in the component's manifest** — marks a *durable, conversation-scoped surface* (a cart, an itinerary, a composed page): the platform keys its instance by the **conversation instead of the turn** (every re-call hydrates the *same* slice — a repeated arrival merges, never re-places) and the new-turn reset skips it, so it stays on screen until it's replaced, closes itself, or **a new template loads — the template swap is the hard refresh boundary: every surface (durable ones included) retires when the shell changes.** Default is `"turn"` (everything above).
+
+**A template is in exactly ONE state at a time.** The latest surfaced view IS the template's active state: a card entering `product` puts the template in product mode; nothing surfaced = the conversation/welcome base. **Exactly one reaction surface renders — the active state's.** Other states' data is untouched (a rail's cards persist in the store while an apply panel is open) and re-presents the moment its state is active again. Surfaces never stack; combinations of panels cannot exist.
+
+**Layouts sync by name ([05](./05-templates.md)).** The same derivation goes one step further: a template is a set of **layouts** (full arrangements), and the active one is the layout **named after** the latest surfaced view — a card entering `product` selects the template's `product` layout; nothing (or nothing matching) surfaced selects the default. Component faces and template layouts are the same mechanism at two tiers, connected purely by the view name — no writes, no wiring, and the component never knows templates exist. The template's own LOCAL states (`welcome`, `conversation`, call phases) branch *inside* whichever layout is showing: *component causes it = layout; template knows it = state.*
+
 **Templates react via selectors — never by component type, never by id:**
 
 ```jsonc
@@ -37,8 +43,8 @@ All three live in the client's in-memory store, rebuilt from the stream on reloa
 - "Which component?" is intrinsic — the one that changed state is the one selected. Conflicts: most recent wins (`limit: 1`).
 - **One instance → one placeholder.** A component instance renders in exactly one place. While its **view** matches a surface, it renders **there** — it *lifts out of the flow into the surface*; with no matching surface it renders in the **flow** (the `inline` placeholder). It never paints in two places at once — you never hide a flow copy yourself (no `hideBelow`, no overlay-to-cover; the SDK keeps a claimed instance out of the flow). Its data stays in the conversation history throughout. **Close = the instance switches its view back** (its expanded face carries its own ✕ → `setValue { defaultState: "inline" }`) → the surface releases it → it's back in the flow.
 - **State is local; the view is the interface.** A component's *internal* state (`step`, `phase`, …) is private — the template never reads it. The only thing that crosses to the template is the **active view** (`defaultState`); the template reacts to *that* (`select.where { defaultState }`), never to a component's internal keys.
-- **Many instances are fine.** A source can create many instances of a component (three courses → three cards); the rule is *per instance*. **The template decides how a placeholder lays its instances out** — a flow list, one focus (`limit: 1`), a rail/grid — via its `select`.
-- **Template-focus is derived, not stored**: "is anything focused?" = "does any component match my focus selector?". Nothing writes a focus flag anywhere.
+- **Many instances are fine.** A source can create many instances of a component (three products → three cards); the rule is *per instance*. **The template decides how a placeholder lays its instances out** — a flow list, one focus (`limit: 1`), a rail/grid — via its `select`.
+- **Template-focus is derived, not stored**: "is anything focused?" = "does any component match my focus selector?". Nothing writes a focus flag anywhere. For template **chrome** (not surfaces), the same fact is projected into scope as **`surfacedView`** — the name of the most recently surfaced view with an occupant, `""` when everything is inline — so e.g. a header button reacts by name: `visibleWhen { "field": "surfacedView", "in": ["", "products"] }`.
 
 **The two global rules — the only protocol-level behavior:**
 
@@ -47,7 +53,7 @@ All three live in the client's in-memory store, rebuilt from the stream on reloa
 
 ### State names are open — the template decides what they mean
 
-`focused` isn't hardcoded anywhere. A component can arrive in **any** named state — `focused`, `course`, `pip` — and a template reacts to exactly the names it defines surfaces for: a `where: { eq: "course" }` rail frames course cards; a template without one renders them inline. New names ship with zero protocol change. (Convention: keep names consistent per org — `focused` in one component and `focus` in another silently fragments the vocabulary templates select on.)
+`focused` isn't hardcoded anywhere. A component can arrive in **any** named state — `focused`, `product`, `pip` — and a template reacts to exactly the names it defines surfaces for: a `where: { eq: "product" }` rail frames product cards; a template without one renders them inline. New names ship with zero protocol change. (Convention: keep names consistent per org — `focused` in one component and `focus` in another silently fragments the vocabulary templates select on.)
 
 ---
 

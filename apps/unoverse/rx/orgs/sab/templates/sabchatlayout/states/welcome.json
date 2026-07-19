@@ -55,7 +55,7 @@
         "columns": 2,
         "gap": "md",
         "width": "full",
-        "maxWidth": 560
+        "maxWidth": "140"
       },
       "template": {
         "type": "Button",

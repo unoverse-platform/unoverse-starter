@@ -21,8 +21,9 @@
  *   TEMPLATE   rx/orgs/<org>/templates/<name>/
  *     manifest.json          THE ENVELOPE: name/description/whenToUse/category/
  *                            version/defaultState/inputSchema/stateOrder:[]/
- *                            binding{workflow,trigger}/layout · width?
- *     layouts/<layout>.json  the root tree (named by manifest.layout)
+ *                            binding{workflow,trigger}/layout (width/focusWidth deprecated)
+ *     layouts/<layout>.json  the root tree (named by manifest.layout) · root appWidth =
+ *                            the app's constant core width; panel appWidth = slide-out
  *     components/*.json       sub-partials
  *     states/*.json           layers
  *
@@ -123,7 +124,10 @@ const spaceSteps = new Set(["0", "full", "auto"]);
 }
 const stepList = () => [...spaceSteps].filter((s) => /^\d/.test(s)).sort((a, b) => Number(a) - Number(b)).join(", ");
 const checkDimension = (file, where, key, v) => {
-  for (const val of Array.isArray(v) ? v : [v]) {
+  for (const raw of Array.isArray(v) ? v : [v]) {
+    // A NUMBER is held to the same law as a numeric string — raw JSON numbers
+    // (`"maxWidth": 560`) must not smuggle pixel values past the scale.
+    const val = typeof raw === "number" ? String(raw) : raw;
     if (typeof val !== "string" || val.includes("{{")) continue;
     if (/^\d+(\.\d+)?$/.test(val) && spaceSteps.size > 3 && !spaceSteps.has(val))
       report("error", file, `${where}.${key}: "${val}" is not a step on the space scale — invalid values fall through as broken CSS (auto sizing). Real steps: ${stepList()} (docs/design/06)`);
@@ -138,14 +142,42 @@ const atomNames = new Set(
     .map((f) => f.replace(/\.json$/, "").toLowerCase()),
 );
 
-// definition homes: shared components/atoms + each org's templates (same law everywhere)
+// definition homes: design-system components/atoms + each org's templates AND
+// components (same law everywhere — an org component is a component, just org-private)
 const homes = [{ dir: join(RX, "components") }, { dir: join(RX, "atoms") }];
 const orgsDir = join(RX, "orgs");
 if (existsSync(orgsDir))
   for (const org of readdirSync(orgsDir)) {
-    const t = join(orgsDir, org, "templates");
-    if (existsSync(t) && statSync(t).isDirectory()) homes.push({ dir: t });
+    for (const sub of ["templates", "components"]) {
+      const d = join(orgsDir, org, sub);
+      if (existsSync(d) && statSync(d).isDirectory()) homes.push({ dir: d });
+    }
   }
+
+// ── component-name uniqueness across tiers (the no-shadowing law) ──
+// Names are the addressing contract: a bare `unoverse://components/<name>` must be
+// unambiguous, so ONE name may exist in exactly one home (design system OR one org).
+{
+  const seenNames = new Map(); // lower-name -> first home path
+  const componentHomes = [join(RX, "components")];
+  if (existsSync(orgsDir))
+    for (const org of readdirSync(orgsDir)) {
+      const d = join(orgsDir, org, "components");
+      if (existsSync(d) && statSync(d).isDirectory()) componentHomes.push(d);
+    }
+  for (const home of componentHomes) {
+    for (const e of readdirSync(home)) {
+      if (e.startsWith(".")) continue;
+      const p = join(home, e);
+      const name = (statSync(p).isDirectory() ? e : e.endsWith(".json") ? e.replace(/\.json$/, "") : null)?.toLowerCase();
+      if (!name) continue;
+      const first = seenNames.get(name);
+      if (first)
+        report("error", p, `component name "${name}" already exists at ${relative(RX, first)} — names are UNIQUE across the design system and every org (no shadowing); rename one`);
+      else seenNames.set(name, p);
+    }
+  }
+}
 
 // ── condition (visibleWhen / style.when entry) ──
 function checkCondition(vw, file, where) {
@@ -164,7 +196,52 @@ function checkCondition(vw, file, where) {
 // ── per-node structural walk ──
 // `widthCap` = the tightest numeric maxWidth on this node's ancestor chain (space
 // steps are monotonic, so step names compare numerically).
-function walkNode(node, file, root, widthCap = null) {
+// The org's STANDARD APP SIZES (styles/semantic/app-sizes.json) — the names `appWidth`
+// may reference. null = the file is not under an org (no size home to check against).
+const appSizesCache = new Map();
+function appSizesForFile(file) {
+  const m = file.match(/[\\/]orgs[\\/]([^\\/]+)[\\/]/);
+  if (!m) return null;
+  const org = m[1];
+  if (!appSizesCache.has(org)) {
+    const p = join(dirname(file).split(`${sep}orgs${sep}`)[0], "orgs", org, "styles", "semantic", "app-sizes.json");
+    let sizes = {};
+    try {
+      if (existsSync(p)) {
+        const j = JSON.parse(readFileSync(p, "utf8"));
+        for (const [k, v] of Object.entries(j.appSize ?? {})) sizes[k] = typeof v === "string" ? v : v?.$value;
+      }
+    } catch {
+      /* the file lints separately */
+    }
+    appSizesCache.set(org, sizes);
+  }
+  return appSizesCache.get(org);
+}
+
+// The universal component names (rx/components/*, case-insensitive) — for validating a
+// template manifest's `preview` map. null = the file is not under an rx tree.
+const componentNamesCache = new Map();
+// Components an ORG's template may reference: the design-system tier + that org's OWN
+// components — never another org's (org-privacy). Cached per org.
+function componentNamesForFile(file) {
+  const m = file.split(`${sep}orgs${sep}`);
+  if (m.length < 2) return null;
+  const org = m[1].split(sep)[0];
+  const cached = componentNamesCache.get(org);
+  if (cached !== undefined) return cached;
+  const dirs = [join(m[0], "components"), join(m[0], "orgs", org, "components")];
+  let names = null;
+  for (const dir of dirs) {
+    if (!existsSync(dir)) continue;
+    names ??= new Set();
+    for (const e of readdirSync(dir)) names.add(e.replace(/\.json$/, "").toLowerCase());
+  }
+  componentNamesCache.set(org, names);
+  return names;
+}
+
+function walkNode(node, file, root, widthCap = null, isLayoutRoot = false) {
   if (Array.isArray(node)) return node.forEach((n) => walkNode(n, file, root, widthCap));
   if (!node || typeof node !== "object") return;
 
@@ -218,6 +295,66 @@ function walkNode(node, file, root, widthCap = null) {
     // reaches past the view boundary the whole model rests on.
     else if (node.select.where && node.select.where.field && node.select.where.field !== "defaultState")
       report("warn", file, `reaction surface selects on "${node.select.where.field}" — a template reacts to a component's VIEW ("defaultState"), never its internal state (that is private to the component). Select on "defaultState" (STATE_MODEL §5b)`);
+    // ONE STATE AT A TIME (docs/design/04): the active state is THE latest surfaced
+    // view, so a surface must claim exactly ONE view by `eq` — `ne`/`in`/bare selects
+    // make "which state is the template in?" ambiguous.
+    else if (node.select.where && node.select.where.field === "defaultState" && typeof node.select.where.eq !== "string")
+      report("error", file, `a reaction surface claims exactly ONE view: select.where needs "eq": "<view>" — ne/in/bare make the template's active state ambiguous (docs/design/04)`);
+  }
+
+  // STATE-OWNED SIZING (docs/design/05): every PANEL states its width once via
+  // `appWidth`; the app is the sum of the open ones. A plain node = always open (the
+  // core chat column); a reaction-surface ComponentSlot = open while occupied; a
+  // visibleWhen pane = open while its condition matches.
+  if (node.appWidth !== undefined) {
+    if (typeof node.appWidth !== "string" || node.appWidth.trim() === "")
+      report("error", file, `"appWidth" must be a CSS width string ("360px", "min(50vw, 760px)") or a named app size ("chat", "rail", "panel") (docs/design/05)`);
+    // A bare name is a STANDARD SIZE — it must exist in the org's app-sizes.json
+    // (rx/orgs/<org>/styles/semantic/app-sizes.json); the server resolves it at serve time.
+    else if (/^[a-z][a-z0-9-]*$/i.test(node.appWidth)) {
+      const sizes = appSizesForFile(file);
+      if (sizes && !(node.appWidth in sizes))
+        report("error", file, `"appWidth": "${node.appWidth}" names no app size — declare it in the org's styles/semantic/app-sizes.json (known: ${Object.keys(sizes).join(", ") || "none"}) (docs/design/05)`);
+    }
+    if (t === "ComponentSlot" && !(node.select && node.select.where))
+      report("error", file, `"appWidth" on a ComponentSlot without select.where — only a reaction surface can slide out; the flow slot never sizes the app (docs/design/05)`);
+    // ONE declaration per panel: the SDK sizes the frame FROM appWidth (width +
+    // flex: 0 0 auto) — a frame width/flex alongside it is dead duplication that
+    // can silently disagree.
+    if (t === "ComponentSlot" && node.frame && node.frame.style) {
+      for (const dup of ["width", "flex"])
+        if (node.frame.style[dup] !== undefined)
+          report("error", file, `panel frame declares style.${dup} alongside appWidth — the panel states its width ONCE; the SDK sizes the frame from appWidth. Remove the frame ${dup} (docs/design/05)`);
+    }
+  }
+
+  // BRIEFED COMPONENTS (the composer): a `brief` sits on the node that renders what it
+  // describes and compiles into the component's MCP tool schema (server briefSchema →
+  // registry metadata.inputSchema → the minted tool). Shape is a closed contract —
+  // a typo'd key or misplaced constraint silently weakens the compiled schema.
+  if (node.brief !== undefined) {
+    const b = node.brief;
+    if (typeof b !== "string" && (typeof b !== "object" || b === null || Array.isArray(b)))
+      report("error", file, `"brief" must be a string (the description) or { description, maxLength | minItems/maxItems } (docs/design/03)`);
+    else if (typeof b === "object") {
+      const BRIEF_KEYS = new Set(["description", "maxLength", "minItems", "maxItems"]);
+      for (const k of Object.keys(b))
+        if (!BRIEF_KEYS.has(k))
+          report("error", file, `brief.${k} is not part of the brief contract — only description / maxLength / minItems / maxItems compile into the tool schema (docs/design/03)`);
+      if (b.description !== undefined && typeof b.description !== "string")
+        report("error", file, `brief.description must be a string — it IS the schema field's description (docs/design/03)`);
+      for (const nk of ["maxLength", "minItems", "maxItems"])
+        if (b[nk] !== undefined && (typeof b[nk] !== "number" || b[nk] < 0 || !Number.isInteger(b[nk])))
+          report("error", file, `brief.${nk} must be a non-negative integer — it compiles to the native JSON Schema keyword (docs/design/03)`);
+      if (typeof b.minItems === "number" && typeof b.maxItems === "number" && b.minItems > b.maxItems)
+        report("error", file, `brief.minItems (${b.minItems}) > maxItems (${b.maxItems}) — no composition can satisfy this schema (docs/design/03)`);
+      const bound = node.bind && (node.bind.value || node.bind.src);
+      const isEach = t === "Each" && node.bind && node.bind.items;
+      if (b.maxLength !== undefined && !bound)
+        report("warn", file, `brief.maxLength on a node with no bind — a length cap only compiles when the brief sits next to the bound field it governs (docs/design/03)`);
+      if ((b.minItems !== undefined || b.maxItems !== undefined) && !isEach)
+        report("warn", file, `brief.minItems/maxItems on a non-Each node — item counts only compile on the Each that binds the array (docs/design/03)`);
+    }
   }
 
   if (node.visibleWhen !== undefined) checkCondition(node.visibleWhen, file, t || "node");
@@ -227,8 +364,15 @@ function walkNode(node, file, root, widthCap = null) {
   // (Legit panel/draft setTemplateValue writes a DIFFERENT key and is untouched.)
   const scanAction = (a) => {
     if (!a || typeof a !== "object") return;
-    if (a.type === "setTemplateValue" && Array.isArray(a.values) && a.values.some((v) => v && v.key === "defaultState"))
-      report("warn", file, `setTemplateValue writing "defaultState" is the deprecated focus bridge — a component writes only its own slice; templates react via ComponentSlot.select.where (STATE_MODEL §5b)`);
+    if (a.type === "setTemplateValue") {
+      // A COMPONENT writes only its own slice — ANY template-state write from the
+      // shared component home is the deprecated bridge (STATE_MODEL §5b). Template-
+      // local partials (composer, suggestions) legitimately write template chrome.
+      if (!isTemplatePath(file))
+        report("error", file, `a component never writes template state — setTemplateValue is the deprecated bridge; change the view with setValue and let the template react via select.where (STATE_MODEL §5b)`);
+      else if (Array.isArray(a.values) && a.values.some((v) => v && v.key === "defaultState"))
+        report("warn", file, `setTemplateValue writing "defaultState" is the deprecated focus bridge — a component writes only its own slice; templates react via ComponentSlot.select.where (STATE_MODEL §5b)`);
+    }
     if (a.then) scanAction(a.then);
   };
   if (node.action) scanAction(node.action);
@@ -280,16 +424,24 @@ function walkNode(node, file, root, widthCap = null) {
 }
 
 // ── stateOrder ⇄ states/ folder cross-check ──
-function checkStateOrder(order, rootFolder, file) {
+function checkStateOrder(order, rootFolder, file, includeLayouts = false) {
   if (!Array.isArray(order)) return;
-  const statesDir = join(rootFolder, "states");
-  const onDisk = existsSync(statesDir)
-    ? new Set(readdirSync(statesDir).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, "")))
-    : new Set();
+  const dirNames = (sub) => {
+    const d = join(rootFolder, sub);
+    return existsSync(d)
+      ? readdirSync(d).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""))
+      : [];
+  };
+  // TEMPLATES: stateOrder lists LOCAL states + LAYOUTS in picker order (docs/design/05) —
+  // a layout name (the view a component enters) is a valid entry. COMPONENTS: states only.
+  const stateNames = dirNames("states");
+  const onDisk = new Set([...stateNames, ...(includeLayouts ? dirNames("layouts") : [])]);
   for (const name of order)
     if (typeof name === "string" && !onDisk.has(name))
-      report("error", file, `stateOrder lists "${name}" but states/${name}.json does not exist (docs/design/03)`);
-  for (const name of onDisk)
+      report("error", file, `stateOrder lists "${name}" but no states/${name}.json${includeLayouts ? ` or layouts/${name}.json` : ""} exists (docs/design/${includeLayouts ? "05" : "03"})`);
+  // Only STATES must appear in stateOrder to lock the picker order; the default layout is
+  // legitimately omitted, so never warn on layouts.
+  for (const name of stateNames)
     if (!order.includes(name))
       report("warn", file, `states/${name}.json is not in stateOrder — it falls to the end of the picker; add it to lock the order (docs/design/07)`);
 }
@@ -298,10 +450,13 @@ function checkStateOrder(order, rootFolder, file) {
 function lintFile(file) {
   const src = readFileSync(file, "utf8");
 
-  // LAW 1 — tokens only (skip manifest + fixture; styles/ is never in a def home)
+  // LAW 1 — tokens only (skip manifest + fixture; styles/ is never in a def home).
+  // Exempt: `appWidth` — the HOST-facing outer width (state-owned sizing, docs/design/05).
+  // It is raw CSS the embed host applies to the app panel ("min(50vw, 760px)", "360px"),
+  // never a style the SDK resolves — token law governs the inside, not the envelope.
   if (!isFixture(file) && !isManifest(file))
     src.split("\n").forEach((line, i) => {
-      if (RAW_VALUE.test(line))
+      if (RAW_VALUE.test(line) && !/^\s*"appWidth"\s*:/.test(line))
         report("error", file, `raw value — token names only; add/scale a token in the org styles instead (LAW 1, docs/design/06): ${line.trim()}`, i + 1);
     });
 
@@ -332,9 +487,73 @@ function lintFile(file) {
         if (!existsSync(join(root, "layouts", layoutName + ".json")))
           report("error", file, `manifest.layout "${layoutName}" → layouts/${layoutName}.json does not exist (and no <name>.json envelope) (docs/design/05)`);
       }
-      checkStateOrder(json.stateOrder, root, file);
+      checkStateOrder(json.stateOrder, root, file, /* includeLayouts */ true);
+      // ONE STATE AT A TIME (docs/design/04): the active state is derived from the
+      // latest surfaced VIEW, so no two surfaces in one template may claim the same
+      // view — the active surface would be ambiguous.
+      {
+        const claims = new Map(); // view -> first file
+        const collectClaims = (n, from) => {
+          if (Array.isArray(n)) return n.forEach((c) => collectClaims(c, from));
+          if (!n || typeof n !== "object") return;
+          const w = n.type === "ComponentSlot" ? n.select?.where : null;
+          if (w?.field === "defaultState" && typeof w.eq === "string") {
+            if (claims.has(w.eq))
+              report("error", file, `two reaction surfaces claim the view "${w.eq}" (${claims.get(w.eq)} and ${from}) — a template is in ONE state at a time; each view has exactly one surface (docs/design/04)`);
+            else claims.set(w.eq, from);
+          }
+          for (const v of Object.values(n)) if (v && typeof v === "object") collectClaims(v, from);
+        };
+        for (const sub of ["layouts", "states", "components"]) {
+          const d = join(root, sub);
+          if (!existsSync(d)) continue;
+          for (const f of readdirSync(d).filter((f) => f.endsWith(".json"))) {
+            try {
+              collectClaims(JSON.parse(readFileSync(join(d, f), "utf8")), `${sub}/${f}`);
+            } catch {
+              /* that file lints separately */
+            }
+          }
+        }
+      }
       if (json.mode !== undefined && json.defaultState === undefined)
         report("warn", file, `"mode" was renamed to "defaultState" — still read as a fallback, but rename it (docs/design/04)`);
+      // `preview` — the per-state MOCK map ({ "<state>": ["coursecard", …] }): each key
+      // must be a states/ file, each name a real component. A repeated name seeds
+      // several instances (a card rail).
+      if (json.preview !== undefined) {
+        if (!json.preview || typeof json.preview !== "object" || Array.isArray(json.preview))
+          report("error", file, `"preview" must be an object mapping state names to component-name arrays (docs/design/07)`);
+        else {
+          // preview keys are per-LAYOUT (the component view Studio mocks) or a local state
+          // (docs/design/05) — resolve against states/ ∪ layouts/, same as stateOrder.
+          const viewsIn = (sub) => {
+            const d = join(root, sub);
+            return existsSync(d)
+              ? readdirSync(d).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""))
+              : [];
+          };
+          const states = new Set([...viewsIn("states"), ...viewsIn("layouts")]);
+          const comps = componentNamesForFile(file);
+          for (const [state, list] of Object.entries(json.preview)) {
+            if (!states.has(state))
+              report("error", file, `preview."${state}" — no states/${state}.json or layouts/${state}.json in this template (docs/design/07)`);
+            if (!Array.isArray(list) || list.some((c) => typeof c !== "string")) {
+              report("error", file, `preview."${state}" must be an array of component names`);
+              continue;
+            }
+            for (const c of list)
+              if (comps && !comps.has(String(c).toLowerCase()))
+                report("error", file, `preview."${state}" names unknown component "${c}" — no match in rx/components/ or this org's components/ (org-privacy: another org's components are out of reach; lookup is case-insensitive)`);
+          }
+        }
+      }
+      // Sizing is STATE-OWNED (docs/design/05): the layout root's `appWidth` is the core
+      // surface's constant width; a panel slot's `appWidth` slides out on top. Manifest
+      // width/focusWidth are DEAD — nothing reads them; there is no fallback.
+      for (const dep of ["width", "focusWidth"])
+        if (json[dep] !== undefined)
+          report("error", file, `manifest "${dep}" is dead — nothing reads it. Sizing is state-owned: \`appWidth\` on the layout root (constant core width) or on a panel (slide-out width) (docs/design/05)`);
     } else {
       // COMPONENT manifest = OPTIONAL spatial discovery. No binding. Mirrors the
       // discovery-meta assertions in server/src/runtime/microapp-structure.test.ts.
@@ -350,6 +569,12 @@ function lintFile(file) {
         report("error", file, `discovery manifest.whenToUse is selector-shaped — write the words the USER would say, not instructions about the user (docs/design/03a)`);
       if (json.binding)
         report("warn", file, `a component discovery manifest has no workflow — drop "binding" (a component is streamed or node-hydrated) (docs/design/03a)`);
+      // `lifetime` — OPTIONAL render lifetime (docs/design/04 §Two lifetimes). Closed set:
+      // "turn" (default — the universal new-turn reset) | "conversation" (durable
+      // conversation-scoped surface: conversation-keyed instance, exempt from the
+      // new-turn reset, retired only by replacement, self-close, or a template swap).
+      if (json.lifetime !== undefined && json.lifetime !== "turn" && json.lifetime !== "conversation")
+        report("error", file, `manifest "lifetime" must be "turn" (default) or "conversation" — got ${JSON.stringify(json.lifetime)} (docs/design/04 §Two lifetimes)`);
     }
     return;
   }
@@ -426,8 +651,21 @@ function lintFile(file) {
             const caseNames = Object.keys(cases).filter((k) => k !== "default");
             // inline is the UNIVERSAL default face: an unknown/absent defaultState must
             // render SOMETHING — require an `inline` case or an explicit `default`.
-            if (!caseNames.includes("inline") && cases.default === undefined)
-              report("error", file, `faced component's Switch has no "inline" case and no "default" — inline is the universal default face; a component with neither disappears for unknown states (STATE_MODEL §5b)`);
+            // EXCEPTION — a SURFACE-ONLY component (docs/design/03): its manifest
+            // declares a SURFACED arrival (defaultState naming one of its cases, not
+            // inline), and it deliberately renders NOTHING while unsurfaced (e.g. a
+            // rail card retired by a new turn). Then omitting inline/default is the
+            // point, not a mistake.
+            if (!caseNames.includes("inline") && cases.default === undefined) {
+              let arrival;
+              try {
+                const mp = join(root, "manifest.json");
+                if (existsSync(mp)) arrival = JSON.parse(readFileSync(mp, "utf8")).defaultState;
+              } catch { /* linted separately */ }
+              const surfaceOnly = typeof arrival === "string" && arrival !== "inline" && caseNames.includes(arrival);
+              if (!surfaceOnly)
+                report("error", file, `faced component's Switch has no "inline" case and no "default" — inline is the universal default face; a component with neither disappears for unknown states. (Intentional surface-only component? Declare a surfaced arrival: manifest.defaultState naming one of its cases.) (STATE_MODEL §5b)`);
+            }
             // Each named case's layout include must MATCH the case name — the layout
             // filename IS the state name (Studio writes defaultState=<case>).
             const usedLayouts = new Set();
@@ -472,8 +710,10 @@ function lintFile(file) {
       checkStateOrder(json.stateOrder, root, file); // non-component envelopes (rare)
     }
   } else {
-    // bare partial (layouts/ states/ components/ blocks/, or an atom)
-    walkNode(json, file, root);
+    // bare partial (layouts/ states/ components/ blocks/, or an atom). A template
+    // layout's TOP-LEVEL node is the app's layout root — the one non-slot home for
+    // `appWidth` (state-owned sizing, docs/design/05).
+    walkNode(json, file, root, null, /[\\/]layouts[\\/][^\\/]+\.json$/.test(file) && isTemplatePath(file));
   }
 }
 

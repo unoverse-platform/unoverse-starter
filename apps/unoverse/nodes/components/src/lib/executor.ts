@@ -21,7 +21,7 @@
 import { PromiseNode, type ValidationResult, type NodeExecutionContext } from "@unoverse-platform/plugin-base";
 import { publishComponent } from "./publishComponent";
 import { awaitSubmission } from "./awaitSubmission";
-import type { RuntimeComponentMeta } from "./meta";
+import { componentUri, type RuntimeComponentMeta } from "./meta";
 
 export class DesignComponentExecutor extends PromiseNode {
   // Shared across ALL components — keys are per (execution, node), so one map serves
@@ -80,7 +80,7 @@ export class DesignComponentExecutor extends PromiseNode {
       version: "1.0.0",
       nodeId: context.nodeId,
       props: changed,
-      componentUrl: `unoverse://components/${meta.name}`,
+      componentUrl: componentUri(meta),
       ...(meta.nodeSize ? { nodeSize: { width: meta.nodeSize.width, height: meta.nodeSize.height } } : {}),
       metadata: {
         dataSource: "direct",

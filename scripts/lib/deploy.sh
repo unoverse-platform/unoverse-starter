@@ -65,16 +65,23 @@ EOF
   echo ""
 
   local ansible_dir="$ROOT/ansible"
-  local subcommand="${1:-full}"
+  # ansible only reads ansible.cfg from CWD/env — we run from the repo root, so
+  # point it at ours explicitly (inventory defaults, deprecation-noise silencing).
+  export ANSIBLE_CONFIG="$ansible_dir/ansible.cfg"
+  local subcommand="${1:-}"
 
   case "$subcommand" in
-    packages|pkg)
-      # Carve-out (nodes/rx/prompts): rsync + build (including the universal
-      # component-node package, in-container) + restart. Component nodes are
-      # definition-backed — they synthesize from the deployed rx/ at boot.
-      # (The component build needs plugin-base in the plugins volume; if it's
-      # missing it says so — run a full `deploy` or `deploy marketplace` first.)
-      info "Deploying packages (carve-out)..."
+    ""|deploy)
+      # THE deploy (starter developers): YOUR server gets the latest platform
+      # images AND your local work (your custom nodes built locally with dists
+      # shipped, your rx design, your prompts).
+      info "Deploying your platform (images + your local work)..."
+      echo ""
+      ansible-playbook \
+        -i "$tmp_inventory" \
+        "$ansible_dir/playbooks/deploy-images.yml" \
+        -e "env_file=$env_prod"
+
       echo ""
       ansible-playbook \
         -i "$tmp_inventory" \
@@ -90,25 +97,15 @@ EOF
         -i "$tmp_inventory" \
         "$ansible_dir/playbooks/deploy-design.yml"
       ;;
-    full|"")
-      # One command deploys EVERYTHING, in dependency order:
-      #   install        → base host + services
-      #   marketplace    → reconcile npm nodes from the DB (also installs plugin-base,
-      #                    which the component-node package build needs to compile)
-      #   deploy-packages→ rsync the carve-out (nodes, rx, prompts) + build (incl. the
-      #                    universal component-node package) + restart (nodes synthesize
-      #                    from the deployed rx/ at boot)
-      info "Running full deployment (install + marketplace + packages)..."
+    init|full)
+      # FIRST-TIME provisioning only (base host + services + carve-out).
+      # Marketplace nodes need no step: boot converges them from the shared
+      # installed_plugins state (keep-latest). Day-to-day = `deploy a` / `deploy b`.
+      info "First-time provisioning (install + carve-out)..."
       echo ""
       ansible-playbook \
         -i "$tmp_inventory" \
         "$ansible_dir/playbooks/install.yml" \
-        -e "env_file=$env_prod"
-
-      echo ""
-      ansible-playbook \
-        -i "$tmp_inventory" \
-        "$ansible_dir/playbooks/install-marketplace.yml" \
         -e "env_file=$env_prod"
 
       echo ""
@@ -163,18 +160,6 @@ EOF
         "$ansible_dir/playbooks/install-umap.yml" \
         -e "env_file=$env_prod"
       ;;
-    marketplace|nodes)
-      # Reconcile prod's marketplace nodes against the DB. The DB (installed_plugins) is
-      # the source of truth — a Studio Install records the node there; prod has no Studio,
-      # so this tells prod to install anything recorded but missing from disk. No package
-      # list anywhere: the DB is the only declaration.
-      info "Reconciling marketplace nodes against the database..."
-      echo ""
-      ansible-playbook \
-        -i "$tmp_inventory" \
-        "$ansible_dir/playbooks/install-marketplace.yml" \
-        -e "env_file=$env_prod"
-      ;;
     test|check)
       info "Running connectivity test..."
       echo ""
@@ -186,14 +171,17 @@ EOF
     *)
       echo "Usage: unoverse deploy [command]"
       echo ""
-      echo "Commands:"
-      echo "  (none)       Full deploy: install + marketplace + carve-out"
-      echo "  packages     Deploy carve-out (nodes/rx/prompts): rsync + build + restart"
-      echo "  design       Deploy rx/ design definitions only: rsync + restart (no build)"
-      echo "  marketplace  Reconcile prod's marketplace nodes against the DB"
+      echo "  (none)       Deploy your platform: pull images + ship your work"
+      echo "               (your nodes built locally, rx, prompts) + restart."
+      echo ""
+      echo "Fast lane:"
+      echo "  design       rx/ definitions only: rsync + restart (no build)"
+      echo ""
+      echo "Setup & utilities:"
+      echo "  init         First-time provisioning (install + carve-out)"
       echo "  db           Run database setup"
       echo "  caddy        Install Caddy TLS reverse proxy"
-      echo "  caddy-uninstall  Remove Caddy (revert to direct host ports)"
+      echo "  caddy-uninstall  Remove Caddy"
       echo "  umap         Install UMAP AI service"
       echo "  test         Run connectivity test"
       rm -f "$tmp_inventory"

@@ -16,6 +16,9 @@ import { NodeInputType, inputPropKeys, type EnhancedNodeDefinition } from "@unov
 export interface UnoverseDefinition {
   name: string;
   kind?: string;
+  /** The owning client org for an ORG component (rx/orgs/<org>/components — injected
+   *  from the folder location by the loader). Design-system components carry none. */
+  org?: string;
   description?: string;
   whenToUse?: string;
   category?: string;
@@ -28,6 +31,8 @@ export interface UnoverseDefinition {
 /** What the universal executor needs per component — all data, no code. */
 export interface RuntimeComponentMeta {
   name: string;
+  /** Owning org (org components) — scopes the published componentUrl. */
+  org?: string;
   /** Input prop keys in def order, with their declared types (for the string "" pin). */
   inputProps: Array<{ key: string; isString: boolean }>;
   nodeSize?: { width: number; height: number };
@@ -35,6 +40,14 @@ export interface RuntimeComponentMeta {
   defaultState?: string;
   /** Declared output contract keys (interactive components — awaitSubmission leg). */
   outputKeys: string[];
+}
+
+/** The canonical resource URI for a component def: org-scoped for an org component
+ *  (`unoverse://components/<org>/<name>`), bare for the design-system tier. ONE
+ *  emitter — componentTemplate, publishComponent and the spatial app contract must
+ *  all agree on this address. */
+export function componentUri(def: { name: string; org?: string }): string {
+  return `unoverse://components/${def.org ? `${def.org}/` : ""}${def.name}`;
 }
 
 const DEF_TYPE_TO_SCHEMA: Record<string, string> = {
@@ -92,7 +105,7 @@ export function synthesize(def: UnoverseDefinition): { definition: EnhancedNodeD
     category: "Design System",
     color: "#10b981",
     template: "uiComponent",
-    componentTemplate: { componentUrl: `unoverse://components/${def.name}` },
+    componentTemplate: { componentUrl: componentUri(def) },
     logoUrl: "https://res.cloudinary.com/sonik/image/upload/v1751366180/gravity/icons/gravityIcon.png",
     ...(def.nodeSize ? { nodeSize: { width: def.nodeSize.width, height: def.nodeSize.height } } : {}),
     inputs: [{ name: "signal", type: NodeInputType.OBJECT, description: "Signal" }],
@@ -105,6 +118,7 @@ export function synthesize(def: UnoverseDefinition): { definition: EnhancedNodeD
     definition,
     meta: {
       name: def.name,
+      ...(def.org ? { org: def.org } : {}),
       inputProps,
       nodeSize: def.nodeSize,
       defaultState,
@@ -120,7 +134,26 @@ export function synthesize(def: UnoverseDefinition): { definition: EnhancedNodeD
  * supply discoverability meta the def lacks: manifest wins per the protocol
  * ("Manifest wins over the def for every field").
  */
+/** Load every component definition across BOTH tiers: the design system
+ *  (`rx/components`) and each org pack (`rx/orgs/<org>/components`) — org components
+ *  synthesize nodes exactly like universal ones, tagged with their org so their
+ *  published componentUrl is org-scoped. */
 export function loadComponentDefs(rxComponentsDir: string): UnoverseDefinition[] {
+  const defs = loadComponentDefsFromDir(rxComponentsDir);
+  const rxRoot = dirname(rxComponentsDir);
+  const orgsRoot = join(rxRoot, "orgs");
+  if (existsSync(orgsRoot)) {
+    for (const org of readdirSync(orgsRoot, { withFileTypes: true })) {
+      if (!org.isDirectory()) continue;
+      const dir = join(orgsRoot, org.name, "components");
+      if (!existsSync(dir)) continue;
+      for (const def of loadComponentDefsFromDir(dir)) defs.push({ ...def, org: org.name });
+    }
+  }
+  return defs;
+}
+
+function loadComponentDefsFromDir(rxComponentsDir: string): UnoverseDefinition[] {
   const defs: UnoverseDefinition[] = [];
   for (const entry of readdirSync(rxComponentsDir, { withFileTypes: true })) {
     let file: string | undefined;

@@ -27,6 +27,22 @@
       become: yes
 
   tasks:
+    # DEPLOY SHIPS WHAT'S LOCAL, BUILT LOCALLY — the server never builds. Node
+    # package dists are compiled here (against the workspace plugin-base, which
+    # matches the image's baked copy by construction) and rsynced below.
+    - name: "[0b/4] Build node packages locally (dists ship with the deploy)"
+      delegate_to: localhost
+      become: no
+      shell: |
+        set -e
+        cd "{{ local_root }}/apps/unoverse/nodes"
+        for d in */; do
+          [ -f "$d/package.json" ] && [ -f "$d/tsconfig.json" ] || continue
+          (cd "$d" && npx tsc)
+          echo "built $d"
+        done
+      register: local_build
+
     - name: "[1/4] Sync developer folders (nodes, rx, prompts) to server"
       ansible.posix.synchronize:
         src: "{{ local_root }}/apps/unoverse/{{ item }}/"
@@ -35,7 +51,7 @@
         rsync_opts:
           - "--exclude=node_modules"
           - "--exclude=.turbo"
-          - "--exclude=dist"
+          # dist SHIPS — built locally in [0b/4]; the server never builds.
           - "--exclude=.DS_Store"
           - "--exclude=*.swp"
           - "--exclude=*.log"
@@ -71,34 +87,8 @@
       debug:
         msg: "{{ build_result.stdout_lines[-10:] | default(['done']) }}"
 
-    # nodes/components is NOT a root workspace (root globs are apps/* + plugin-base),
-    # so the turbo build above never compiles it — and the rsync excludes dist/
-    # (--delete never removes excluded dest files), so a stale dist can survive a
-    # deploy. ALWAYS build it in-container: a skip-if-present would silently run
-    # old executor code. It's a small tsc (seconds). The image bakes plugin-base since v1.12.36;
-    # the symlink below keeps older images working and pins tsc to the plugins-volume
-    # copy when present.
-    - name: "[3b/4] Build the universal component-node package (tsc, in-container)"
-      shell: |
-        cd {{ gravity_dir }}
-        docker compose exec -T unoverse sh -c '
-          if [ ! -d /app/plugins/node_modules/@unoverse-platform/plugin-base ]; then
-            echo "plugin-base not installed in the plugins volume — run: unoverse deploy marketplace"; exit 1
-          fi
-          mkdir -p /app/node_modules/@unoverse-platform
-          # Link ONLY if the image has no plugin-base (pre-v1.12.36 images).
-          # Never override a baked copy — the plugins-volume one may be older.
-          if [ ! -e /app/node_modules/@unoverse-platform/plugin-base ]; then
-            ln -sfn /app/plugins/node_modules/@unoverse-platform/plugin-base /app/node_modules/@unoverse-platform/plugin-base
-          fi
-          cd /app/apps/unoverse/nodes/components && npm run build
-        ' 2>&1 | tail -15
-      register: component_build_result
-
-    - name: "[3b/4] Component-node package build output"
-      debug:
-        msg: "{{ component_build_result.stdout_lines[-15:] | default(['done']) }}"
-
+    # (No server-side build: dists ship prebuilt from [0b/4]. Runtime plugin-base
+    # is the IMAGE's baked copy — platform code, not a marketplace package.)
     - name: "[4/4] Restart unoverse (reloads customer node packages)"
       shell: |
         cd {{ gravity_dir }}
@@ -113,6 +103,6 @@
           DEVELOPER CARVE-OUT DEPLOYED (nodes, rx, prompts)
           ============================================
           Build:      {{ 'OK' if build_result.rc == 0 else 'FAILED' }}
-          Components: {{ 'OK' if component_build_result.rc == 0 else 'FAILED' }}
+          Components: shipped prebuilt (local dists)
           Restart:    {{ 'OK' if restart_result.rc == 0 else 'FAILED' }}
           ============================================

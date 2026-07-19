@@ -172,6 +172,8 @@ services:
       - AUTH_ISSUER=${AUTH_ISSUER}
       - AUTH_AUDIENCE=${AUTH_AUDIENCE}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # TEMP test shim: SearchPlaces/SearchAPI env fallback when no credential is stored.
+      - SEARCHAPI_KEY=${SEARCHAPI_KEY}
       - SERVER_WS_URL=ws://server:4100
       # In-process loopback: the engine runs IN THIS container and binds :4101.
       - WORKFLOW_SERVICE_URL=http://127.0.0.1:4101

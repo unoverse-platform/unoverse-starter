@@ -14,10 +14,12 @@
         "radius": "2xl",
         "radiusTopRight": "sm",
         "padding": [
-          "sm",
+          "2",
+          "4",
+          "3",
           "4"
         ],
-        "maxWidth": 440
+        "maxWidth": "120"
       },
       "children": [
         {

@@ -26,11 +26,10 @@ Atoms are **never served standalone** — `loadDefinition` expands all `Ref`s, s
 receives a fully-expanded primitive tree. This is why the Button's style lives **here** (the atom),
 not as a recipe in `rx/styles` and not in the SDK.
 
-**Atoms are NOT served to channels.** There is no `unoverse://atoms/{name}`
-resource. Atoms are *internal* — they exist only to be **composed/inlined into
-components + templates**. A channel only ever receives fully-expanded
-component/template definitions. The **workbench** can see them (dev tool) via the
-dev-only route `/dev/atoms` — that's the design-system reference, not a channel API.
+**Atoms are NOT served to channels — or shown anywhere.** There is no
+`unoverse://atoms/{name}` resource and no Studio view. Atoms are *authoring-time
+only* — they exist to be **composed/inlined into components + templates**; a channel
+only ever receives fully-expanded component/template definitions.
 
 ## Atoms vs primitives vs components
 
@@ -46,11 +45,12 @@ Atoms reference **semantic tokens** from `rx/styles/` (e.g. `action.primary`,
 ## Ref overrides (per-host customization)
 
 `loadDefinition` expands every `Ref` into the atom's primitive tree. Beyond `props`
-(field remapping), a `Ref` may override three things on the atom's root — for the parts
-an atom can't carry itself:
+(field remapping), a `Ref` may override four things — for the parts an atom can't
+carry itself:
 
 | Override | Use |
 |---|---|
+| `with` | pass **literals** into the atom — `{ "type": "Ref", "ref": "button", "with": { "label": "Learn more", "icon": "arrowRight" } }`. A bind whose field is a `with` key becomes a hardcoded attribute; a truthy `with` key satisfies (drops) a matching `visibleWhen` guard (unprovided key ⇒ that piece stays hidden); `{{key}}` style bindings take the literal value |
 | `visibleWhen` | gate the whole atom (e.g. `{ "type": "Ref", "ref": "Button", "visibleWhen": "callToAction" }`) |
 | `style` | merge style onto the root (e.g. a `pill` with a different `background` tone) |
 | `action` | replace the atom's action — the per-host behaviour an atom can't bake in (e.g. each wizard step's option writes different fields) |

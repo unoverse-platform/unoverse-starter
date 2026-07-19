@@ -167,12 +167,12 @@ prop defaulting `"focused"` ⇒ `"focus"` — remains as fallback). The universa
 widget streams in. The name is the contract, not an enum:
 - a wizard declares `"focus"` → the template opens its focus surface (the load-time
   equivalent of a user expanding it);
-- a CourseCard declares `"course"` → a template that defines a `course` state frames the
+- a ProductCard declares `"product"` → a template that defines a `product` state frames the
   arriving cards its own way (a rail, a grid, anything); one that doesn't simply renders
   them inline in the flow — unknown names are inert, so new arrival states ship with zero
   protocol change.
 The user's own expand/close actions write the same key (`setTemplateValue { defaultState:
-"focus" }` / back to the arrival name, e.g. `{ defaultState: "course" }`).
+"focus" }` / back to the arrival name, e.g. `{ defaultState: "product" }`).
 The **component stays fit-to-content** (its own card); the **template** decides the framing.
 
 This pairs with the **app**-level `defaultState` (manifest, formerly `mode` — still read as fallback; `template` = fluid surface · `focus` = fit
@@ -379,8 +379,8 @@ never from holding everything in the browser. The only trade-off: scrolling back
 2. **Propagate + the legacy break** — publish `core` + `react` (bumped), reinstall at the
    unoverse root, restart Vite, then verify focus + FAQ disclosure in the workbench.
    ⚠️ Publishing flips a **migration break live**: the Suggestions node now emits
-   `TEMPLATE_DATA`, so any **legacy `SUGGESTIONS_UPDATE` consumer** (e.g. the old
-   gravity-client suggestions UI) stops receiving it. Confirm that's acceptable / migrate it.
+   `TEMPLATE_DATA`, so any **legacy `SUGGESTIONS_UPDATE` consumer** stops receiving it.
+   (The old legacy web client that consumed it has since been removed, so this is settled.)
 
 ---
 

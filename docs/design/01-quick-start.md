@@ -73,7 +73,7 @@ The JSON Schema at `rx/_schema/unoverse.schema.json` catches structural mistakes
 {
   "json.schemas": [
     {
-      "fileMatch": ["**/rx/components/**/*.json", "**/rx/orgs/**/templates/**/*.json", "**/rx/atoms/*.json"],
+      "fileMatch": ["**/rx/components/**/*.json", "**/rx/orgs/**/components/**/*.json", "**/rx/orgs/**/templates/**/*.json", "**/rx/atoms/*.json"],
       "url": "./apps/unoverse/rx/_schema/unoverse.schema.json"
     }
   ]

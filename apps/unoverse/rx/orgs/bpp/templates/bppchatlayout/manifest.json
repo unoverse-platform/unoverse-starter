@@ -1,12 +1,10 @@
 {
   "name": "BPP Assistant",
   "description": "The BPP learning-support chat for questions about studying with BPP.",
-  "whenToUse": "Ask BPP a question or get general guidance about studying — the conversational home and fallback for learners. Choosing the right course or journey has its own focused finder; everything else starts here.",
+  "whenToUse": "Ask BPP a question or get general guidance about studying \u2014 the conversational home and fallback for learners. Choosing the right course or journey has its own focused finder; everything else starts here.",
   "category": "Assistant",
   "version": "1.0.0",
   "defaultState": "template",
-  "width": "55vw",
-  "focusWidth": "90vw",
   "inputSchema": {
     "type": "object",
     "properties": {
@@ -16,7 +14,33 @@
       }
     }
   },
-  "stateOrder": ["welcome", "conversation", "focus", "course", "apply"],
+  "stateOrder": [
+    "welcome",
+    "conversation",
+    "focus",
+    "courses",
+    "course",
+    "apply"
+  ],
+  "preview": {
+    "conversation": [
+      "markdownrenderer"
+    ],
+    "courses": [
+      "coursecard",
+      "coursecard",
+      "coursecard"
+    ],
+    "course": [
+      "coursecard"
+    ],
+    "apply": [
+      "coursecard"
+    ],
+    "focus": [
+      "journeyfinder"
+    ]
+  },
   "autoTrigger": false,
   "expose": {
     "openaiApps": false
@@ -25,5 +49,5 @@
     "workflow": "wf-8koixv",
     "trigger": "inputtrigger1"
   },
-  "layout": "main"
+  "layout": "standard"
 }

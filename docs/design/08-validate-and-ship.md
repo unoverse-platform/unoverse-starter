@@ -48,6 +48,7 @@ The same rules the platform's guard tests enforce in CI, runnable in seconds fro
 | **conditions** | only `eq`/`ne`/`in`/truthy — no `and`/`or`/arithmetic; `style.when` entries carry `field` + `apply` | error |
 | **self-guard** | a `Switch` case never re-checks its own discriminant ([03](./03-components.md)) | error |
 | **resolution** | every `$include` path and `Ref` atom actually exists | error |
+| **tiers** | component names unique across the design system and every org (no shadowing); design-system definitions never reference org components (incl. template preview lists) | error |
 | **space scale** | dimension values are real scale steps — an invented step is silently broken CSS ([06](./06-styles-and-tokens.md)) | error |
 | **microapp: three homes** | all `props` are `input: true`; the `state` block is SCALAR view-state only (arrays/objects/URLs = slop) ([03](./03-components.md)) | error |
 | **microapp: faces** | a faced component's root is `Switch on defaultState` → `layouts/<state>` (filename = state name) and declares its arrival state (manifest) | error |

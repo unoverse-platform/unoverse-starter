@@ -3,9 +3,18 @@
   "border": {
     "width": {
       "$type": "dimension",
-      "none":  { "$value": "0" },
-      "thin":  { "$value": "1px" },
-      "thick": { "$value": "2px" }
+      "none": {
+        "$value": "0"
+      },
+      "thin": {
+        "$value": "1px"
+      },
+      "thick": {
+        "$value": "2px"
+      },
+      "heavy": {
+        "$value": "4px"
+      }
     }
   }
 }

@@ -1,24 +1,24 @@
 {
   "type": "Box",
   "style": {
-    "direction": "column",
+    "direction": "row",
     "width": "full",
     "height": "full",
-    "background": "surface.base"
+    "overflow": "hidden"
   },
   "children": [
     {
       "type": "Box",
       "style": {
         "direction": "column",
-        "flex": 1,
-        "minHeight": "0",
-        "position": "relative"
+        "width": "full",
+        "height": "full",
+        "background": "surface.base",
+        "border": "subtle",
+        "radius": "2xl",
+        "overflow": "hidden"
       },
       "children": [
-        {
-          "$include": "components/header"
-        },
         {
           "type": "Box",
           "style": {
@@ -29,32 +29,47 @@
           },
           "children": [
             {
-              "$include": "states/welcome"
+              "$include": "components/header"
             },
             {
-              "$include": "states/conversation"
-            }
-          ]
-        },
-        {
-          "type": "Box",
-          "style": {
-            "width": "full",
-            "direction": "column"
-          },
-          "children": [
+              "type": "Box",
+              "style": {
+                "direction": "column",
+                "flex": 1,
+                "minHeight": "0",
+                "position": "relative"
+              },
+              "children": [
+                {
+                  "$include": "states/welcome"
+                },
+                {
+                  "$include": "states/conversation"
+                }
+              ]
+            },
             {
-              "$include": "components/suggestions"
+              "type": "Box",
+              "style": {
+                "width": "full",
+                "direction": "column"
+              },
+              "children": [
+                {
+                  "$include": "components/suggestions"
+                }
+              ]
+            },
+            {
+              "$include": "states/focus"
             }
           ]
         },
         {
-          "$include": "states/focus"
+          "$include": "components/composer-bar"
         }
-      ]
-    },
-    {
-      "$include": "components/composer-bar"
+      ],
+      "appWidth": "chat"
     }
   ]
 }

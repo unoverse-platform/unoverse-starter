@@ -1,6 +1,6 @@
 ---
 name: unoverse-create
-description: Create or edit Unoverse platform artifacts — UI components, templates, atoms and styles (rx/), agent skills and prompt blocks (prompts/), custom workflow nodes (nodes/), and workflows built live on the Canvas via the builder MCP. Use when the user wants to create, add, build, or modify a component, template, theme, agent skill, prompt block, custom node, or workflow in an Unoverse starter repo.
+description: Create or edit Unoverse platform artifacts — UI components (including briefed/AI-filled components), templates, atoms and styles (rx/), agent skills and prompt blocks (prompts/), custom workflow nodes (nodes/), and workflows built live on the Canvas via the builder MCP. Use when the user wants to create, add, build, or modify a component, template, theme, agent skill, prompt block, custom node, or workflow in an Unoverse starter repo.
 ---
 
 # Creating Unoverse Artifacts
@@ -21,7 +21,7 @@ anything**:
 
 | The user wants… | Read |
 |---|---|
-| A UI component or shared atom | `references/component.md` |
+| A UI component or shared atom — incl. a page/card the AI fills with content (briefed) | `references/component.md` (§Briefs for AI-filled) |
 | A template / app layout (chat surface, wizard shell) | `references/template.md` |
 | A style / theme / token change | `references/component.md` §Tokens |
 | An agent skill (behavior guide the AI follows) | `references/agent-skill.md` |
@@ -56,6 +56,13 @@ material.
    the node and sent as a plain field.
 4. **Audit before you're done.** Every component/template must pass the conformance
    checklist (`docs/unoverse/UNOVERSE_AUTHORING.md` §9). Walk it item by item.
+5. **Discovery meta is ranked, not read.** Any spatially-discoverable artifact — a
+   component or template with a manifest, an agent skill, a node — is selected by
+   embedding `title`/`name` + `whenToUse`/`description` + `category` against the user's
+   own words (or the planner's task). The strict contract is
+   `docs/nodes/14-node-discoverability.md`: outcome-first, utterance-shaped, opening
+   words dominate, disqualify by property (never name a sibling). Each playbook carries
+   the summary; read doc 14 before writing any meta.
 
 ## Step 3 — Deploy loop (after the artifact is written)
 

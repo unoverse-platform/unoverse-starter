@@ -22,7 +22,7 @@
         "direction": "column",
         "align": "start",
         "gap": "sm",
-        "maxWidth": 620,
+        "maxWidth": "160",
         "padding": [
           "0",
           "xl",
@@ -97,7 +97,7 @@
           "position": "relative",
           "flex": "1 1 0",
           "minWidth": 0,
-          "height": 350,
+          "height": "90",
           "padding": "0",
           "radius": "2xl",
           "border": "none",
@@ -224,7 +224,7 @@
                     },
                     "style": {
                       "font": "button",
-                      "color": "brand.yasisland.night",
+                      "color": "brand.yasisland.ink-emphasis",
                       "lineHeight": "tight"
                     }
                   }
@@ -236,28 +236,28 @@
       },
       "items": [
         {
-          "image": "https://loremflickr.com/520/760/rollercoaster",
-          "tag": "Theme parks",
-          "title": "Plan a park day",
-          "subtitle": "Ferrari World, Yas Waterworld, Warner Bros. World, SeaWorld — pick your thrills.",
-          "cta": "Plan my day",
-          "text": "Help me plan a theme park day on Yas Island"
+          "image": "https://avatars.mds.yandex.net/get-altay/15426074/2a00000197d3ae7e9e92a18e01bff45b88df/orig",
+          "tag": "Dining",
+          "title": "Craving Chinese?",
+          "subtitle": "The island's best tables for dim sum and wok-fire.",
+          "cta": "Recommend a spot",
+          "text": "Recommend me a great Chinese restaurant on Yas Island"
         },
         {
-          "image": "https://loremflickr.com/520/760/resort,pool",
-          "tag": "Stays",
-          "title": "Find a hotel",
-          "subtitle": "From family-friendly to luxury — find the right stay for your trip.",
-          "cta": "Find my stay",
-          "text": "Which Yas Island hotel is right for my trip?"
+          "image": "https://res.cloudinary.com/sonik/image/upload/v1784299721/yasIsland/tabsmulti1ywwd3.jpg.jpg",
+          "tag": "Water park",
+          "title": "Make a splash",
+          "subtitle": "Slides, wave pools and lazy rivers at Yas Waterworld.",
+          "cta": "Dive in",
+          "text": "Show me the water parks on Yas Island"
         },
         {
-          "image": "https://loremflickr.com/520/760/restaurant,dining",
-          "tag": "Dining & events",
-          "title": "Eat & experience",
-          "subtitle": "Restaurants, shows and events happening across the island.",
-          "cta": "See what's on",
-          "text": "What dining and events are on at Yas Island right now?"
+          "image": "https://res.cloudinary.com/sonik/image/upload/v1784299725/yasIsland/multipark2.jpg.jpg",
+          "tag": "Family",
+          "title": "Your perfect day",
+          "subtitle": "Build your family's perfect day.",
+          "cta": "Build my day",
+          "text": "Build my perfect family day on Yas Island"
         }
       ]
     }

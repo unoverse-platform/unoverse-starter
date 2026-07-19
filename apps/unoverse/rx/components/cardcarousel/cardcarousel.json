@@ -3,7 +3,10 @@
   "kind": "component",
   "name": "CardCarousel",
   "category": "Content",
-  "nodeSize": { "width": 820, "height": 440 },
+  "nodeSize": {
+    "width": 820,
+    "height": 440
+  },
   "description": "A horizontally scrollable row of image + title + description + call-to-action cards, one per item.",
   "whenToUse": "Show a set of items — offers, products, services, results — as a horizontally scrollable row of cards the viewer swipes through, each with an image, title, short description and a call-to-action. Pick when several comparable items should be browsed side by side rather than a single one in isolation.",
   "props": {
@@ -33,8 +36,16 @@
   },
   "root": {
     "type": "Each",
-    "bind": { "items": "items" },
-    "style": { "width": "full", "direction": "row", "gap": "4", "overflow": "auto", "padding": "4" },
+    "bind": {
+      "items": "items"
+    },
+    "style": {
+      "width": "full",
+      "direction": "row",
+      "gap": "4",
+      "overflow": "auto",
+      "padding": "4"
+    },
     "template": {
       "type": "Box",
       "style": {
@@ -49,35 +60,80 @@
         {
           "type": "Box",
           "visibleWhen": "image",
-          "style": { "width": "full", "height": "40", "overflow": "hidden" },
+          "style": {
+            "width": "full",
+            "height": "40",
+            "overflow": "hidden"
+          },
           "children": [
             {
               "type": "Image",
-              "bind": { "src": "image", "alt": "title" },
-              "style": { "width": "full", "height": "full", "fit": "cover" }
+              "bind": {
+                "src": "image",
+                "alt": "title"
+              },
+              "style": {
+                "width": "full",
+                "height": "full",
+                "fit": "cover"
+              }
             }
           ]
         },
         {
           "type": "Box",
-          "style": { "direction": "column", "padding": "5", "gap": "2", "align": "start" },
+          "style": {
+            "direction": "column",
+            "padding": "5",
+            "gap": "2",
+            "align": "start"
+          },
           "children": [
             {
               "type": "Text",
-              "bind": { "value": "title" },
-              "style": { "font": "headline.sm", "weight": "semibold", "color": "text.primary" }
+              "bind": {
+                "value": "title"
+              },
+              "style": {
+                "font": "headline.sm",
+                "weight": "semibold",
+                "color": "text.primary"
+              }
             },
             {
               "type": "Text",
               "visibleWhen": "description",
-              "bind": { "value": "description" },
-              "style": { "font": "body.sm", "color": "text.secondary" }
+              "bind": {
+                "value": "description"
+              },
+              "style": {
+                "font": "body.sm",
+                "color": "text.secondary"
+              }
             },
             {
-              "type": "Ref",
-              "ref": "Button",
-              "visibleWhen": "callToAction",
-              "props": { "label": "callToAction" }
+              "type": "Button",
+              "bind": {
+                "label": "callToAction"
+              },
+              "action": "click",
+              "style": {
+                "display": "inline-flex",
+                "align": "center",
+                "justify": "center",
+                "cursor": "pointer",
+                "border": "none",
+                "font": "button",
+                "background": "action.primary",
+                "color": "action.primary-text",
+                "padding": [
+                  "3",
+                  "6"
+                ],
+                "minHeight": "10",
+                "radius": "sm"
+              },
+              "visibleWhen": "callToAction"
             }
           ]
         }

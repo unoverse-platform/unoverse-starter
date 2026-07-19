@@ -1,12 +1,36 @@
 {
   "type": "Box",
-  "style": { "direction": "row", "justify": "end" },
+  "style": {
+    "direction": "row",
+    "justify": "end"
+  },
   "children": [
     {
       "type": "Box",
-      "style": { "direction": "row", "align": "center", "background": "action.primary", "radius": "2xl", "radiusTopRight": "sm", "padding": ["sm", "4"], "maxWidth": 440 },
+      "style": {
+        "direction": "row",
+        "align": "center",
+        "background": "action.primary",
+        "radius": "2xl",
+        "radiusTopRight": "sm",
+        "padding": [
+          "sm",
+          "4"
+        ],
+        "maxWidth": "120"
+      },
       "children": [
-        { "type": "Text", "bind": { "value": "text" }, "style": { "font": "body.md", "color": "text.inverse", "lineHeight": "tight" } }
+        {
+          "type": "Text",
+          "bind": {
+            "value": "text"
+          },
+          "style": {
+            "font": "body.md",
+            "color": "text.inverse",
+            "lineHeight": "tight"
+          }
+        }
       ]
     }
   ]

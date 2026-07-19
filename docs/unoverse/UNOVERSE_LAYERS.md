@@ -71,8 +71,8 @@ A **rich** thing (a template or component that actually has layers) is organized
   more than one state reuses it. A shape used by a single state is **not** a block — it stays
   inline in that state. (See §3 — extraction is *earned* by reuse.)
 - **`states/`** = the *what shows when* — thin. A state file composes blocks (via **`$include`**;
-  use `Ref` only for a **global** `rx/atoms/` shape that needs per-use field remapping — local
-  blocks are `$include`d) and **binds** the data for that layer. It carries no shape code and no
+  use `Ref` only for a **global** `rx/atoms/` shape that needs per-use field remapping (`props`)
+  or literal injection (`with`) — local blocks are `$include`d) and **binds** the data for that layer. It carries no shape code and no
   data — just *which blocks + what they bind*.
 - **root `<thing>.json`** = the **selector**: `Switch on <discriminant>` mapping each value to its
   state, plus any always-on shell (header, close button).
@@ -295,7 +295,8 @@ compute the projection.
 This is **formalizing what already exists**, not new machinery:
 
 - `components/` = shared shapes, composed with **`$include`** (`Ref` stays for **global** `rx/atoms/`
-  when a shape needs per-use field remapping — `$include` inlines, it can't remap).
+  when a shape needs per-use field remapping via `props` or literals via `with` — `$include`
+  inlines, it can't remap).
 - `states/` = the `$include`d **layer views** — but thin, because the shape lives in `components/`.
 - the root's `Switch on <discriminant>` = the **selector** already in the vocabulary.
 

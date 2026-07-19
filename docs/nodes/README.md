@@ -25,7 +25,6 @@
 ### Reference
 
 9. **[Troubleshooting](./05-troubleshooting.md)** - Common issues and solutions
-10. **[Migrating Integrations (.ssi)](./12-migrating-integrations.md)** - Convert external connector bundles (IBM `.ssi`, etc.) into marketplace nodes
 
 ---
 

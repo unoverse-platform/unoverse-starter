@@ -40,8 +40,8 @@ Work through these in order — each doc builds on the previous one.
 
 | I want to… | Build a… | Doc |
 |---|---|---|
-| Show a piece of streamed data (a card, a chart, a list) | **Component** (`rx/components/`) | [03](./03-components.md) |
-| Reuse a small piece across components | **Atom** (`rx/atoms/`) | [03](./03-components.md) |
+| Show a piece of streamed data (a card, a chart, a list) | **Component** — design-system tier (`rx/components/`, org-neutral) or org tier (`rx/orgs/<org>/components/`, that org's own) | [03](./03-components.md) |
+| Reuse a small piece across components | **Atom** (`rx/atoms/` — authoring-time only; the server expands it before serving) | [03](./03-components.md) |
 | Define a whole surface (chat, voice, dashboard) | **Template** (`rx/orgs/<org>/templates/`) | [05](./05-templates.md) |
 | Change colors / spacing / brand | **Tokens** (`rx/orgs/<org>/styles/`) | [06](./06-styles-and-tokens.md) |
 | Make UI react (tabs, wizard steps, expand/collapse) | **State + the four moves** | [04](./04-state.md) |

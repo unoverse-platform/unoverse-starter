@@ -1,9 +1,6 @@
 {
   "type": "Box",
-  "visibleWhen": {
-    "field": "callState",
-    "eq": "idle"
-  },
+  "visibleWhen": "isEmpty",
   "style": {
     "direction": "column",
     "align": "center",
@@ -40,14 +37,14 @@
               "8"
             ],
             "radius": "full",
-            "background": "action.primary",
-            "color": "action.primary-text",
+            "background": "action.cta",
+            "color": "action.cta-text",
             "shadow": "md",
             "cursor": "pointer",
             "outline": "none",
             "transition": "all 150ms ease",
             "hover": {
-              "background": "action.primary-hover"
+              "background": "action.cta-hover"
             }
           },
           "children": [

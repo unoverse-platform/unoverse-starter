@@ -1,12 +1,12 @@
 {
-  "$description": "Yas Island text styles — display/headline/title compose font.family.display (Poppins); body/label/caption/button stay on font.family.sans (Open Sans).",
+  "$description": "Yas Island text styles — display = Bebas Neue (single-weight, uppercase face); headline/title/body/label on Barlow Condensed (DIN-condensed brand voice).",
   "text": {
     "$type": "typography",
     "display": {
       "$value": {
         "fontFamily": "{font.family.display}",
         "fontSize": "{font.size.display.lg}",
-        "fontWeight": "{font.weight.extrabold}",
+        "fontWeight": "{font.weight.normal}",
         "lineHeight": "{font.lineHeight.display}",
         "letterSpacing": "{font.tracking.display}"
       }
@@ -14,7 +14,7 @@
     "headline": {
       "lg": {
         "$value": {
-          "fontFamily": "{font.family.display}",
+          "fontFamily": "{font.family.sans}",
           "fontSize": "{font.size.headline.lg}",
           "fontWeight": "{font.weight.bold}",
           "lineHeight": "{font.lineHeight.headline}",
@@ -23,7 +23,7 @@
       },
       "md": {
         "$value": {
-          "fontFamily": "{font.family.display}",
+          "fontFamily": "{font.family.sans}",
           "fontSize": "{font.size.headline.md}",
           "fontWeight": "{font.weight.bold}",
           "lineHeight": "{font.lineHeight.headline}",
@@ -32,7 +32,7 @@
       },
       "sm": {
         "$value": {
-          "fontFamily": "{font.family.display}",
+          "fontFamily": "{font.family.sans}",
           "fontSize": "{font.size.headline.sm}",
           "fontWeight": "{font.weight.bold}",
           "lineHeight": "{font.lineHeight.headline}",
@@ -42,7 +42,7 @@
     },
     "title": {
       "$value": {
-        "fontFamily": "{font.family.display}",
+        "fontFamily": "{font.family.sans}",
         "fontSize": "{font.size.title.md}",
         "fontWeight": "{font.weight.semibold}",
         "lineHeight": "{font.lineHeight.title}",

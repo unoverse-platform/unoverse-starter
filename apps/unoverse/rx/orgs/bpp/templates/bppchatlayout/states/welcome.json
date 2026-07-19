@@ -22,7 +22,7 @@
         "direction": "column",
         "align": "start",
         "gap": "sm",
-        "maxWidth": 620,
+        "maxWidth": "160",
         "padding": [
           "0",
           "xl",
@@ -73,7 +73,7 @@
             "color": "brand.bpp.white-dim",
             "align": "start"
           },
-          "value": "Courses, qualifications and apprenticeships — ask me anything."
+          "value": "Courses, qualifications and apprenticeships \u2014 ask me anything."
         }
       ]
     },
@@ -97,7 +97,7 @@
           "position": "relative",
           "flex": "1 1 0",
           "minWidth": 0,
-          "height": 350,
+          "height": "90",
           "padding": "0",
           "radius": "2xl",
           "border": "none",
@@ -239,7 +239,7 @@
           "image": "https://www.datocms-assets.com/106045/1727947826-woman-on-computer-edited.png?auto=format&fit=crop&w=520&h=760",
           "tag": "Courses",
           "title": "Find a course",
-          "subtitle": "Share your career goals — I'll match you to the right course.",
+          "subtitle": "Share your career goals \u2014 I'll match you to the right course.",
           "cta": "Find my course",
           "text": "Help me find the right course or learning journey for my career goals"
         },
@@ -247,7 +247,7 @@
           "image": "https://www.datocms-assets.com/106045/1727865777-mock-trial-edited.png?auto=format&fit=crop&w=520&h=760",
           "tag": "Professional",
           "title": "Qualifications",
-          "subtitle": "ACCA, ACA, SQE — compare routes and find your right fit.",
+          "subtitle": "ACCA, ACA, SQE \u2014 compare routes and find your right fit.",
           "cta": "Compare options",
           "text": "Which professional qualification should I take?"
         },

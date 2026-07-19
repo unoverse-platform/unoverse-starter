@@ -17,15 +17,15 @@
         "width": "20",
         "height": "20",
         "radius": "full",
-        "background": "action.primary",
+        "background": "action.cta",
         "border": "subtle",
-        "color": "action.primary-text",
+        "color": "action.cta-text",
         "cursor": "pointer",
         "outline": "none",
         "shadow": "md",
         "transition": "all 150ms ease",
         "hover": {
-          "background": "action.subtle"
+          "background": "action.cta-hover"
         }
       },
       "children": [

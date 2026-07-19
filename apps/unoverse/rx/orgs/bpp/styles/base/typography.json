@@ -99,7 +99,7 @@
         "$value": "clamp(0.9375rem, 0.875rem + 0.25vw, 1rem)"
       },
       "bodyMd": {
-        "$value": "0.9375rem"
+        "$value": "0.875rem"
       },
       "bodySm": {
         "$value": "0.8125rem"

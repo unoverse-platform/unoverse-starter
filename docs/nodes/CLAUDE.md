@@ -397,6 +397,5 @@ Study these published packages when a pattern is unclear:
 - `09-signal-routing.md` — route table, connector dependencies, signal types
 - `10-package-marketplace.md` — marketplace schema, categories, features format
 - `11-agent-skills.md` — MCP `instructions` field for nodes with complex tool protocols
-- `12-migrating-integrations.md` — collapsing an external `.ssi` connector bundle into a marketplace node
 - `13-testing-nodes.md` — per-node integration tests (real API, gitignored `.env`, skip without key)
 - `14-node-discoverability.md` — **writing meta the AI will actually pick** — how `getNodeCatalog` ranks `whenToUse`, outcome-first rule, naming the incumbent, service-node tension; PLUS the template/skill contract (user-intent ranking, utterance-shaped text, the generalist trap)

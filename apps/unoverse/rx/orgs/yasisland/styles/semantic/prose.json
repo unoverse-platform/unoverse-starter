@@ -4,7 +4,7 @@
     "paragraph": {
       "$value": {
         "margin": "0 0 0.75em 0",
-        "lineHeight": "1.4"
+        "lineHeight": "1.333"
       }
     },
     "link": {
@@ -16,12 +16,7 @@
     },
     "linkIcon": {
       "$value": {
-        "width": "0.85em",
-        "height": "0.85em",
-        "display": "inline-block",
-        "verticalAlign": "middle",
-        "marginLeft": "0.1em",
-        "marginBottom": "0.1em"
+        "display": "none"
       }
     },
     "list": {
