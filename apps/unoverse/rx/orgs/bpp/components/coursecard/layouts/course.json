@@ -139,53 +139,72 @@
               ]
             },
             {
-              "type": "Button",
-              "action": {
-                "type": "setValue",
-                "values": [
-                  {
-                    "key": "defaultState",
-                    "value": "apply"
-                  }
-                ]
-              },
+              "type": "Box",
               "style": {
-                "direction": "row",
-                "align": "center",
-                "gap": "xs",
+                "direction": "column",
+                "align": "end",
+                "gap": "3",
                 "flex": "0 0 auto",
-                "background": "action.primary",
-                "border": "none",
-                "radius": "full",
-                "padding": [
-                  "2",
-                  "4"
-                ],
-                "shadow": "sm",
-                "cursor": "pointer",
-                "transition": "all 150ms ease",
-                "hover": {
-                  "background": "action.primary-hover",
-                  "shadow": "md"
-                }
+                "maxWidth": "75"
               },
               "children": [
                 {
-                  "type": "Text",
-                  "value": "Learn more",
+                  "type": "Button",
+                  "action": {
+                    "type": "setValue",
+                    "values": [
+                      {
+                        "key": "defaultState",
+                        "value": "apply"
+                      }
+                    ]
+                  },
                   "style": {
-                    "font": "body.sm",
-                    "weight": "medium",
-                    "color": "action.primary-text"
-                  }
+                    "direction": "row",
+                    "align": "center",
+                    "gap": "sm",
+                    "flex": "0 0 auto",
+                    "background": "transparent",
+                    "border": "heavy accent",
+                    "radius": "full",
+                    "padding": [
+                      "3",
+                      "5"
+                    ],
+                    "cursor": "pointer",
+                    "transition": "all 150ms ease",
+                    "hover": {
+                      "background": "action.subtle"
+                    }
+                  },
+                  "children": [
+                    {
+                      "type": "Icon",
+                      "icon": "phone",
+                      "style": {
+                        "width": "4",
+                        "height": "4",
+                        "color": "action.primary"
+                      }
+                    },
+                    {
+                      "type": "Text",
+                      "value": "Request callback",
+                      "style": {
+                        "font": "button",
+                        "weight": "bold",
+                        "color": "action.primary"
+                      }
+                    }
+                  ]
                 },
                 {
-                  "type": "Icon",
-                  "icon": "arrowRight",
+                  "type": "Text",
+                  "value": "Transform your business, or your career, with industry-leading training from BPP.",
                   "style": {
-                    "width": "3",
-                    "height": "3",
-                    "color": "action.primary-text"
+                    "font": "body.sm",
+                    "color": "text.secondary",
+                    "textAlign": "end"
                   }
                 }
               ]

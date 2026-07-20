@@ -168,6 +168,12 @@ services:
       # NOT in this production image. Keep this 0; the Docker runtime serves MCP + API only.
       - UNOVERSE_WORKBENCH=0
       - UNOVERSE_PORT=4105
+      # PUBLIC origin the app's OWN /mcp + /stream live at — baked into each MCP app's
+      # widget CSP (openai/widgetCSP.connect_domains). MUST be the api.<domain> host, or
+      # the widget (running in ChatGPT's iframe) is CSP-blocked from calling back and renders
+      # blank. Derived from DOMAIN like every other HTTPS URL (set DOMAIN only); empty in dev,
+      # where the code falls back to localhost:4105.
+      - UNOVERSE_PUBLIC_URL=${DOMAIN:+https://api.${DOMAIN}}
       - UNOVERSE_RUNTIME_PORT=4106
       - AUTH_ISSUER=${AUTH_ISSUER}
       - AUTH_AUDIENCE=${AUTH_AUDIENCE}
