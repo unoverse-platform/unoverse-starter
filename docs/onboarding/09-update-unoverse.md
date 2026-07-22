@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Update Unoverse"
+title: "Update Unoverse"
 ---
-
-# Challenge 9: Update Unoverse
 
 Keep your platform up to date when new versions are released.
 
@@ -51,7 +50,7 @@ This pulls the latest Docker images, rebuilds packages, and restarts all service
 unoverse check
 ```
 
-All 14 checks should pass — services running, health endpoints, packages built, plugins loaded, and Canvas accessible.
+All 14 checks should pass — services running, health endpoints, packages built, plugins loaded, and **Canvas** accessible.
 
 ---
 

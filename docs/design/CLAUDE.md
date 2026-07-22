@@ -31,9 +31,9 @@ Arrival `defaultState` lives in the **manifest**, not the state block.
 
 **Prop names = the data contract.** Source data (content rows, node outputs) seeds component state **as-is, by name — no projection, no mapping**; a bind whose name the source doesn't carry silently renders the preview `default` (tell: title streams, image/tagline stay mock). Content-attached cards MUST use the writer vocabulary: `title` `tagline` `description` `bodyCopy` `introParagraph` `primaryImage` `images` `link` `callToAction` — never invent (`image`/`subtitle`/`category`/`location` are misses). Fix = rename the prop to the source field, never add glue. Guard: `content-card-hydration.test.ts`; law: `UNOVERSE_MCP_TEMPLATE_PROTOCOL.md` §Content-attached cards; walkthrough: docs/design/03 §Prop names.
 
-**Naming = discoverability (docs/design/05 §Naming; canonical: docs/nodes/14):** spatial embeds `title. whenToUse||description [category]` against the USER'S OWN WORDS. title = the thing itself; description = what it IS, ≤120; whenToUse = utterance-shaped, outcome-first, opening words dominate; category = job domain. Disqualify by property, NEVER name a sibling; a fallback surface never enumerates siblings' jobs (generalist trap).
+**Naming = discoverability (docs/design/05 §Naming; canonical: docs/nodes/14):** **Spatial** embeds `title. whenToUse||description [category]` against the USER'S OWN WORDS. title = the thing itself; description = what it IS, ≤120; whenToUse = utterance-shaped, outcome-first, opening words dominate; category = job domain. Disqualify by property, NEVER name a sibling; a fallback surface never enumerates siblings' jobs (generalist trap).
 
-**Briefs (AI-fed components):** a `brief` sits ON the node that renders what it describes — `{ description, maxLength }` next to the bound element, `{ description, minItems, maxItems }` on the Each (JSON Schema's own words — the brief IS the schema fragment), plain-string context on a face/partial root; NEVER in the manifest or a separate file. The platform compiles briefs into the component's **MCP tool schema** (keys pass through verbatim as native JSON Schema; Each template binds→items schema) — the schema IS the instruction channel; grounding (fill only from spatial results, never invent) is injected by the compiler. Closed shape, lint-enforced (docs/design/03).
+**Briefs (AI-fed components):** a `brief` sits ON the node that renders what it describes — `{ description, maxLength }` next to the bound element, `{ description, minItems, maxItems }` on the Each (JSON Schema's own words — the brief IS the schema fragment), plain-string context on a face/partial root; NEVER in the manifest or a separate file. The platform compiles briefs into the component's **MCP tool schema** (keys pass through verbatim as native JSON Schema; Each template binds→items schema) — the schema IS the instruction channel; grounding (fill only from **Spatial** results, never invent) is injected by the compiler. Closed shape, lint-enforced (docs/design/03).
 
 ## 4. The reaction contract — state-selected UI (STATE_MODEL §5b)
 
@@ -64,7 +64,7 @@ Arrival `defaultState` lives in the **manifest**, not the state block.
 1. Read the matching journey doc ([03](./03-components.md) component / [05](./05-templates.md) template / [06](./06-styles-and-tokens.md) styles); study the exemplars: `productfinder`/`planfinder` (components), `acmechatlayout` (template).
 2. Author to the anatomy in §2; put every shown thing in its ONE home (§3).
 3. **`./unoverse lint` — 0 errors required**; it enforces §2–§5 with doc-cited messages. Justify any warning.
-4. Restart: `docker compose restart unoverse`; then Studio — mock (prop defaults + state picker + Inline/Focused toggle), then live. Debug order: stream log → state inspector → definition. Never edit on a guess.
+4. Restart: `docker compose restart unoverse`; then **Studio** — mock (prop defaults + state picker + Inline/Focused toggle), then live. Debug order: stream log → state inspector → definition. Never edit on a guess.
 
 ## 7. Error → fix quick table
 

@@ -1,72 +1,112 @@
 ---
-sidebarTitle: "Components and Templates"
+sidebarTitle: "5. Components and Templates"
+title: "Components and Templates"
 ---
 
-# Challenge 5: Components and Templates
+Design the interfaces your Agents speak through. UI on unoverse is **data, not code**: a component is a JSON definition, rendered natively on every platform by the SDK. No React, no CSS, no rebuild.
 
-Build UI on Unoverse — restyle an existing component live, then create your own.
+This challenge is a build, not a theory tour:
 
-## How UI Works Here
+| | |
+| --- | --- |
+| **What you'll build** | Your org and its theme, plus a price card component your Agent can stream data into |
+| **Where it lives** | `apps/unoverse/rx/orgs/<your-org>/components/pricecard/` |
+| **Where you'll see it** | Live in **Studio** while you design; in the conversation once wired to a workflow |
 
-Components, templates, and styles are **JSON definitions** rendered by the platform's
-SDK — no React code, no CSS. You describe *what the UI looks like for a given state*
-using a small closed vocabulary of primitives (`Box`, `Text`, `Image`, `Button`,
-`Each`, `Switch`, …), and every visual value is a **token name** (`text.primary`,
-`radius.lg`) resolved by the active theme.
+This approach is called **SDUI**, server-driven UI. The interface is served as data, and each channel's native SDK renders it. One definition renders on your website, in your mobile apps, and on every channel you connect; publish a change and it is live on all of them at once, with no release cycle. [This introduction to SDUI](https://medium.com/digia-studio/server-driven-ui-sdui-the-necessary-evil-for-scalable-mobile-apps-80c650a2c8de) covers the pattern and why it scales; [SDUI and MCP Apps](../design/02-sdui-and-mcp-apps.md) explains how it works here.
 
-Everything lives in `apps/unoverse/rx/`:
+Definitions are composed from a [small closed set of primitives](../design/02-sdui-and-mcp-apps.md#the-closed-primitive-set), and every visual value is a token name resolved by the theme. That's all the theory this page needs; the **Design** tab of these docs is the full journey, from [Quick Start](../design/01-quick-start.md) through components, state, templates, and tokens.
 
-| Path | What |
-|---|---|
-| `rx/components/<name>/<name>.json` | Universal components |
-| `rx/atoms/<name>.json` | Shared partials (buttons, rows) composed via `Ref` |
-| `rx/orgs/<org>/templates/<name>/` | Org-scoped app layouts (+ `manifest.json`) |
-| `rx/orgs/<org>/styles/` | The org's tokens: `base/` scales → `semantic/` + `themes/` |
+<Note>
+**MCP Apps are the future, and you are designing for it now.** [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) are interactive apps that run inside AI clients like ChatGPT and Claude. unoverse is native MCP, so every interface you design here is served as an MCP app. As new channels adopt the standard, your designs already work there.
+</Note>
 
-The complete authoring guide is **`docs/unoverse/UNOVERSE_AUTHORING.md`** — read §1–§7
-before building anything real. `UNOVERSE_LAYERS.md` covers how templates organize into
-`blocks/` + `states/`, and `UNOVERSE_CONFORMANCE.md` explains how the rules are checked.
+## Build it
 
-## Step 1: Open the Studio
+<Steps>
+<Step title="Open Studio">
 
-Set `UNOVERSE_WORKBENCH=1` on the `unoverse` service in `docker-compose.yml`, restart
-(`docker compose up -d unoverse`), and open http://localhost:4105. Mock mode renders
-every component from its prop `default`s; the state picker walks its states.
+**Studio** runs with the platform at http://localhost:3002. Open **Components**: every definition renders from its prop defaults, and the controls walk its layouts and states. This is where you'll live while designing.
 
-## Step 2: Restyle an Existing Component (live)
+</Step>
+<Step title="Create your org">
 
-1. Pick a component in the Studio and open its definition in `rx/components/`.
-2. Change a style — e.g. a `radius`, a `color` token, a `gap`.
-3. Refresh — **edits to existing components apply live**, no rebuild needed.
+Your own work lives in your org: its components, its apps, its brand. One command sets it up:
 
-## Step 3: Create Your Own Component
+```bash Create your org
+unoverse new org acme
+```
 
-1. Copy the closest existing component folder as your starting shape.
-2. Give it an envelope (`unoverse`, `kind`, `name`, `category`, `description`,
-   `whenToUse`) and declare every bound field in `props` with a `default`.
-3. Build the tree from the closed vocabulary — compose, don't invent primitives.
+You get `rx/orgs/acme/` with `components/`, `templates/`, and a complete copy of the default token set in `styles/`, self-contained and ready to rebrand.
 
-```bash
-# Then generate its workflow node and restart:
+</Step>
+<Step title="Make your theme">
+
+The first design work in a new org is the brand. It lives in `rx/orgs/acme/styles/`:
+
+| Folder | What you set there |
+| --- | --- |
+| `base/` | The raw scales: color palettes, typography and fonts, spacing, radius |
+| `semantic/` | The names components use, mapped onto your scales |
+| `themes/` | `light` and `dark`: the values each theme resolves to |
+
+Start with `base/color.json` and `base/typography.json`: your palette and your fonts. In **Studio**, switch to your org and change a value. Every component re-renders in your brand, live, with no build step. That loop, edit JSON and watch it render, is the whole design workflow.
+
+Change token values freely; keep every token name, and the theme contract stays green.
+
+</Step>
+<Step title="Create your own component">
+
+Author your component in your org, at `rx/orgs/acme/components/pricecard/`. Start from the closest existing component's shape. Declare every field the workflow will fill in `props` with a realistic `default`; those defaults are what **Studio** renders in mock mode. Compose the layout from the closed set of primitives.
+
+</Step>
+<Step title="Lint it">
+
+```bash Check your definition
+unoverse lint
+```
+
+The linter enforces the design rules with doc-cited messages: token names only (no raw px or hex), every bound field declared in `props`, one home for every piece of state. **Studio** and the platform apply the same rules, so a clean lint means it ships.
+
+</Step>
+<Step title="Put it in a workflow">
+
+New components register as nodes at boot:
+
+```bash Load the new node
 docker compose restart unoverse
 ```
 
-Your component now appears in the Studio and as a node on the Canvas, ready for a
-workflow to stream data into it.
+Then, exactly as in [Create Your First Agent](./02-create-your-first-agent.md): open your component in **Studio**, click **Copy for Canvas**, and paste it into a workflow. Wire data into it and your design renders live in the conversation.
 
-## Step 4: Audit It
+</Step>
+</Steps>
 
-Run your definition through the conformance checklist —
-`docs/unoverse/UNOVERSE_AUTHORING.md` §9. The big ones: no raw px/hex anywhere
-(tokens only), every bound field has a prop with a default, workflow-fed props are
-marked `input: true`, whole-view swaps use `Switch`, repeats use `Each`.
+<Note>
+Restarts are only for **new** components, because the platform synthesizes a node per definition at boot. Edits to existing components apply live.
+</Note>
 
-## Build with Claude Code
+## Have Claude Code build it
 
-The starter ships an authoring skill (`.claude/skills/unoverse-create`). Open the repo
-in Claude Code and ask — *"create a pricing card component"* — and it follows the
-authoring rules, validation, and deploy loop for you.
+<div className="skill-callout">
+<img className="skill-logo" src="/images/onboarding/claude-logo.png" alt="Claude" />
+<div className="skill-eyebrow">Claude Code skill · ships with your repo</div>
+<div className="skill-title">/unoverse-create</div>
 
-## What's Next?
+The same skill that builds nodes designs components. Open your repo in Claude Code and describe what you want:
 
-- [Challenge 6: Create a MCP](./06-create-a-mcp.md)
+> Create a pricing card component with a title, three feature lines, and a call to action.
+
+The skill follows the authoring rules, builds the definition in layers, lints it, and walks the deploy loop, so what it produces passes the same checks your own work does.
+
+</div>
+
+## Next steps
+
+<Card title="The Design journey" icon="palette" href="../design/01-quick-start.md" horizontal>
+Components, state, templates, and tokens, in full depth.
+</Card>
+
+<Card title="Create an MCP" icon="plug" href="./06-create-a-mcp.md" horizontal>
+Expose your Agent to ChatGPT and every MCP client.
+</Card>

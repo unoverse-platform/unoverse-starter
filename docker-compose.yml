@@ -311,6 +311,10 @@ services:
       - MEMORY_SERVICE_URL=http://memory:4104
     volumes:
       - runtime_workflow:/workflow
+      # The §5 node store: deploy-time `npm install` of each artifact's nodePackages lands
+      # here — a named volume so installs persist across restarts/updates. First run seeds
+      # it from the image (externals + plugin-base only; the image ships ZERO node packages).
+      - runtime_node_store:/app/node_modules
     labels:
       - "com.docker.compose.service=unoverse-runtime"
     logging: *default-logging
@@ -342,3 +346,4 @@ volumes:
   umap_models:
   unoverse_plugins: # Marketplace-installed node packages (persisted across restarts)
   runtime_workflow: # The runtime's deployed workflow artifact (survives restarts)
+  runtime_node_store: # Deploy-time-installed node packages (§5 golden rule — only what's needed)

@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Welcome"
+title: "unoverse"
 ---
-
-# unoverse
 
 unoverse is a platform for building AI Agents that represent your brand.
 
@@ -20,7 +19,7 @@ You build, manage, and observe Agents visually in **Canvas**. You create everyth
 
 ![Canvas](./images/canvas.png)
 
-You build a workflow visually and test it as you go. Each node runs on its own, so you can inspect its output before you connect the next one. What you test in Canvas is exactly what runs in production. Once an Agent is live, Canvas shows you what it's doing: the steps it takes, the tokens it uses, and what it remembers. And Canvas is where you manage credentials, deployments, and every running Agent in one place.
+You build a workflow visually and test it as you go. Each node runs on its own, so you can inspect its output before you connect the next one. What you test in **Canvas** is exactly what runs in production. Once an Agent is live, **Canvas** shows you what it's doing: the steps it takes, the tokens it uses, and what it remembers. And **Canvas** is where you manage credentials, deployments, and every running Agent in one place.
 
 [Build your first Agent](./onboarding/02-create-your-first-agent.md)
 
@@ -30,7 +29,7 @@ You build a workflow visually and test it as you go. Each node runs on its own, 
 
 ![Studio](./images/studio.png)
 
-Interfaces are definitions, not code. This approach is called server-driven UI, or SDUI: the platform serves each interface as data, and every client renders it natively. You write a component once and style it with your brand's design tokens. SDKs for web, native iOS, Android, React Native, and Flutter render the same definition as native UI on each platform. Studio previews everything as you edit, state by state, across screen sizes. Publishing a change requires no app release.
+Interfaces are definitions, not code. This approach is called server-driven UI, or SDUI: the platform serves each interface as data, and every client renders it natively. You write a component once and style it with your brand's design tokens. SDKs for web, native iOS, Android, React Native, and Flutter render the same definition as native UI on each platform. **Studio** previews everything as you edit, state by state, across screen sizes. Publishing a change requires no app release.
 
 [Create a component](./onboarding/05-components-and-templates.md)
 
@@ -48,7 +47,7 @@ Everything an Agent draws on lives here: content, images, skills, tools, and app
 
 ## How it works
 
-The customer states what they want, and the brand assembles the answer. A client sends the message over MCP or WebSocket. The engine runs your workflow: nodes call models, query Spatial, and execute your logic, streaming progress as they go. Components render the results in your interface, on whatever platform the conversation is happening.
+The customer states what they want, and the brand assembles the answer. A client sends the message over MCP or WebSocket. The engine runs your workflow: nodes call models, query **Spatial**, and execute your logic, streaming progress as they go. Components render the results in your interface, on whatever platform the conversation is happening.
 
 The [architecture overview](./architecture.md) covers the runtime, the security model, and how the same stack scales from a laptop to a distributed deployment.
 
@@ -58,7 +57,7 @@ The [architecture overview](./architecture.md) covers the runtime, the security 
 
 | Section | Contents |
 |---|---|
-| [Onboarding](./onboarding/overview.md) | From clone to deployed, in nine steps |
+| [Onboarding](./onboarding/01-getting-started.md) | From clone to deployed, in nine steps |
 | [Design](./design/overview.md) | Components, templates, tokens, and the state model |
 | [Nodes](./nodes/overview.md) | Custom node development: types, patterns, credentials, testing |
 | [Runbooks](./runbooks/overview.md) | Operations: deployment, database, TLS, hardening |

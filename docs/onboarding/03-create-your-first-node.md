@@ -1,128 +1,280 @@
 ---
-sidebarTitle: "Create Your First Node"
+sidebarTitle: "3. Create Your First Node"
+title: "Create Your First Node"
 ---
 
-# Challenge 3: Create Your First Node
+When the marketplace doesn't have the node you need, write it. A node is a small npm package: you write TypeScript, build it, and it appears in the node library in **Canvas** like any other node.
 
-Build a custom node to extend the platform.
+This tutorial keeps it simple: one small node, built end to end. When you need more depth, the [Nodes](../nodes/overview.md) tab of these docs covers node development in full.
 
-## Goal
+| | |
+| --- | --- |
+| **What you'll build** | <span className="node-chip">Quote</span>, a node that fetches a famous quote from a public API |
+| **Where it lives** | `apps/unoverse/nodes/quote/` |
+| **What it outputs** | Two connectors: `quote` and `author` |
+| **Why this API** | It needs no key, so you focus on the shape of a node, not credentials |
 
-- Understand node structure by reviewing existing nodes
-- Learn how credentials work with nodes
-- Use your IDE's AI assistant to generate a new node
+## Before you begin
 
-## Step 1: Review Existing Nodes
+The platform is running (`unoverse dev`). You've built the workflow from [Create Your First Agent](./02-create-your-first-agent.md); you'll extend it to test your node.
 
-Before building your own, study how existing nodes are structured. Review these two examples:
+## How a node is put together
 
-### OpenAI Node (Simple LLM call)
+Every node splits its work across three layers:
 
-```
-apps/unoverse/nodes/openai/src/OpenAI/
-├── node/
-│   ├── index.ts      # Node definition (inputs, outputs, config schema)
-│   └── executor.ts   # Node executor (extends PromiseNode)
-├── service/
-│   └── queryChatGPT.ts  # Business logic
-└── util/
-    └── types.ts      # TypeScript types
-```
+| Layer | File | Job |
+| --- | --- | --- |
+| **Definition** | `node/index.ts` | What **Canvas** shows: name, connectors, the settings form, required credentials |
+| **Executor** | `node/executor.ts` | Thin glue that runs when the node executes |
+| **Service** | `service/index.ts` | Your business logic and external API calls |
 
-### SearchWeb Node (API integration with credentials)
+The executor stays thin and the service does the work. That split is the habit to build now: when a node grows, it grows in the service layer.
 
-```
-apps/unoverse/nodes/ingest/src/SearchWeb/
-├── node/
-│   ├── index.ts      # Node definition with credentials
-│   └── executor.ts   # Executor using credentials
-├── service/
-│   └── searchWebService.ts  # API calls
-└── util/
-    └── types.ts
-```
+There are two executor types. `PromiseNode` is stateless: it runs once, one input in, one output out, like a promise. `CallbackNode` is stateful: it holds state between events and emits many outputs over time, for streaming and iteration. Most nodes are stateless, and Quote is one. The [Node Types](../nodes/02-node-types.md) guide covers the choice in depth.
 
-## Step 2: Understand Node Structure
+## Build it
 
-Every node has two parts:
+<Steps>
+<Step title="Scaffold the package">
 
-**1. Definition (`node/index.ts`)** - Describes the node:
+Node packages live in `apps/unoverse/nodes/`. Create `quote/` there with this layout:
 
-- `type` - Unique identifier
-- `inputs` / `outputs` - Data connectors
-- `configSchema` - UI form fields
-- `credentials` - Required API keys
+| Path | What it is |
+| --- | --- |
+| `package.json` | The package manifest, below |
+| `tsconfig.json` | The build config, below |
+| `src/index.ts` | Plugin registration |
+| `src/Quote/node/index.ts` | The definition |
+| `src/Quote/node/executor.ts` | The executor |
+| `src/Quote/service/index.ts` | The service |
+| `src/Quote/util/types.ts` | Shared types |
 
-**2. Executor (`node/executor.ts`)** - Runs the node:
+The two config files in full, so nothing is left to guess:
 
-- Extends `PromiseNode` (or `CallbackNode` for stateful execution)
-- `executeNode()` method does the work
-- Returns `{ __outputs: { ... } }`
-
-## Step 3: Understand Credentials
-
-Nodes declare credential requirements in the definition:
-
-```typescript
-credentials: [
-  {
-    name: "openAICredential",    // Credential type name
-    required: true,
-    displayName: "OpenAI API",
-    description: "OpenAI API credentials for authentication",
+```json package.json
+{
+  "name": "@unoverse-platform/quote",
+  "version": "1.0.0",
+  "description": "Fetches a random famous quote",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
   },
-],
+  "dependencies": {
+    "@unoverse-platform/plugin-base": ">=1.1.6"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
 ```
 
-In the executor, access credentials via context:
-
-```typescript
-const credentialContext = this.buildCredentialContext(context);
-// Then pass to your service function
+```json tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "declaration": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "moduleResolution": "node"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
 ```
 
-In the service, retrieve the actual API key:
+Then install the dependencies from inside `quote/`:
 
-```typescript
-const credentials = await getNodeCredentials(context, "searchapiCredential");
-const apiKey = credentials?.apiKey;
+```bash Install dependencies
+npm install
 ```
 
-## Step 4: Use AI to Generate Your Node
+</Step>
+<Step title="Write the definition">
 
-The complete node documentation is in `docs/nodes/`. Point your IDE's AI assistant to this folder.
+The definition is what **Canvas** renders: the connectors you wire and the settings form you fill in. Quote has no settings, so its `configSchema` is empty.
 
-| Document                                            | What You'll Learn           |
-| --------------------------------------------------- | --------------------------- |
-| [01-quick-start.md](../nodes/01-quick-start.md)     | Create your first node      |
-| [02-node-types.md](../nodes/02-node-types.md)       | PromiseNode vs CallbackNode |
-| [03-patterns.md](../nodes/03-patterns.md)           | Common patterns             |
-| [04-credentials.md](../nodes/04-credentials.md)     | Handling API keys           |
-| [06-config-schema.md](../nodes/06-config-schema.md) | Config UI schemas           |
+```typescript src/Quote/node/index.ts
+import { NodeInputType, type EnhancedNodeDefinition } from "@unoverse-platform/plugin-base";
+import QuoteExecutor from "./executor";
 
-**Prompt your AI assistant:**
+const definition: EnhancedNodeDefinition = {
+  type: "Quote",
+  name: "Quote",
+  description: "Fetches a random famous quote",
+  whenToUse: "Pick when a step needs a famous quote to open or color a reply. Returns one random quote and its author each run.",
+  category: "Search",
+  inputs: [{ name: "input", type: NodeInputType.STRING, required: true }],
+  outputs: [
+    { name: "quote", type: NodeInputType.STRING },
+    { name: "author", type: NodeInputType.STRING },
+  ],
+  configSchema: {
+    type: "object",
+    properties: {},
+  },
+  capabilities: { isTrigger: false },
+};
 
-> "I want to create a new Unoverse node that [describe what it does].
-> Use the documentation in `docs/nodes/` and follow the patterns
-> from `apps/unoverse/nodes/openai/src/OpenAI/` as a reference.
-> Create the node definition, executor, and service files."
-
-## Step 5: Build & Deploy
-
-```bash
-unoverse update nodes
+export const QuoteNode = { definition, executor: QuoteExecutor };
 ```
 
-Or build just your package:
+Each entry in `outputs` becomes a connector on the node. Downstream nodes read them as `signal.quote1.quote` and `signal.quote1.author`, where `quote1` is the instance id **Canvas** assigns when you drag the node in, the convention from [Create Your First Agent](./02-create-your-first-agent.md).
 
-```bash
-unoverse build @unoverse-platform/my-node
+<Note>
+`whenToUse` decides whether the AI workflow builder can find your node at all. The catalog ranks it against the task being built, so lead with the outcome in plain words and keep it to one or two sentences. Describe what disqualifies your node as a property ("no streaming"), and never name another node. The full guide is [Node Discoverability](../nodes/14-node-discoverability.md); read it before writing this field for a real node.
+</Note>
+
+</Step>
+<Step title="Write the executor">
+
+```typescript src/Quote/node/executor.ts
+import { PromiseNode, type NodeExecutionContext, type ValidationResult } from "@unoverse-platform/plugin-base";
+import { getRandomQuote } from "../service";
+
+export default class QuoteExecutor extends PromiseNode {
+  constructor() {
+    super("Quote");
+  }
+
+  protected async validateConfig(): Promise<ValidationResult> {
+    return { success: true };
+  }
+
+  protected async executeNode(
+    inputs: Record<string, any>,
+    config: Record<string, never>,
+    context: NodeExecutionContext
+  ) {
+    const result = await getRandomQuote();
+    return {
+      __outputs: {
+        quote: result.quote,
+        author: result.author,
+      },
+    };
+  }
+}
 ```
 
-> **Tip:** If you haven't run `unoverse dev` yet, do that first — it installs all workspace dependencies.
+Two rules matter here, and they apply to every node you'll ever write:
 
-Your node now appears in Canvas!
+- Implement `executeNode()`, never override `execute()`.
+- Wrap what you return in `__outputs`. That wrapper is how values reach the node's output connectors; a raw return goes nowhere.
 
-## ✅ Challenge Complete
+</Step>
+<Step title="Write the service">
 
-You understand node structure and can generate new nodes with AI assistance. Proceed to [Challenge 4: Ingest Content to Spatial](./04-ingest-content-to-spatial.md).
+The service holds the business logic. The executor doesn't know or care that this is an HTTP call.
+
+```typescript src/Quote/service/index.ts
+import type { QuoteResult } from "../util/types";
+
+export async function getRandomQuote(): Promise<QuoteResult> {
+  const response = await fetch("https://zenquotes.io/api/random");
+  if (!response.ok) {
+    throw new Error(`Quote API failed: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return {
+    quote: data[0].q,
+    author: data[0].a,
+  };
+}
+```
+
+The URL is hardcoded to keep the tutorial small. A real node exposes it as a `configSchema` field, so it can change without a rebuild.
+
+```typescript src/Quote/util/types.ts
+export interface QuoteResult {
+  quote: string;
+  author: string;
+}
+```
+
+<Note>
+A service that calls an authenticated API fetches its key with `api.getNodeCredentials()`, and the definition declares the credential so **Canvas** asks for it. Keys never live in node code or env files. [Credential Management](../nodes/04-credentials.md) shows the full pattern.
+</Note>
+
+</Step>
+<Step title="Register it">
+
+The package's entry point tells the platform what it contains:
+
+```typescript src/index.ts
+import { createPlugin, type GravityPluginAPI } from "@unoverse-platform/plugin-base";
+import packageJson from "../package.json";
+
+export default createPlugin({
+  name: packageJson.name,
+  version: packageJson.version,
+  description: packageJson.description,
+  async setup(api: GravityPluginAPI) {
+    const { QuoteNode } = await import("./Quote/node");
+    api.registerNode(QuoteNode);
+  },
+});
+```
+
+</Step>
+<Step title="Build and load">
+
+```bash Build your package
+unoverse build @unoverse-platform/quote
+```
+
+The build compiles your package and restarts the platform so it loads. Confirm it registered before you go looking for it:
+
+```bash Verify it loaded
+unoverse check
+```
+
+The loaded-nodes line now includes Quote. Open **Canvas**: <span className="node-chip">Quote</span> is in the node library.
+
+</Step>
+<Step title="Test it in a workflow">
+
+Open your workflow from [Create Your First Agent](./02-create-your-first-agent.md). Drag <span className="node-chip">Quote</span> in and connect <span className="node-chip">Input Trigger</span> to it. Step through the workflow and open Quote's **Debug** tab: `quote` and `author` carry a fresh quote from the API.
+
+From here, try feeding it to the model: reference `signal.quote1.quote` in the OpenAI Stream prompt and your Agent can open its answer with a famous quote.
+
+</Step>
+</Steps>
+
+## Have Claude Code build it
+
+<div className="skill-callout">
+<img className="skill-logo" src="/images/onboarding/claude-logo.png" alt="Claude" />
+<div className="skill-eyebrow">Claude Code skill · ships with your repo</div>
+<div className="skill-title">/unoverse-create</div>
+
+Claude Code already knows everything on this page. Open your repo in Claude Code and describe the node you want:
+
+> Create a node that fetches the top story from a news API.
+
+The skill reads the node reference, scaffolds the package with its config files, writes the definition with `whenToUse`, the executor, and the service, then builds it and verifies it loaded.
+
+Not sure everything is wired up? Type `/mcp` in Claude Code: the `unoverse-builder` server should show as connected.
+
+</div>
+
+Using a different AI assistant? Point it at the node reference in your repo at `docs/nodes/`. It is the same material as the [Nodes](../nodes/overview.md) tab of these docs: node types, patterns, credentials, config schemas, and marketplace metadata.
+
+## Next steps
+
+<Card title="Ingest content to Spatial" icon="globe" href="./04-ingest-content-to-spatial.md" horizontal>
+Ground your Agent's answers in your own content.
+</Card>
+
+<Card title="Components and templates" icon="palette" href="./05-components-and-templates.md" horizontal>
+Design the interfaces your Agents speak through.
+</Card>

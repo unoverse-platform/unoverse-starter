@@ -1,12 +1,11 @@
 ---
 sidebarTitle: "Node Discoverability"
+title: "Node Discoverability"
 ---
-
-# 14 — Discoverability: writing meta the AI will actually pick
 
 > **This is critical, not cosmetic.** A node that works perfectly but never gets *selected* by the workflow-building agent (UNO / Universe Copilot) is dead code. Discoverability is decided entirely by three string fields on the node definition — `name`, `description`, `whenToUse` — and the `category`. Getting them wrong silently buries a specialized node under a generic one. This doc is the authoritative guide for those fields; `whenToUse` in particular.
 
-> **This contract is NOT nodes-only.** Templates (MCP apps) and agent skills are embedded into spatial and selected by *user intent* (`findIntent`) with the **same fields and the same formula** — every rule in this doc applies to them verbatim. See the final section, "Templates and skills use this contract too."
+> **This contract is NOT nodes-only.** Templates (MCP apps) and agent skills are embedded into **Spatial** and selected by *user intent* (`findIntent`) with the **same fields and the same formula** — every rule in this doc applies to them verbatim. See the final section, "Templates and skills use this contract too."
 
 ---
 
@@ -123,7 +122,7 @@ This supersedes the old "always lead with *attach via a service edge*" guidance.
 
 ## Templates and skills use this contract too
 
-Nodes are selected by a *planner's task query*; **templates (MCP apps) and agent skills are selected by the USER'S OWN INTENT** — the spatial engine (`findIntent`) ranks them against what the user literally asks for ("transfer money to Kieran", "I want to complain"). Same fields, same formula, higher stakes: mechanism-first meta makes an entire app invisible.
+Nodes are selected by a *planner's task query*; **templates (MCP apps) and agent skills are selected by the USER'S OWN INTENT** — the **Spatial** engine (`findIntent`) ranks them against what the user literally asks for ("transfer money to Kieran", "I want to complain"). Same fields, same formula, higher stakes: mechanism-first meta makes an entire app invisible.
 
 **Where the fields live:**
 

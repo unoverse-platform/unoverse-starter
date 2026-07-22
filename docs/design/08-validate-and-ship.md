@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Validate & Ship"
+title: "Validate & Ship"
 ---
-
-# 08 — Validate & Ship
 
 **Three enforcement layers catch mistakes for you; one checklist covers what only you can judge.**
 

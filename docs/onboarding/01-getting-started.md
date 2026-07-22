@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Getting Started"
+title: "Getting Started"
 ---
-
-# Getting Started
 
 Set up your local development environment. You'll have the platform running in a few minutes.
 
@@ -91,7 +90,7 @@ Runs all migrations and seeds the database. Safe to re-run at any time; migratio
 unoverse check
 ```
 
-Every line should be green: services up, health endpoints responding, packages built, nodes loaded, Canvas reachable. If anything fails, run `unoverse doctor` for a diagnosis.
+Every line should be green: services up, health endpoints responding, packages built, nodes loaded, **Canvas** reachable. If anything fails, run `unoverse doctor` for a diagnosis.
 
 </Step>
 <Step title="Open Canvas">
@@ -224,7 +223,7 @@ It checks the whole stack and tells you what's wrong.
 ## Next steps
 
 <Card title="Build your first Agent" icon="bot" href="./02-create-your-first-agent.md" horizontal>
-Wire a trigger, a model, and a response together in Canvas, and talk to it.
+Wire a trigger, a model, and a response together in **Canvas**, and talk to it.
 </Card>
 
 <Card title="Explore the CLI" icon="terminal" href="./00-cli.md" horizontal>
@@ -232,5 +231,5 @@ Every command for setup, development, design, and deployment.
 </Card>
 
 <Card title="Create a component" icon="palette" href="./05-components-and-templates.md" horizontal>
-Design a component in Studio and see it render live.
+Design a component in **Studio** and see it render live.
 </Card>

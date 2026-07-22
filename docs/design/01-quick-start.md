@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Quick Start"
+title: "Quick Start"
 ---
-
-# 01 — Quick Start
 
 **Build your first component, validate it, deploy it, and see it render in Studio.**
 
@@ -21,7 +20,7 @@ A `PriceCard` component: a card that shows a product name, a price, and a short 
 > Throughout these docs, `rx/` means the design folder in your repo: **`apps/unoverse/rx/`**. It is mounted straight into the running platform.
 
 ```bash
-./unoverse new component pricecard
+./unoverse new org acme    # then author components in rx/orgs/acme/components/
 ```
 
 This creates `rx/components/pricecard/pricecard.json`, already passing the linter — you fill the TODOs and shape the tree. Edited for our card:
@@ -61,7 +60,7 @@ What each part is:
 |---|---|
 | `unoverse` / `kind` / `name` | The **envelope** — marks this file as a component definition |
 | `whenToUse` | **Required for components** — the AI reads this to pick your component. Outcome-first, in the user's vocabulary. See [08](./08-validate-and-ship.md) |
-| `props` | The **data contract** — every field the definition reads, with a default (the Studio mock). `input: true` = fed by the workflow at runtime — mark **all** workflow-fed props |
+| `props` | The **data contract** — every field the definition reads, with a default (the **Studio** mock). `input: true` = fed by the workflow at runtime — mark **all** workflow-fed props |
 | `root` | The UI tree, built only from **primitives** ([02](./02-sdui-and-mcp-apps.md)) |
 | `bind` | An object mapping the primitive's target → your data field: `{ "value": "title" }`, `{ "src": "image" }` |
 | `visibleWhen` | A bare field name is a truthy test — the description row hides when empty |
@@ -93,7 +92,7 @@ Now a typo like `"type": "Bax"` or a missing `description` is a red squiggle, no
 Two mechanisms, both already in your file:
 
 - **Prop `default`s ARE the mock.** Studio renders the component from them with no backend — that's why every prop carries a realistic default, not an empty string.
-- **The `states/` folder is the state picker.** If your component has multiple layers (a `Switch` on a discriminant — wizard steps, inline↔focused), enumerate each layer as `states/<layer>.json` and Studio automatically shows a pill per state; clicking one sets the discriminant and that layer draws itself ([07](./07-studio.md)). PriceCard is single-view, so it needs none.
+- **The `states/` folder is the state picker.** If your component has multiple layers (a `Switch` on a discriminant — wizard steps, inline↔focused), enumerate each layer as `states/<layer>.json` and **Studio** automatically shows a pill per state; clicking one sets the discriminant and that layer draws itself ([07](./07-studio.md)). PriceCard is single-view, so it needs none.
 
 ---
 
@@ -106,32 +105,32 @@ docker compose restart unoverse    # nodes synthesize from your definitions at b
 
 Component nodes are **definition-backed**: one universal executor serves every component, and the platform synthesizes a node per definition at boot — there is no code generation. The restart just picks up your new definition. Your `PriceCard` is now:
 
-- a **node** any workflow can use — copy it from Studio (**⧉ Copy for Canvas**) and paste (`Cmd+V`) onto the canvas, wire data into its props — and
-- an **MCP resource** every channel (web, native, Studio) renders natively.
+- a **node** any workflow can use — copy it from **Studio** (**⧉ Copy for Canvas**) and paste (`Cmd+V`) onto the **Canvas**, wire data into its props — and
+- an **MCP resource** every channel (web, native, **Studio**) renders natively.
 
 ---
 
 ## Step 5 — See it in Studio
 
-Open Studio (served by the platform — see [07 — Studio](./07-studio.md)):
+Open **Studio** (served by the platform — see [07 — **Studio**](./07-studio.md)):
 
 1. Find **PriceCard** in the component list.
 2. **Mock mode**: it renders from your prop defaults; multi-state components get a state picker from their `states/` folder — this is your Storybook.
-3. **Live mode**: wire it into a workflow on the Canvas and watch a real agent stream real data into it.
+3. **Live mode**: wire it into a workflow on the **Canvas** and watch a real agent stream real data into it.
 
-If it looks right in Studio, it looks right in production — Studio is just another MCP client using the same SDK and the same stream ([02](./02-sdui-and-mcp-apps.md) explains why).
+If it looks right in **Studio**, it looks right in production — **Studio** is just another MCP client using the same SDK and the same stream ([02](./02-sdui-and-mcp-apps.md) explains why).
 
 ---
 
 ## 📋 Quick-Start Checklist
 
-- [ ] Scaffolded with `./unoverse new component <name>` (full envelope for free)
+- [ ] Org created with `./unoverse new org <name>`; component authored in the org with a full envelope
 - [ ] `whenToUse` written outcome-first (the AI picks components by it)
 - [ ] Every `bind` has a matching prop **with a default**, workflow-fed props marked `input: true`
 - [ ] Zero raw values — token names only in every `style`
 - [ ] Prop defaults realistic (they ARE the mock); multi-layer components enumerate `states/`
 - [ ] `./unoverse lint` clean, then `docker compose restart unoverse`
-- [ ] Previewed in Studio (mock states, then live)
+- [ ] Previewed in **Studio** (mock states, then live)
 
 ---
 

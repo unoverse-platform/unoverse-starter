@@ -1,18 +1,17 @@
 ---
 sidebarTitle: "AI Model (UMAP)"
+title: "Runbook: AI Model (UMAP)"
 ---
 
-# Runbook: AI Model (UMAP)
-
-Deploy the UMAP AI service for spatial search and 3D dictionary visualization.
+Deploy the UMAP AI service for **Spatial** search and 3D dictionary visualization.
 
 ## Overview
 
 UMAP (Uniform Manifold Approximation and Projection) converts 1536-dimensional OpenAI embeddings into 3D coordinates for:
 
 - **Spatial search** — find dictionary entries near a query point in 3D space
-- **3D visualization** — render the dictionary as an explorable 3D map in Canvas
-- **MCP discovery** — spatial proximity for tool/capability matching
+- **3D visualization** — render the dictionary as an explorable 3D map in **Canvas**
+- **MCP discovery** — **Spatial** proximity for tool/capability matching
 
 UMAP is separate from **vector search** (which uses pgvector for direct 1536D similarity). Both search types serve different purposes and coexist.
 
@@ -134,8 +133,8 @@ Internal URL: http://134.209.106.203:5001
 | Model loading slow             | First startup                   | Wait 2-3 minutes for model to load                   |
 | Out of memory                  | Insufficient RAM                | Increase VM to 16GB+ or set `--memory=4g`            |
 | Connection refused from App VM | Firewall                        | Allow App VM → ML VM on port 5001                    |
-| 500 error on spatial search    | UMAP unreachable                | Check `docker compose logs unoverse` for UMAP errors |
-| "Model may not be trained"     | No UMAP model for workflow      | Train model via Dictionary → Settings in Canvas      |
+| 500 error on **Spatial** search    | UMAP unreachable                | Check `docker compose logs unoverse` for UMAP errors |
+| "Model may not be trained"     | No UMAP model for workflow      | Train model via Dictionary → Settings in **Canvas**      |
 
 ## Next Steps
 

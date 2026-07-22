@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Deployment"
+title: "Deployment"
 ---
-
-# Challenge 8: Deployment
 
 Deploy Unoverse to production VMs.
 

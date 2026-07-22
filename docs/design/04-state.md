@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "State"
+title: "State"
 ---
-
-# 04 — State (the reaction contract)
 
 **Components write themselves. Templates react. Inline is the universal default.**
 

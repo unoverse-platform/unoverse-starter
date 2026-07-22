@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Core Services"
+title: "Runbook: Core Services"
 ---
-
-# Runbook: Core Services
 
 Deploy the core Gravity Platform services to a VM.
 
@@ -12,7 +11,7 @@ Deploy the core Gravity Platform services to a VM.
 | ---------------- | ---- | ----------------------------------- |
 | **unoverse**     | 4105 | Platform runtime — workflow engine (in-process), node plane, `/api`, native MCP (`/mcp`), data plane |
 | **memory**       | 4104 | Evidence-based user memory          |
-| **canvas**       | 3001 | Web UI                              |
+| **Canvas**       | 3001 | Web UI                              |
 
 > **Unoverse has three listeners.** `:4105` is the public port (JWT-gated: `/api/*`, MCP defs, workbench, `/plugins` management, `/health`). `:4106` is the internal node runtime (`/execute`, `/nodes`, `/skills`, `/health`) — it lives on the Docker network only and is deliberately never published or proxied; network isolation is the trust boundary. `:4101` is the workflow engine surface (internal; other containers reach it as `http://unoverse:4101`).
 
@@ -79,7 +78,7 @@ cd ansible
 ansible-playbook -i inventory/production.yml playbooks/install.yml
 ```
 
-This installs Docker, Node.js, pulls DOCR images, and starts **core platform** (unoverse, memory, canvas).
+This installs Docker, Node.js, pulls DOCR images, and starts **core platform** (unoverse, memory, **Canvas**).
 
 ### 3. Deploy Customer Packages
 

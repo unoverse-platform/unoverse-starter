@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "SDUI & MCP Apps"
+title: "SDUI & MCP Apps"
 ---
-
-# 02 — SDUI & MCP Apps
 
 **UI is data. MCP is the transport. This is the standard — not one option among several.**
 
@@ -35,7 +34,7 @@ sidebarTitle: "SDUI & MCP Apps"
 | **One definition, every platform** | The same JSON renders as React on web and native views elsewhere. You never fork per platform. |
 | **Agents can drive UI** | Because UI is data, a workflow/agent can select, stream, and update it at runtime — the whole point of the platform. |
 | **Rebrand = data** | All styling is tokens; a theme swap touches `styles/` only ([06](./06-styles-and-tokens.md)). |
-| **Provable dev loop** | Studio renders through the exact production path — what you preview is what ships ([07](./07-studio.md)). |
+| **Provable dev loop** | **Studio** renders through the exact production path — what you preview is what ships ([07](./07-studio.md)). |
 
 ---
 
@@ -68,7 +67,7 @@ Definitions compose ONLY these. The set is frozen — adding to it is an SDK cha
 | **How UI state arrives** | Run-scoped messages (`COMPONENT_INIT/DATA`, `TEMPLATE_DATA`, `WORKFLOW_STATE`) on the MCP **`/stream`**. |
 | **How themes arrive** | Served live as MCP resources (`unoverse://theme/<name>`) — never baked into an SDK bundle. |
 
-**The rule:** a host must NEVER hand-roll its own transport — no bespoke REST send, no custom `user_action` message, no side-channel state push. The SDK owns the one interaction path; every consumer (Studio, a native app, an external MCP client) shares it. If your channel needs something the path doesn't do, that's a platform gap to raise — not a workaround to build.
+**The rule:** a host must NEVER hand-roll its own transport — no bespoke REST send, no custom `user_action` message, no side-channel state push. The SDK owns the one interaction path; every consumer (**Studio**, a native app, an external MCP client) shares it. If your channel needs something the path doesn't do, that's a platform gap to raise — not a workaround to build.
 
 ### The org endpoint + its default app (the front door)
 
@@ -96,18 +95,18 @@ Everything you author reads from the first lane. The second lane belongs to nati
 
 ## 🎨 The four ways a component renders
 
-Every design component reaches the chat by one of **four paths** — two in the workflow world, two discovered natively from spatial. **Every path ends identically:** the SDK renders your definition into the conversation. Knowing which path you're on tells you *where the data comes from* and *whether a workflow is involved*. (Canonical: `docs/unoverse/UNOVERSE_MCP_TEMPLATE_PROTOCOL.md` §"The four ways UI reaches the chat".)
+Every design component reaches the chat by one of **four paths** — two in the workflow world, two discovered natively from **Spatial**. **Every path ends identically:** the SDK renders your definition into the conversation. Knowing which path you're on tells you *where the data comes from* and *whether a workflow is involved*. (Canonical: `docs/unoverse/UNOVERSE_MCP_TEMPLATE_PROTOCOL.md` §"The four ways UI reaches the chat".)
 
 | # | Way to render | Where the data comes from | Workflow? |
 |---|---|---|---|
 | **A** | **Template app** — you bind a workflow to a template; the workflow drives the whole surface (the app shell — `binding` in the manifest, [05](./05-templates.md)). | the bound workflow | ✅ |
-| **B** | **Self-contained component app** — the component **is its own MCP app** (a tool + `ui://`); spatial surfaces it, the agent reacts natively, and the SDK renders it **as-is**. It carries its own `state`. | the component itself | ❌ |
-| **C** | **Node-hydrated component** — a spatial **data node** carries an assigned component **URI** (a card shell); on discovery the node **hydrates** that component with its data and the SDK renders the filled card. | a spatial data node | ❌ |
+| **B** | **Self-contained component app** — the component **is its own MCP app** (a tool + `ui://`); **Spatial** surfaces it, the agent reacts natively, and the SDK renders it **as-is**. It carries its own `state`. | the component itself | ❌ |
+| **C** | **Node-hydrated component** — a **Spatial** **data node** carries an assigned component **URI** (a card shell); on discovery the node **hydrates** that component with its data and the SDK renders the filled card. | a **Spatial** data node | ❌ |
 | **D** | **Streamed component** — a workflow node emits `COMPONENT_INIT`/`DATA` mid-run and the component **streams in** (the classic runtime paint path for **A**). | the running workflow | ✅ |
 
 **Two worlds:**
 - **A + D — the workflow world.** Assign a workflow; it drives the surface (A) and streams its pieces in (D). Streaming is the standard runtime paint path, not a legacy one.
-- **B + C — the native-MCP-from-spatial world.** The component is **discovered**, not pushed. **B** carries its own data; **C** is a reusable card shell a spatial node fills.
+- **B + C — the native-MCP-from-spatial world.** The component is **discovered**, not pushed. **B** carries its own data; **C** is a reusable card shell a **Spatial** node fills.
 
 **The one rule that keeps B + C pure:** a component is never a callable primitive. The discovered unit is a standard **MCP app** (a tool with a `ui://` resource); the agent does an ordinary `tools/call`, the result carries the UI, and the **SDK** renders it. Nothing component-specific is invented.
 
@@ -117,11 +116,11 @@ Every design component reaches the chat by one of **four paths** — two in the 
 
 ## 🔁 One path, dev and prod
 
-Studio is **not a special harness**. It is just another MCP client: it subscribes to the same definition resources, receives the same component stream, and runs the same native renderers as production channels. That's why:
+**Studio** is **not a special harness**. It is just another MCP client: it subscribes to the same definition resources, receives the same component stream, and runs the same native renderers as production channels. That's why:
 
-- "Works in Studio" provably means "works in production."
-- Hot reload in Studio is the same `resources/subscribe` mechanism that live-updates production channels.
-- Live mode in Studio is literally production, pointed at local renderers.
+- "Works in **Studio**" provably means "works in production."
+- Hot reload in **Studio** is the same `resources/subscribe` mechanism that live-updates production channels.
+- Live mode in **Studio** is literally production, pointed at local renderers.
 
 ---
 

@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Overview"
+title: "Node Development Guide"
 ---
-
-# GravityAI Plugin Node Development Guide
 
 **Create powerful AI workflow nodes with GravityAI's plugin system**
 

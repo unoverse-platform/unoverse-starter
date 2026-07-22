@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Node Types"
+title: "Node Types: PromiseNode vs CallbackNode"
 ---
-
-# Node Types: PromiseNode vs CallbackNode
 
 **Choose the right base class for your node**
 

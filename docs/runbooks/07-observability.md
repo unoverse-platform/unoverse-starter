@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Observability"
+title: "Runbook: Observability (Log Viewer)"
 ---
-
-# Runbook: Observability (Log Viewer)
 
 Install the bundled log viewer for POC/demo environments.
 

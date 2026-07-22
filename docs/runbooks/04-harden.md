@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Security Hardening"
+title: "Runbook: Security Hardening"
 ---
-
-# Runbook: Security Hardening
 
 Apply security hardening to Gravity Platform VMs.
 

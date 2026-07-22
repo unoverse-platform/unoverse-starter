@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# unoverse new — scaffold a conformant rx/ artifact
-#   ./unoverse new component <name>
-#   ./unoverse new template <org> <name>
+# unoverse new — scaffold a new org (folder structure + default token set)
+#   ./unoverse new org <name>
 
 cmd_new() {
   if ! command -v node >/dev/null 2>&1; then

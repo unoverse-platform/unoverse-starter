@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Overview"
+title: "Design Overview"
 ---
-
-# Unoverse Design — Components & Templates
 
 **Build cross-platform, server-driven UI (SDUI) as pure data — components and templates that render natively on every channel, streamed by real agents over MCP.**
 
@@ -19,7 +18,7 @@ Work through these in order — each doc builds on the previous one.
 ### Getting Started
 | Doc | What you'll learn |
 |---|---|
-| [01 — Quick Start](./01-quick-start.md) | Build your first component, validate it, deploy it, see it in Studio — in minutes |
+| [01 — Quick Start](./01-quick-start.md) | Build your first component, validate it, deploy it, see it in **Studio** — in minutes |
 | [02 — SDUI & MCP Apps](./02-sdui-and-mcp-apps.md) | The model: UI is data, the closed primitive set, why templates ARE MCP Apps |
 | [02a — Coming from React](./02a-coming-from-react.md) | The translation table: every React/Flutter reflex → its Unoverse move |
 
@@ -34,7 +33,7 @@ Work through these in order — each doc builds on the previous one.
 ### Test & Ship
 | Doc | What you'll learn |
 |---|---|
-| [07 — Studio](./07-studio.md) | View and test your work: mock states, live mode, multi-channel preview, state inspector |
+| [07 — **Studio**](./07-studio.md) | View and test your work: mock states, live mode, multi-channel preview, state inspector |
 | [08 — Validate & Ship](./08-validate-and-ship.md) | The JSON Schema, the guard linter, the conformance checklist, the deploy loop |
 | [09 — Troubleshooting](./09-troubleshooting.md) | Symptom → cause → fix for the common mistakes |
 
@@ -64,7 +63,7 @@ Work through these in order — each doc builds on the previous one.
 | **The reaction contract** | A component writes only its own slice (`setValue`); templates react via state selectors (`select.where`); **inline is the universal default**. |
 | **Locked state is read-only** | Conversation flow, voice call state, and native host chrome are managed for you — you project them, never manage them. |
 | **MCP is the standard** | Templates are MCP Apps: definitions are MCP resources, sends are `tools/call`, answers are elicitations. No bespoke transport. |
-| **Studio is the proof** | The dev loop IS the production loop — if it works in Studio, it works on every channel. |
+| **Studio is the proof** | The dev loop IS the production loop — if it works in **Studio**, it works on every channel. |
 
 ---
 
@@ -72,7 +71,7 @@ Work through these in order — each doc builds on the previous one.
 
 ```bash
 # 1. Scaffold a conformant definition, then shape it (schema validates as you type)
-./unoverse new component pricecard
+./unoverse new org acme    # then author components in rx/orgs/acme/components/
 
 # 2. Lint (schema + token law + state rules, doc-cited messages), then deploy
 ./unoverse lint

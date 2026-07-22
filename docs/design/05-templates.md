@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Templates"
+title: "Templates"
 ---
-
-# 05 — Templates (MCP Apps)
 
 **A template is a set of LAYOUTS — full arrangements selected by the component views they're named after. Its manifest IS its envelope.**
 
@@ -131,7 +130,7 @@ Declare `"service": "voice"` in the manifest; the channel instantiates the nativ
 > **user's own words** (`findIntent`), not a planner's task query. Bad meta makes an
 > entire app invisible. This section is the design-side summary.
 
-**The formula.** Spatial embeds exactly `` `title. whenToUse||description [category]` ``
+**The formula.** **Spatial** embeds exactly `` `title. whenToUse||description [category]` ``
 and ranks it against what the user literally types/says. Three consequences:
 - **`whenToUse` IS the selection text** — when present it *replaces* description in the ranking.
 - **The opening words dominate the embedding.** Lead with the user's vocabulary for the
@@ -181,7 +180,7 @@ one plain line about what it is? Does the category name the domain, not the buil
 - [ ] `binding.workflow` + `binding.trigger` real (the app owns them); `stateOrder` lists states + layouts in picker order; `preview` seeds each layout's mock
 - [ ] Flow slot generic (`select: {}`); surfaces select by `where`, never `type`
 - [ ] `whenToUse` utterance-shaped; `description` ≤120 chars
-- [ ] `./unoverse lint` 0 errors, then preview in Studio — layout pills × local states, then live ([07](./07-studio.md))
+- [ ] `./unoverse lint` 0 errors, then preview in **Studio** — layout pills × local states, then live ([07](./07-studio.md))
 
 ---
 

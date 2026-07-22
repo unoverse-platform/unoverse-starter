@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Coming from React"
+title: "Coming from React"
 ---
-
-# 02a — Coming from React (or SwiftUI, or Flutter)
 
 **Every instinct you have has a home here — it's just data now.**
 

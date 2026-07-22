@@ -19,6 +19,12 @@ Before writing anything, pick the existing node package closest to your shape (a
 promise-style API call? a streaming callback? a service provider?) and **mirror its
 folder layout exactly**.
 
+For the minimal complete shape — including FULL `package.json` and `tsconfig.json`
+listings (`main: dist/index.js`, `build: tsc`, plugin-base dep) — the onboarding
+tutorial's Quote node is the canonical small exemplar:
+`docs/onboarding/03-create-your-first-node.md`. Never hand a user a package missing
+those two config files; a name-only package.json does not build or load.
+
 ## Workflow
 
 1. **Decide the node type first** (CLAUDE.md): request→result = PromiseNode;

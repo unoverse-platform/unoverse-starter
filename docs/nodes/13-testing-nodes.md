@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Testing Nodes"
+title: "Testing Nodes"
 ---
-
-# 13 — Testing Nodes
 
 Every code node should ship an **integration test** that exercises the node's real
 behavior against the real upstream API. This is a true feature test — not a mock —

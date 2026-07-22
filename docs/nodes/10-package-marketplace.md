@@ -1,10 +1,9 @@
 ---
 sidebarTitle: "Package Marketplace"
+title: "Package Marketplace Schema"
 ---
 
-# Package Marketplace Schema
-
-This document defines the ideal `gravity` field schema for `package.json` that powers the unified Package Marketplace in Canvas.
+This document defines the ideal `gravity` field schema for `package.json` that powers the unified Package Marketplace in **Canvas**.
 
 ## The `gravity` field in package.json
 
@@ -117,7 +116,7 @@ Each entry in `gravity.nodes[]` is now an object (not a plain string):
 | `name` | string | yes | Display name shown in node palette |
 | `type` | `"PromiseNode"` \| `"CallbackNode"` | yes | Execution model |
 | `description` | string | yes | One-line description of what this node does |
-| `category` | string | yes | Node category in the canvas palette |
+| `category` | string | yes | Node category in the **Canvas** palette |
 | `mcp` | boolean | no | Whether this node exposes MCP service tools |
 
 ## Features list guidelines

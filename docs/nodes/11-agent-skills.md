@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Agent Skills"
+title: "Agent Skills"
 ---
-
-# MCP `instructions` Field
 
 The MCP spec defines an `instructions` field on the schema response — guidance on how to use the server's tools effectively. This is separate from:
 
@@ -19,7 +18,7 @@ The MCP spec defines an `instructions` field on the schema response — guidance
 ## Lifecycle
 
 - **Canvas-connected MCPs**: instructions load at session start, remain stable for the session
-- **Spatially-discovered MCPs**: instructions arrive with the tools and are replaced when a fresh spatial search returns a new set of MCPs. Same lifecycle as the tools themselves.
+- **Spatially-discovered MCPs**: instructions arrive with the tools and are replaced when a fresh **Spatial** search returns a new set of MCPs. Same lifecycle as the tools themselves.
 
 ## When to include instructions
 
@@ -46,4 +45,4 @@ See the `smart-document` package (`src/SmartDocument/service/mcpSchema.ts`) — 
 
 ## Relationship to Skills
 
-Skills (`readSkill`/`readSkillFile`) are a separate system — behavioural guidance discovered at runtime via spatial search. The `instructions` field is part of the MCP schema and follows MCP spec conventions. They are not the same thing.
+Skills (`readSkill`/`readSkillFile`) are a separate system — behavioural guidance discovered at runtime via **Spatial** search. The `instructions` field is part of the MCP schema and follows MCP spec conventions. They are not the same thing.

@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Components"
+title: "Components"
 ---
-
-# 03 — Components (contained microapps)
 
 **A component is a light, self-contained app: its manifest is the contract, its layouts are its faces, and everything it shows has exactly one home.**
 
@@ -34,7 +33,7 @@ A **flat component** (a simple card, a chart) is the reduced form: just `<name>.
 Names are **unique across the design system and every org** — a collision is a lint error (no shadowing). Both address forms are first-class — the bare URI is the canonical address for a design-system component, the org URI for an org component; uniqueness means a bare ref also resolves an org component unambiguously. Direction rule: org things may reference design-system things; **design-system things never reference org things** (lint-enforced, including template preview lists).
 
 - File lookup is case-insensitive by filename; `name` is the display/type name.
-- **`components/` vs atoms:** a shape shared across *this component's* states → its own `components/` (`$include`). A shape shared across *many components* (a close button, a choice row) → a universal atom in `rx/atoms/` (`Ref`). Used once → inline it. Atoms are **authoring-time only**: the server always expands them before serving (channels only ever receive fully-expanded primitive trees; atoms are never served, never enumerable, and have no Studio view). A `Ref`'s `props` remaps *fields*; its `with` passes *literals* into the atom — `{ "type": "Ref", "ref": "button", "with": { "label": "Learn more", "icon": "arrowRight" }, "action": { … } }` hardcodes those attributes, and a truthy `with` key satisfies (drops) a matching `visibleWhen` guard, so unprovided pieces stay hidden.
+- **`components/` vs atoms:** a shape shared across *this component's* states → its own `components/` (`$include`). A shape shared across *many components* (a close button, a choice row) → a universal atom in `rx/atoms/` (`Ref`). Used once → inline it. Atoms are **authoring-time only**: the server always expands them before serving (channels only ever receive fully-expanded primitive trees; atoms are never served, never enumerable, and have no **Studio** view). A `Ref`'s `props` remaps *fields*; its `with` passes *literals* into the atom — `{ "type": "Ref", "ref": "button", "with": { "label": "Learn more", "icon": "arrowRight" }, "action": { … } }` hardcodes those attributes, and a truthy `with` key satisfies (drops) a matching `visibleWhen` guard, so unprovided pieces stay hidden.
 
 ---
 
@@ -56,7 +55,7 @@ Names are **unique across the design system and every org** — a collision is a
 - **`lifetime` (OPTIONAL) = how long the rendered instance survives.** Default `"turn"`: the universal reset — the instance returns to inline / retires on the next user turn ([04 §Two lifetimes](./04-state.md)). `"conversation"`: a **durable, conversation-scoped surface** (a cart, an itinerary, a composed page) — the platform keys the instance by the *conversation* (every re-call hydrates the SAME slice: merge, never re-place) and the new-turn reset skips it; it stays on screen until replaced, self-closed, or a **new template loads** (the template swap is the hard refresh boundary). Closed set `turn | conversation`, lint-checked.
 - **Manifest presence = spatially discoverable.** The discovery meta (`title`/`description`/`whenToUse`) lives here and ONLY here — never duplicated in the envelope. A component that's only ever streamed by a workflow, arrives inline, and needs no discovery can skip the manifest entirely.
 - `whenToUse` is **utterance-shaped** — the words a user would say ("find the right product for me"), never selector-shaped dev framing ("use this when the user asks…").
-- **Naming is discoverability** ([05 §Naming](./05-templates.md) — canonical: `docs/nodes/14-node-discoverability.md`). Spatial embeds `` `title. whenToUse||description [category]` `` and ranks it against the user's own words: `title` = the thing itself (no mechanism, no org prefix), `description` = one ≤120-char line of what it IS, `whenToUse`'s **opening words** carry the ranking, `category` = the job's domain. Disqualify by property, never by naming a sibling.
+- **Naming is discoverability** ([05 §Naming](./05-templates.md) — canonical: `docs/nodes/14-node-discoverability.md`). **Spatial** embeds `` `title. whenToUse||description [category]` `` and ranks it against the user's own words: `title` = the thing itself (no mechanism, no org prefix), `description` = one ≤120-char line of what it IS, `whenToUse`'s **opening words** carry the ranking, `category` = the job's domain. Disqualify by property, never by naming a sibling.
 
 ---
 
@@ -131,7 +130,7 @@ Every faced component's root is the same three lines: a `Switch` on `defaultStat
 
 - **The layout filename = the state name.** A custom arrival state `product` gets `layouts/product.json` — no special-casing, any open name works.
 - **The face is a state decision, never a width decision.** The same `defaultState` write that makes a template's surface react also flips the face. Container queries (`hideBelow`) are for fine adjustments *inside* a face, never for picking one.
-- **A `hideBelow` threshold must be reachable by the card itself** — keep it *below* the layout's own `maxWidth`. A threshold at or above it can only be satisfied by the surrounding surface, so the element shows on a wide Studio stage and silently vanishes in a chat column (linted).
+- **A `hideBelow` threshold must be reachable by the card itself** — keep it *below* the layout's own `maxWidth`. A threshold at or above it can only be satisfied by the surrounding surface, so the element shows on a wide **Studio** stage and silently vanishes in a chat column (linted).
 - The component's own buttons move it: expand = `setValue { defaultState: "focused" }`, its focused face carries its own ✕ that sets it back to `"inline"`. **A component writes only its own slice** — how templates react is [04 — State](./04-state.md).
 
 ---
@@ -154,7 +153,7 @@ A **brief** is metadata that tells an AI what should fill a bound element. It si
 ```
 
 - **Shape (linted, closed):** a string (just the description) or `{ description, maxLength }` on a bound element, `{ description, minItems, maxItems }` on an `Each` — **JSON Schema's own vocabulary**, because the brief IS the schema fragment it compiles to. A brief on a node with **no** bind (a face or partial root) is *composition context* — rules about the whole, like ordering or refinement behavior.
-- **What it becomes — this is MCP-native, no side-channel:** the platform compiles every brief into the component's **MCP tool schema** (each key passes through verbatim — `description`, `maxLength`, `minItems`, `maxItems` are native JSON Schema, the Each's template binds → the array's `items` schema). An agent that discovers the component sees a rich, *required* schema — so it must gather real content (spatial search) and hydrate the fields before it can render. The hydrated call's values flow back in as the component's state. **The schema IS the instruction channel**; there is no prompt to maintain anywhere else.
+- **What it becomes — this is MCP-native, no side-channel:** the platform compiles every brief into the component's **MCP tool schema** (each key passes through verbatim — `description`, `maxLength`, `minItems`, `maxItems` are native JSON Schema, the Each's template binds → the array's `items` schema). An agent that discovers the component sees a rich, *required* schema — so it must gather real content (**Spatial** search) and hydrate the fields before it can render. The hydrated call's values flow back in as the component's state. **The schema IS the instruction channel**; there is no prompt to maintain anywhere else.
 - **Grounding is part of the compiled contract:** fields are filled only from search results in the conversation — never invented. The compiler injects this law into every briefed schema.
 - **The server referees and mirrors:** invalid/empty compositions are rejected with an instructive result before anything renders (the agent self-corrects and retries); a successful render returns *the page as the guest sees it* in the tool result, so the agent refines surgically on later turns ("more golf" knows which section to swap).
 - **The single-face pattern pairs naturally:** a continuously-enriched page (one named face + `default` → the same face, no `inline`, no ✕) arrives in its surface, can never leave it, and each refinement turn merges new data into the same instance.
@@ -166,7 +165,7 @@ A **brief** is metadata that tells an AI what should fill a bound element. It si
 
 ## 🧩 Private steps — `states/` + `stateOrder`
 
-A wizard's questions are the component's own states: one file per step in `states/`, listed in the envelope's `stateOrder` (the exact set, in order — Studio's state picker and the mock walk use it):
+A wizard's questions are the component's own states: one file per step in `states/`, listed in the envelope's `stateOrder` (the exact set, in order — **Studio**'s state picker and the mock walk use it):
 
 ```jsonc
 "stateOrder": ["goals", "situation", "subject", "route", "mode", "commitment", "searching", "results"]

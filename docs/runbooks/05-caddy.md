@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Caddy (TLS)"
+title: "Runbook: Caddy (TLS + Reverse Proxy)"
 ---
-
-# Runbook: Caddy (TLS + Reverse Proxy)
 
 Configure Caddy for TLS termination and hostname-based routing.
 
@@ -85,7 +84,7 @@ User → LB (HTTPS Passthrough) → VM → Caddy (TLS) → Services
 
 | Subdomain             | Service      | Port | Visibility                              |
 | --------------------- | ------------ | ---- | --------------------------------------- |
-| `domain.com`          | Canvas (UI)  | 3001 | Public (always)                          |
+| `domain.com`          | **Canvas** (UI)  | 3001 | Public (always)                          |
 | `api.domain.com`      | API + Unoverse (public listener; serves native MCP at `/mcp`, `/prompt-blocks`, `/plugins`) | 4105 | Public (always, JWT-gated in-app) |
 | `umap.domain.com`     | UMAP Service | 5001 | Public only if `CADDY_INCLUDE_UMAP=true` |
 

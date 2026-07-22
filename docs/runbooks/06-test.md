@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Test Connectivity"
+title: "Runbook: Test Connectivity"
 ---
-
-# Runbook: Test Connectivity
 
 Verify all services are running and accessible.
 
@@ -273,7 +272,7 @@ echo "=== Done ==="
 | Packages not built     | No `dist/` directory               | `unoverse update` (builds all packages)                    |
 | Nodes registered: 0    | unoverse didn't load packages      | Check `docker compose logs unoverse`, then re-run `unoverse deploy packages` (or `unoverse update`) |
 | Component bundles 404  | Unoverse can't find design-system  | Verify the `packages/` mount (`/app/host_packages`) contains `design-system/components/` |
-| Canvas 404             | Container not started              | `docker compose up -d canvas`                             |
+| **Canvas** 404             | Container not started              | `docker compose up -d canvas`                             |
 
 ## Next Steps
 

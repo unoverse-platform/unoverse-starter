@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Restart & Rebuild"
+title: "Runbook: Restart & Rebuild"
 ---
-
-# Runbook: Restart & Rebuild
 
 Rebuild packages and restart services so the platform picks up your latest changes. Component nodes are definition-backed — they re-synthesize from `rx/` at boot; there is no generation step, ever.
 
@@ -108,8 +107,8 @@ docker compose exec -T unoverse node -e \
 
 | Issue | Cause | Fix |
 |-------|-------|-----|
-| New component not in Canvas | unoverse not restarted since the definition was added | `docker compose restart unoverse` |
-| Node shows in Canvas but errors | Package not built | `./unoverse build` |
+| New component not in **Canvas** | unoverse not restarted since the definition was added | `docker compose restart unoverse` |
+| Node shows in **Canvas** but errors | Package not built | `./unoverse build` |
 | Component renders old version | Client caching | hard-refresh the browser |
 | `nodes: 0` in status | unoverse didn't load packages | Check `docker compose logs unoverse` |
 | Build fails | Dependencies missing | `npm install`, then `./unoverse build` |

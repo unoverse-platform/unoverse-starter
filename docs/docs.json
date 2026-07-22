@@ -57,7 +57,6 @@
             "pages": [
               "index",
               "architecture",
-              "onboarding/overview",
               "onboarding/01-getting-started",
               "onboarding/00-cli"
             ]
@@ -65,6 +64,7 @@
           {
             "group": "Challenges",
             "pages": [
+              "onboarding/01-marketplace-nodes",
               "onboarding/02-create-your-first-agent",
               "onboarding/03-create-your-first-node",
               "onboarding/04-ingest-content-to-spatial",

@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Architecture"
+title: "Platform Architecture"
 ---
-
-# Platform Architecture
 
 This page is the high-level map of the platform: what runs, how your code stays separate from the platform, and how the same stack scales from a laptop to a distributed deployment.
 
@@ -19,7 +18,7 @@ Everything a client sees is served by the **unoverse** engine; the other service
 - **unoverse** is the engine. It runs your workflows, serves the platform's native MCP surface, and streams live results to clients. One public listener, JWT-gated. The internal runtime surface is never published outside the Docker network.
 - **Canvas** is where you build, manage, and observe Agents.
 - **Studio** is where you design components, templates, and skills. It is a development tool and is not exposed in production.
-- **Spatial ML** maintains the 3D semantic map behind Spatial.
+- **Spatial ML** maintains the 3D semantic map behind **Spatial**.
 - **Memory** keeps user profiles and open tasks so Agents can reason about the same user across weeks.
 
 All state lives in Postgres and Redis. The services themselves are stateless, which is what makes scaling and recovery straightforward.

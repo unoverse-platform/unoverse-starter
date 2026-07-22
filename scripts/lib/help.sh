@@ -25,7 +25,7 @@ cmd_help() {
   echo -e "    ${GREEN}build${NC}       Build and restart ${DIM}(./unoverse build <package>)${NC}"
   echo ""
   echo -e "  ${BOLD}Design (rx/)${NC}"
-  echo -e "    ${GREEN}new${NC}         Scaffold a definition ${DIM}(./unoverse new component <name> | new template <org> <name>)${NC}"
+  echo -e "    ${GREEN}new${NC}         Create an org ${DIM}(./unoverse new org <name> — folder structure + default token set)${NC}"
   echo -e "    ${GREEN}lint${NC}        Lint rx/ definitions ${DIM}(schema + guard rules)${NC}"
   echo ""
   echo -e "  ${BOLD}Deployment${NC}"

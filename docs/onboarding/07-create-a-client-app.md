@@ -1,8 +1,7 @@
 ---
-sidebarTitle: "Create a Client App"
+sidebarTitle: "7. Create a Client App"
+title: "Create a Client App"
 ---
-
-# Challenge 7: Create a Client App
 
 _Coming soon_
 

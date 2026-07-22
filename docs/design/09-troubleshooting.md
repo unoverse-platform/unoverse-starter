@@ -1,10 +1,9 @@
 ---
 sidebarTitle: "Troubleshooting"
+title: "Troubleshooting"
 ---
 
-# 09 — Troubleshooting
-
-**Symptom → cause → fix.** Debug in Studio's DevTools order: stream log → state inspector → definition ([07](./07-studio.md)). See the data before editing anything.
+**Symptom → cause → fix.** Debug in **Studio**'s DevTools order: stream log → state inspector → definition ([07](./07-studio.md)). See the data before editing anything.
 
 ---
 
@@ -43,8 +42,8 @@ sidebarTitle: "Troubleshooting"
 | Symptom | Cause | Fix |
 |---|---|---|
 | New definition rejected at boot | invalid definition JSON, or an envelope the schema rejects | run the ajv sweep from [08](./08-validate-and-ship.md); fix the reported file |
-| Component exists in Studio but not on the Canvas palette | the platform didn't restart / register | `docker compose restart unoverse`, then `./unoverse check` |
-| Mock states don't appear in Studio's picker | the definition has no `states/` folder — the folder IS the picker; single-file definitions list nothing | enumerate each layer as `states/<layer>.json`; pills appear automatically, ordered by the root's `$include` sequence |
+| Component exists in **Studio** but not on the **Canvas** palette | the platform didn't restart / register | `docker compose restart unoverse`, then `./unoverse check` |
+| Mock states don't appear in **Studio**'s picker | the definition has no `states/` folder — the folder IS the picker; single-file definitions list nothing | enumerate each layer as `states/<layer>.json`; pills appear automatically, ordered by the root's `$include` sequence |
 
 ---
 

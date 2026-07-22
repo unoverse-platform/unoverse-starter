@@ -40,8 +40,134 @@
   max-width: 42rem;
 }
 
+/* Reference tables: quiet headers, clear rows */
 #content-area table {
   font-size: 0.9375rem;
+}
+
+#content-area th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgb(107 114 128);
+}
+
+.dark #content-area th {
+  color: rgb(156 163 175);
+}
+
+#content-area td {
+  vertical-align: top;
+}
+
+/* Commands and identifiers in a table's first column stay on one line */
+#content-area td:first-child code {
+  white-space: nowrap;
+}
+
+/* Node chip: a name styled as the thing itself — something you drag onto the canvas.
+   Usage: <span className="node-chip">Input Trigger</span> */
+#content-area .node-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 0.45rem 0.05rem 0.4rem;
+  border: 1px solid rgb(226 228 236);
+  border-radius: 0.375rem;
+  background: linear-gradient(180deg, rgb(255 255 255), rgb(248 248 252));
+  box-shadow: 0 1px 2px rgb(17 24 39 / 0.06);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgb(55 65 81);
+  white-space: nowrap;
+  vertical-align: text-bottom;
+}
+
+#content-area .node-chip::before {
+  content: "⠿";
+  font-size: 0.7em;
+  line-height: 1;
+  color: #6d5df6;
+}
+
+.dark #content-area .node-chip {
+  border-color: rgb(55 58 74);
+  background: linear-gradient(180deg, rgb(31 33 44), rgb(26 28 38));
+  box-shadow: none;
+  color: rgb(209 213 219);
+}
+
+.dark #content-area .node-chip::before {
+  color: #8b7ef8;
+}
+
+/* Skill callout: feature panel for the Claude Code skill */
+#content-area .skill-callout {
+  position: relative;
+  margin: 1.75rem 0;
+  padding: 1.6rem 1.9rem;
+  border-radius: 1rem;
+  border: 1px solid rgb(109 93 246 / 0.35);
+  background:
+    radial-gradient(120% 150% at 0% 0%, rgb(109 93 246 / 0.14), transparent 55%),
+    radial-gradient(120% 150% at 100% 100%, rgb(139 126 248 / 0.14), transparent 55%),
+    linear-gradient(180deg, rgb(252 252 255), rgb(246 245 255));
+  box-shadow: 0 10px 34px rgb(109 93 246 / 0.14);
+}
+
+.dark #content-area .skill-callout {
+  border-color: rgb(139 126 248 / 0.4);
+  background:
+    radial-gradient(120% 150% at 0% 0%, rgb(109 93 246 / 0.22), transparent 55%),
+    radial-gradient(120% 150% at 100% 100%, rgb(76 63 209 / 0.25), transparent 55%),
+    linear-gradient(180deg, rgb(24 24 34), rgb(19 19 28));
+  box-shadow: 0 10px 34px rgb(0 0 0 / 0.4);
+}
+
+#content-area .skill-callout .skill-logo {
+  position: absolute;
+  top: 1.4rem;
+  right: 1.6rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 0.65rem;
+  margin: 0;
+  box-shadow: 0 2px 8px rgb(17 24 39 / 0.18);
+}
+
+#content-area .skill-callout .skill-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6d5df6;
+  margin-bottom: 0.35rem;
+}
+
+.dark #content-area .skill-callout .skill-eyebrow {
+  color: #8b7ef8;
+}
+
+#content-area .skill-callout .skill-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+  color: rgb(17 24 39);
+  margin-bottom: 0.6rem;
+}
+
+.dark #content-area .skill-callout .skill-title {
+  color: rgb(243 244 246);
+}
+
+#content-area .skill-callout p {
+  max-width: none;
 }
 
 /* On-this-page: sizing and spacing to match the reference look */

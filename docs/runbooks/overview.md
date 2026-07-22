@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Overview"
+title: "Runbooks"
 ---
-
-# Gravity Platform Runbooks
 
 Modular runbooks for deploying and managing Gravity Platform VMs.
 
@@ -15,7 +14,7 @@ Modular runbooks for deploying and managing Gravity Platform VMs.
 | VM Role    | Cores | RAM   | Storage    | Count             | Services                                                   |
 | ---------- | ----- | ----- | ---------- | ----------------- | ---------------------------------------------------------- |
 | **POC**    | 4     | 8 GB  | 100 GB SSD | 1                 | All services                                               |
-| **App VM** | 8     | 32 GB | 200 GB SSD | 2 (Active/Active) | unoverse, memory, canvas |
+| **App VM** | 8     | 32 GB | 200 GB SSD | 2 (Active/Active) | unoverse, memory, **Canvas** |
 | **ML VM**  | 4     | 16 GB | 100 GB SSD | 1 (Dedicated)     | umap-service                                               |
 
 ### External Dependencies
@@ -176,13 +175,13 @@ Both files live at the project root:
 - On the server, `unoverse deploy` places `.env.production` at `/opt/gravity/.env` where `docker compose` reads it
 - `DEPLOY_HOST` and `DEPLOY_USER` are deployment-only — they tell Ansible where to SSH
 
-**How `DOMAIN` drives Canvas URLs:**
+**How `DOMAIN` drives **Canvas** URLs:**
 When `DOMAIN=yourdomain.com` is set, `docker-compose.yml` automatically derives:
 
 - `VITE_API_URL=https://api.yourdomain.com`
 - `VITE_SERVER_WS_URL=wss://api.yourdomain.com`
 
-When `DOMAIN` is unset (local dev), set `API_URL=http://localhost:4105` in `.env` — Canvas calls the platform's public listener (unoverse `:4105`) directly.
+When `DOMAIN` is unset (local dev), set `API_URL=http://localhost:4105` in `.env` — **Canvas** calls the platform's public listener (unoverse `:4105`) directly.
 
 ---
 

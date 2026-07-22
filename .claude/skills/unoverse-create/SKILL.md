@@ -66,8 +66,9 @@ material.
 
 ## Step 3 — Deploy loop (after the artifact is written)
 
-Scaffold design artifacts with `./unoverse new component <name>` / `./unoverse new template
-<org> <name>` (conformant skeleton), and ALWAYS run `./unoverse lint` before deploying —
+Create a client org with `./unoverse new org <name>` (folder structure + default token
+set). Components and templates have NO scaffold command — author them from the references
+(mirror the closest existing artifact), and ALWAYS run `./unoverse lint` before deploying —
 it enforces the schema, token law, and state rules with doc-cited messages (0 errors
 required; justify any warning).
 

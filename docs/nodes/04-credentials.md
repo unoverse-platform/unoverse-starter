@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Credentials"
+title: "Credential Management"
 ---
-
-# Credential Management
 
 **The One Rule: Nodes NEVER touch credentials. Services read credentials from `credentialContext.credentials`.**
 

@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Styles & Tokens"
+title: "Styles & Tokens"
 ---
-
-# 06 — Styles & Tokens
 
 **LAW 1: definitions own ZERO style values. Token names only.**
 
@@ -104,4 +103,4 @@ cp -r rx/orgs/default/styles rx/orgs/<org>/styles
 
 ---
 
-**Next:** [07 — Studio](./07-studio.md) — see it, test it, on every channel.
+**Next:** [07 — **Studio**](./07-studio.md) — see it, test it, on every channel.

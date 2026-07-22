@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Deploy Design"
+title: "Runbook: Deploy Design (rx/)"
 ---
-
-# Runbook: Deploy Design (rx/)
 
 The fast lane for design changes: push your `apps/unoverse/rx/` definitions (components, atoms, org templates + styles) to the server and restart. **No build step** — component nodes are definition-backed and synthesize from `rx/` at boot; restyles of existing components apply live.
 

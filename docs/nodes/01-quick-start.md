@@ -1,8 +1,7 @@
 ---
 sidebarTitle: "Quick Start"
+title: "Quick Start - Essential Templates"
 ---
-
-# Quick Start - Essential Templates
 
 **Get a working node in 5 minutes with copy-paste templates**
 
