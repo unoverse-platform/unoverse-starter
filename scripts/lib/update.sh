@@ -7,6 +7,26 @@ cmd_update() {
   echo ""
   timer_start
 
+  # ── SAFETY GATE: never destroy a developer's uncommitted or untracked work ──────
+  # This command FORCE-SYNCS the checkout to remote: `git reset --hard` (discards
+  # uncommitted edits AND local commits) and `git clean -fd` (DELETES untracked files —
+  # e.g. a brand-new node package you're writing). Fine on a pristine server; CATASTROPHIC
+  # on a dev machine with work in progress. Refuse unless the tree is clean. Automation
+  # that genuinely wants the hard reset opts in with UNOVERSE_UPDATE_FORCE=1.
+  if [ "${UNOVERSE_UPDATE_FORCE:-}" != "1" ] && [ -n "$(git -C "$ROOT" status --porcelain 2>/dev/null)" ]; then
+    fail "Refusing to update — you have local changes that this would DELETE."
+    echo ""
+    echo -e "  ${DIM}Would be discarded (git reset --hard + git clean -fd):${NC}"
+    git -C "$ROOT" status --short | sed 's/^/    /' | head -30
+    echo ""
+    info "Commit them:    git add -A && git commit -m 'wip'"
+    info "Or stash them:  git stash -u"
+    info "Then re-run:    ./unoverse update"
+    info "Force-discard:  UNOVERSE_UPDATE_FORCE=1 ./unoverse update"
+    echo ""
+    exit 1
+  fi
+
   # Step 1: Code — pull from customer's fork
   printf "  ${DIM}●${NC} Pulling latest code..."
   local git_ok=true
